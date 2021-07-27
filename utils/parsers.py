@@ -1,19 +1,28 @@
 from dataclasses import dataclass
 import csv
+from typing import Dict
+
 
 @dataclass(init=False)
 class Parser:
-    def get_topics(cls, path) -> Dict[int, Dict[str]]:
+    @classmethod
+    def get_topics(cls, path) -> Dict[int, Dict[str, str]]:
         raise NotImplementedError
 
-class CDS2021_Parser(Parser):
-    def get_topics(cls, path) -> Dict[int, Dict[str]]:
-        topics = {}
-        with open(csv.Reader(path)) as reader:
-            for row in reader:
-                _id = row["topic_num"]
-                text = row["text"]
 
-                topics[_id] = {"text": text}
+class CDS2021_Parser(Parser):
+    @classmethod
+    def get_topics(cls, csvfile) -> Dict[int, Dict[str, str]]:
+        topics = {}
+        reader = csv.reader(csvfile)
+        for i, row in enumerate(reader):
+            if i == 0:
+                continue
+
+            _id = row[0]
+            text = row[1]
+
+            topics[_id] = {"text": text}
 
         return topics
+
