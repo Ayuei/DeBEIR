@@ -1,5 +1,6 @@
 import json
 from typing import List, Dict
+from generate_script import generate_script
 
 def unwind_mapping(cache, node, key=None):
     if not isinstance(node, dict) or (not key in node):
@@ -85,37 +86,39 @@ class TestTrialsQuery:
         return query
 
     def generate_query_embedding(self, query, encoder, cosine_weights: List[float]=None,
-                                 query_weight=1,
+                                 query_weight: List[float]=None,
                                  expansion="",
                                  norm_weight=2.15):
 
-        assert len(query_weights) == 12
-        assert len(cosine_weights) == 9
+        should = {'should': []}
+
+        for i, field in enumerate(self.best_fields):
+            should['should'].append({
+                "match": {
+                    f"{field}": {
+                        "query": query,
+                        "boost": query_weight[i],
+                    }
+                }
+            })
+
+        params = {
+            "weights": [1]*len(self.best_fields),
+            "q_eb": encoder.encode(self.topics[topic_num]),
+            "offset": 1.0,
+            "norm_weight": norm_weight,
+        }
 
         return {
             "query": {
                 "script_score": {
                     "query": {
                         "bool": {
-                            # Match on title, abstract and fulltext on all three fields
-                            # Weights should be added later
-                            "should": [
-                                {"match": {"title": {"query": q, "boost": query_weights[0]}}},
-                                {"match": {"title": {"query": qstn, "boost": query_weights[1]}}},
-                                {"match": {"title": {"query": narr, "boost": query_weights[2]}}},
-                                {"match": {"title": {"query": expansion, "boost": query_weights[3]}}},
-                                {"match": {"abstract": {"query": q, "boost": query_weights[4]}}},
-                                {"match": {"abstract": {"query": qstn, "boost": query_weights[5]}}},
-                                {"match": {"abstract": {"query": narr, "boost": query_weights[6]}}},
-                                {"match": {"abstract": {"query": expansion, "boost": query_weights[7]}}},
-                                {"match": {"fulltext": {"query": q, "boost": query_weights[8]}}},
-                                {"match": {"fulltext": {"query": qstn, "boost": query_weights[9]}}},
-                                {"match": {"fulltext": {"query": narr, "boost": query_weights[10]}}},
-                                {"match": {"fulltext": {"query": expansion, "boost": query_weights[11]}}},
-                            ],
+                            "should": should,
                         }
                     },
-                }
+                    "script": generate_script(self.best_fields, params=params)
+                },
             }
         }
 
