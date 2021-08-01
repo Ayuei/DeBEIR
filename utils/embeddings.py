@@ -1,16 +1,18 @@
 import sentence_transformers
-import asyncio
 import torch
 import torch.nn.functional as F
+import spacy
+import scispacy
 
 
 class Encoder:
     def __init__(self, model_path):
         self.model = sentence_transformers.SentenceTransformer(model_path)
+        self.nlp = spacy.load("en_core_sci_sm")
+        self.nlp.max_length = 2000000
 
-    async def encode(self, sentences, normalize=True):
-        await asyncio.sleep(0.01)
-
+    def encode(self, topic, normalize=True):
+        sentences = [' '.join(sent.text.split()) for sent in self.nlp(topic).sents if sent.text.strip()]
         embeddings = self.model.encode(sentences, convert_to_tensor=True)
 
         if len(embeddings.size()) == 1:

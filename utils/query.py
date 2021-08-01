@@ -1,6 +1,7 @@
 import json
 from typing import List, Dict
-from generate_script import generate_script
+from utils.generate_script import generate_script
+
 
 def unwind_mapping(cache, node, key=None):
     if not isinstance(node, dict) or (not key in node):
@@ -31,11 +32,11 @@ def parse_mappings(fp):
 
 
 class Query:
-    def generate_query(self):
+    def generate_query(self, *args, **kwargs):
         raise NotImplementedError
 
 
-class TestTrialsQuery:
+class TestTrialsQuery(Query):
     mappings: List[str]
     fields: List[int]
     topics: Dict[int, Dict[str, str]]
@@ -85,12 +86,13 @@ class TestTrialsQuery:
 
         return query
 
-    def generate_query_embedding(self, query, encoder, cosine_weights: List[float]=None,
+    def generate_query_embedding(self, topic_num, encoder, cosine_weights: List[float]=None,
                                  query_weight: List[float]=None,
-                                 expansion="",
                                  norm_weight=2.15):
-
         should = {'should': []}
+
+        qfield = list(self.topics[topic_num].keys())[0]
+        query = self.topics[topic_num][qfield]
 
         for i, field in enumerate(self.best_fields):
             should['should'].append({
@@ -104,7 +106,7 @@ class TestTrialsQuery:
 
         params = {
             "weights": [1]*len(self.best_fields),
-            "q_eb": encoder.encode(self.topics[topic_num]),
+            "q_eb": encoder.encode(self.topics[topic_num][qfield]),
             "offset": 1.0,
             "norm_weight": norm_weight,
         }
