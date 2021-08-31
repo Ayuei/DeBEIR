@@ -6,12 +6,13 @@ import scispacy
 
 
 class Encoder:
-    def __init__(self, model_path):
+    def __init__(self, model_path, normalize=True):
         self.model = sentence_transformers.SentenceTransformer(model_path)
         self.nlp = spacy.load("en_core_sci_sm")
         self.nlp.max_length = 2000000
+        self.normalize = normalize
 
-    def encode(self, topic, normalize=True):
+    def encode(self, topic):
         sentences = [' '.join(sent.text.split()) for sent in self.nlp(topic).sents if sent.text.strip()]
         embeddings = self.model.encode(sentences, convert_to_tensor=True)
 
@@ -19,9 +20,12 @@ class Encoder:
             embeddings = torch.unsqueeze(embeddings, dim=0)
             embeddings = torch.mean(embeddings, axis=0)
 
-        if normalize:
-            norm = F.normalize(embeddings, dim=0)
+        if self.normalize:
+            embeddings = F.normalize(embeddings, dim=0)
 
-            return norm.tolist()
+        embeddings = embeddings.tolist()
 
-        return embeddings.tolist()
+        if isinstance(embeddings[0], list):
+            return embeddings[0]
+
+        return embeddings

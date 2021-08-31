@@ -25,4 +25,3 @@ class CDS2021_Parser(Parser):
             topics[_id] = {"text": text}
 
         return topics
-
