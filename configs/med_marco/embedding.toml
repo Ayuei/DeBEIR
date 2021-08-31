@@ -1,0 +1,4 @@
+query_type = "embedding"
+automatic = true
+encoder_fp = "./model/"
+index = "med-marco"

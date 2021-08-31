@@ -1,0 +1,6 @@
+query_type = "embedding"
+query_field_usage = "sensible_embed"
+embed_field_usage = "best_map_fields"
+automatic = true
+encoder_fp = "./model/"
+index = "test_trials"

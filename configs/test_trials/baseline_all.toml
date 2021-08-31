@@ -1,0 +1,3 @@
+query_type = "query"
+query_field_usage = "all"
+index = "test_trials"

@@ -1,0 +1,3 @@
+query_type = "query"
+query_field_usage = "sensible_embed_safe"
+index = "test_trials"

@@ -1,0 +1,6 @@
+query_type = "embedding"
+query_field_usage = "best_embed_fields"
+embed_field_usage = "sensible_embed_safe"
+automatic = true
+encoder_fp = "./model/"
+index = "clinical_trials"

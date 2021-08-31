@@ -1,0 +1,3 @@
+query_type = "query"
+query_field_usage = "best_recall_fields"
+index = "clinical_trials"
