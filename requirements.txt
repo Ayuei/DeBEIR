@@ -9,3 +9,4 @@ pandas~=1.3.0
 trectools~=0.0.44
 numpy~=1.21.0
 spacy~=3.0.7
+toml~=0.10.2
