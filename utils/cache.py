@@ -2,18 +2,22 @@ import uuid
 import os
 import dill
 
-CACHE_DIR = "./cache/"
-
 
 class _Cache(object):
-    def __init__(self, function, cache_dir=CACHE_DIR):
-        self.cache_dir = CACHE_DIR
+    def __init__(self, function, cache_dir="./cache/", compress=False, hash_self=False):
+        self.cache_dir = cache_dir
+        self.hash_self = hash_self
+        self.compress = compress
         self.function = function
 
-        if not os.path.exists(CACHE_DIR):
-            os.makedirs(CACHE_DIR)
+        if not os.path.exists(self.cache_dir):
+            os.makedirs(self.cache_dir)
 
     def __call__(self, *args, **kwargs):
+        args = list(args)
+        if self.hash_self:
+            args[0] = hash(args[0])
+
         key = str(args)+str(kwargs)
         key = str(uuid.uuid5(uuid.NAMESPACE_DNS, key))
 
@@ -28,10 +32,10 @@ class _Cache(object):
         return output
 
 
-def Cache(function=None, cache_dir=None):
+def Cache(function=None, cache_dir=None, compress=False, hash_self=False):
     if function:
         return _Cache(function)
     else:
         def wrapper(function):
-            return _Cache(function, cache_dir)
+            return _Cache(function, cache_dir, compress, hash_self)
         return wrapper
