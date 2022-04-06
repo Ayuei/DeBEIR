@@ -1,5 +1,5 @@
 from utils.config import MarcoQueryConfig, TrialsQueryConfig
-from utils.query import MarcoQuery, TrialsQuery
+from utils.query import GenericQuery, TrialsQuery
 
 
 config_factory = {
@@ -11,7 +11,7 @@ config_factory = {
 query_factory = {
     "clinical_trials": TrialsQuery,
     "test_trials": TrialsQuery,
-    "med-marco":  MarcoQuery,
+    "med-marco":  GenericQuery,
 }
 
 

@@ -4,7 +4,7 @@ import sys
 import plac
 from elasticsearch import AsyncElasticsearch
 from utils.runner import ClinicalTrialsExecutor
-from utils.parsers import CDS2021_Parser
+from utils.parsers import CDS2021Parser
 from utils.query import TrialsQuery
 from utils.embeddings import Encoder
 from utils.scaler import unpack_scores
@@ -27,7 +27,7 @@ def main(address, es_port, topics_path, output_file=None, index_name=None, query
          norm_weight="2.15", size=1000, delete=False):
 
     loop = asyncio.get_event_loop()
-    topics = CDS2021_Parser.get_topics(csvfile=open(topics_path))
+    topics = CDS2021Parser.get_topics(csvfile=open(topics_path))
     es = AsyncElasticsearch([{'host': address, 'port': es_port}], timeout=1800)
 
     query = None

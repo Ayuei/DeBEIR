@@ -1,7 +1,7 @@
 import plac
 from elasticsearch import AsyncElasticsearch
 from utils.runner import ClinicalTrialsExecutor
-from utils.parsers import CDS2021_Parser
+from utils.parsers import CDS2021Parser
 from utils.query import TrialsQuery
 from utils.embeddings import Encoder
 import asyncio
@@ -20,7 +20,7 @@ import asyncio
 @plac.opt('size', "Retrieved Input Size", type=int)
 def main(addr, es_port, topics_path, model_path, query_type, index_name, output_file, gmapping_id=None, norm_weight=2.15,
          size=1000, delete=False):
-    topics = CDS2021_Parser.get_topics(csvfile=open(topics_path))
+    topics = CDS2021Parser.get_topics(csvfile=open(topics_path))
     es = AsyncElasticsearch([{'host': addr, 'port': es_port}], timeout=1800)
     query = TrialsQuery(topics=topics, mappings_path="./assets/mapping.json", query_type="ablation")
     encoder = Encoder(model_path)

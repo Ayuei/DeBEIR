@@ -215,7 +215,7 @@ class TrialsQuery(Query):
         return query
 
 
-class MarcoQuery:
+class GenericQuery:
     topics: Dict[int, Dict[str, str]]
     config: MarcoQueryConfig
 
@@ -237,11 +237,10 @@ class MarcoQuery:
             "embedding": self.generate_query_embedding
         }
 
-    def generate_query(self, topic_num):
-        should = {'should': []}
-
+    def _generate_base_query(self, topic_num):
         qfield = list(self.topics[topic_num].keys())[0]
         query = self.topics[topic_num][qfield]
+        should = {'should': []}
 
         for i, field in enumerate(self.mappings):
             should['should'].append({
@@ -251,6 +250,11 @@ class MarcoQuery:
                     }
                 }
             })
+
+        return qfield, query, should
+
+    def generate_query(self, topic_num):
+        qfield, query, should = self._generate_base_query(topic_num)
 
         query = {
             "query": {
@@ -264,19 +268,7 @@ class MarcoQuery:
     def generate_query_embedding(self, topic_num, encoder,
                                  norm_weight=2.15, ablations=False,
                                  automatic=None):
-        should = {'should': []}
-
-        qfield = list(self.topics[topic_num].keys())[0]
-        query = self.topics[topic_num][qfield]
-
-        for i, field in enumerate(self.mappings):
-            should['should'].append({
-                "match": {
-                    f"{field}": {
-                        "query": query,
-                    }
-                }
-            })
+        qfield, query, should = self._generate_base_query(topic_num)
 
         if automatic is not None:
             norm_weight = get_z_value(cosine_ceiling=len(self.embed_mappings),
@@ -302,3 +294,24 @@ class MarcoQuery:
         }
 
         return query
+
+
+class BioRedditQuery(GenericQuery):
+    def __init__(self, topics, config, *args, **kwargs):
+        super().__init__(topics, config, *args, **kwargs)
+        self.mappings = [
+            "Text"
+        ]
+
+        self.topics = topics
+        self.config = config
+        self.query_type = self.config.query_type
+
+        self.embed_mappings = [
+            "Text_Embedding"
+        ]
+
+        self.query_funcs = {
+            "query": self.generate_query,
+            "embedding": self.generate_query_embedding
+        }

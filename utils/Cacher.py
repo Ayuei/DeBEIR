@@ -3,4 +3,5 @@ class Cacher:
         self.cache_dir = cache_dir
 
     def cache(self, input, output):
+        pass
         

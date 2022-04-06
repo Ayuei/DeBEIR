@@ -24,8 +24,28 @@ class Config:
         return kwargs
 
     @classmethod
-    def from_toml(cls, fp: str) -> 'Config':
-        raise NotImplementedError
+    def from_toml(cls, fp: str, field_class, *args, **kwargs):
+        args_dict = toml.load(fp)
+
+        field_names = set(f.name for f in dataclasses.fields(field_class))
+        obj = field_class(**{k: v for k, v in args_dict.items() if k in field_names})
+        if obj.encoder_fp:
+            obj.encoder = Encoder(obj.encoder_fp, obj.encoder_normalize)
+
+        obj.validate()
+
+        return obj
+
+    @classmethod
+    def from_dict(cls, data_class, **kwargs):
+        if 'encoder_fp' in kwargs and kwargs ['encoder_fp']:
+            kwargs['encoder'] = Encoder(kwargs['encoder_fp'])
+
+        field_names = set(f.name for f in dataclasses.fields(data_class))
+        obj = data_class(**{k: v for k, v in kwargs.items() if k in field_names})
+        obj.validate()
+
+        return obj
 
 
 @dataclass(init=True)
@@ -49,36 +69,19 @@ class TrialsQueryConfig(Config):
             assert self.query_field_usage and self.embed_field_usage, "Must have both field usages" \
                                                                             " if embedding query"
             assert self.encoder_fp and self.encoder, "Must provide encoder path for embedding model"
-            assert self.norm_weight is not None or self.automatic is not None, "Norm weight be specified or be automatic"
+            assert self.norm_weight is not None or self.automatic is not None, "Norm weight be specified or be " \
+                                                                               "automatic "
 
         assert self.query_field_usage is not None or self.fields is not None, "Must have a query field"
         assert self.query_type in ["ablation", "query", "query_best", "embedding"], "Check your query type"
 
     @classmethod
-    def from_toml(cls, fp: str) -> 'TrialsQueryConfig':
-        args_dict = toml.load(fp)
-
-        field_names = set(f.name for f in dataclasses.fields(TrialsQueryConfig))
-        obj = cls(**{k: v for k, v in args_dict.items() if k in field_names})
-
-        if obj.encoder_fp:
-            obj.encoder = Encoder(obj.encoder_fp, obj.encoder_normalize)
-
-        obj.validate()
-
-        return obj
+    def from_toml(cls, fp: str, *args, **kwargs) -> 'TrialsQueryConfig':
+        return super().from_toml(fp, cls, *args, **kwargs)
 
     @classmethod
-    def from_dict(cls, kwargs) -> 'TrialsQueryConfig':
-
-        if 'encoder_fp' in kwargs and kwargs ['encoder_fp']:
-            kwargs['encoder'] = Encoder(kwargs['encoder_fp'])
-
-        field_names = set(f.name for f in dataclasses.fields(TrialsQueryConfig))
-        obj = cls(**{k: v for k, v in kwargs.items() if k in field_names})
-        obj.validate()
-
-        return obj
+    def from_dict(cls, **kwargs) -> 'TrialsQueryConfig':
+        return super().from_dict(cls, **kwargs)
 
 
 @dataclass(init=True)
@@ -101,28 +104,12 @@ class MarcoQueryConfig(Config):
                                                                                "specified or be automatic"
 
     @classmethod
-    def from_toml(cls, fp: str) -> 'MarcoQueryConfig':
-        args_dict = toml.load(fp)
-
-        field_names = set(f.name for f in dataclasses.fields(MarcoQueryConfig))
-        obj = cls(**{k: v for k, v in args_dict.items() if k in field_names})
-        if obj.encoder_fp:
-            obj.encoder = Encoder(obj.encoder_fp, obj.encoder_normalize)
-
-        obj.validate()
-
-        return obj
+    def from_toml(cls, fp: str, *args, **kwargs) -> 'MarcoQueryConfig':
+        return super().from_toml(fp, cls, *args, **kwargs)
 
     @classmethod
-    def from_dict(cls, kwargs) -> 'MarcoQueryConfig':
-        if 'encoder_fp' in kwargs and kwargs ['encoder_fp']:
-            kwargs['encoder'] = Encoder(kwargs['encoder_fp'])
-
-        field_names = set(f.name for f in dataclasses.fields(MarcoQueryConfig))
-        obj = cls(**{k: v for k, v in kwargs.items() if k in field_names})
-        obj.validate()
-
-        return obj
+    def from_dict(cls, **kwargs) -> 'MarcoQueryConfig':
+        return super().from_dict(cls, **kwargs)
 
 
 def apply_config(func):
