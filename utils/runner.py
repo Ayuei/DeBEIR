@@ -4,8 +4,8 @@ from typing import Dict, Optional, Union
 import tqdm.asyncio
 from elasticsearch import AsyncElasticsearch as Elasticsearch
 
-from utils.embeddings import Encoder
-from utils.query import Query, TrialsQuery, GenericQuery
+from generators.embeddings import Encoder
+from generators.elasticsearch.query import Query, TrialsQuery, GenericQuery
 from utils.config import apply_config
 
 

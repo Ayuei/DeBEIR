@@ -1,5 +1,5 @@
 from utils.config import MarcoQueryConfig, TrialsQueryConfig
-from utils.query import GenericQuery, TrialsQuery
+from query.query import GenericQuery, TrialsQuery
 
 
 config_factory = {
@@ -34,6 +34,6 @@ def query_config_factory(topics, config_fp, index=None):
     config = config_fct.from_toml(config_fp)
     query_type = config.query_type
 
-    query = query_fct(topics=topics, query_type=config.query_type, config=config)
+    query = query_fct(topics=topics, query_type=query_type, config=config)
 
     return query, config

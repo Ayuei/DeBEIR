@@ -1,9 +1,9 @@
 import plac
 from elasticsearch import AsyncElasticsearch
 from utils.runner import ClinicalTrialsExecutor
-from utils.parsers import CDS2021Parser
-from utils.query import TrialsQuery
-from utils.embeddings import Encoder
+from parsers.parsers import CDS2021Parser
+from query.query import TrialsQuery
+from generators.embeddings import Encoder
 import asyncio
 
 

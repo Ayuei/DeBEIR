@@ -21,7 +21,7 @@ class CSVParser:
             temp = {}
 
             for field in cls.parse_fields:
-                temp[field] = row['field']
+                temp[field] = row[field]
 
             topics[i] = temp
 
@@ -67,3 +67,11 @@ class BioRedditCommentParser(CSVParser):
             temp[topic['id']] = topic
 
         return temp
+
+
+class TrecCovidParser(CSVParser):
+    parse_fields = []
+
+    @classmethod
+    def get_topics(cls, csvfile) -> Dict[int, Dict[str, str]]:
+        return super().get_topics(csvfile)

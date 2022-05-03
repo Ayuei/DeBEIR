@@ -3,10 +3,12 @@ import sys
 
 import plac
 from elasticsearch import AsyncElasticsearch
+
+from utils.evaluator import Evaluator
 from utils.runner import ClinicalTrialsExecutor
-from utils.parsers import CDS2021Parser
-from utils.query import TrialsQuery
-from utils.embeddings import Encoder
+from parsers.parsers import CDS2021Parser
+from generators.elasticsearch.query import *
+from generators.embeddings import Encoder
 from utils.scaler import unpack_scores
 from utils.factory import query_config_factory
 import asyncio
@@ -71,18 +73,21 @@ def main(address, es_port, topics_path, output_file=None, index_name=None, query
         ex.return_size = 1
         ex.return_id_only = True
 
-        temp = config.query_type
+        prev_qt = config.query_type
         config.query_type = "query"
 
         results = loop.run_until_complete(ex.run_all_queries(serialize=False, return_results=True))
         results = unpack_scores(results)
         ex.return_size = size
-        config.query_type = temp
+        config.query_type = prev_qt
 
     loop.run_until_complete(ex.run_all_queries(serialize=True, query_type=query_type, norm_weight=norm_weight,
                                                automatic_scores=results))
     loop.run_until_complete(es.close())
     loop.close()
+
+    if config.evaluate:
+        evaluator = Evaluator()
 
 
 if __name__ == "__main__":

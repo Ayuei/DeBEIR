@@ -1,5 +1,5 @@
 from typing import List, Dict
-from utils.generate_script import generate_script
+from generators.elasticsearch.generate_script import generate_script
 from utils.scaler import get_z_value
 from utils.config import Config, TrialsQueryConfig, MarcoQueryConfig, apply_config
 
@@ -254,7 +254,7 @@ class GenericQuery:
         return qfield, query, should
 
     def generate_query(self, topic_num):
-        qfield, query, should = self._generate_base_query(topic_num)
+        _, _, should = self._generate_base_query(topic_num)
 
         query = {
             "query": {
@@ -297,6 +297,27 @@ class GenericQuery:
 
 
 class BioRedditQuery(GenericQuery):
+    def __init__(self, topics, config, *args, **kwargs):
+        super().__init__(topics, config, *args, **kwargs)
+        self.mappings = [
+            "Text"
+        ]
+
+        self.topics = topics
+        self.config = config
+        self.query_type = self.config.query_type
+
+        self.embed_mappings = [
+            "Text_Embedding"
+        ]
+
+        self.query_funcs = {
+            "query": self.generate_query,
+            "embedding": self.generate_query_embedding
+        }
+
+
+class TrecQuery(GenericQuery):
     def __init__(self, topics, config, *args, **kwargs):
         super().__init__(topics, config, *args, **kwargs)
         self.mappings = [

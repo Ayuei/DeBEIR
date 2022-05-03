@@ -1,0 +1,5 @@
+[paths]
+other_script_location = "blah"
+models_dir = ""
+elasticsearch_port = ""
+elasticsearch_url = ""

@@ -1,7 +1,6 @@
 import dataclasses
-import os
 from dataclasses import dataclass
-from utils.embeddings import Encoder
+from generators.embeddings import Encoder
 import toml
 from typing import List
 
@@ -13,12 +12,6 @@ class Config:
 
     def __update__(self, **kwargs):
         attrs = vars(self)
-
-        # Overwrite with config value if it exists
-        #for attr in attrs:
-        #    if attr in kwargs:
-        #        kwargs[attr] = attrs[attr]
-
         kwargs.update(attrs)
 
         return kwargs
