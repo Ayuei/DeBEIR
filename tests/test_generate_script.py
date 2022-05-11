@@ -11,31 +11,34 @@ class Test(TestCase):
         q_eb = [0]
         qstn_eb = [1]
         narr_eb = [2]
-        weights = [1,2,3,4,5,6,7,8,9]
+        weights = [1, 2, 3, 4, 5, 6, 7, 8, 9]
         params = {
-         "q_eb": q_eb,
-         "qstn_eb": qstn_eb,
-         "narr_eb": narr_eb,
-         "weights": weights,
-         # "reduce_offset": len(cosine_weights) - sum(cosine_weights),
-         "norm_weight": 1,
-         "divisor": 1.0,
-         "offset": 1.0,
-         "disable_bm25": False
+            "q_eb": q_eb,
+            "qstn_eb": qstn_eb,
+            "narr_eb": narr_eb,
+            "weights": weights,
+            # "reduce_offset": len(cosine_weights) - sum(cosine_weights),
+            "norm_weight": 1,
+            "divisor": 1.0,
+            "offset": 1.0,
+            "disable_bm25": False,
         }
 
         script = gs.generate_script(
-            fields=[q,question,narr],
+            fields=[q, question, narr],
             params=params,
             source_generator=gs.generate_source,
         )
 
-        script2 = generate_query(q, question, narr, q_eb, qstn_eb, narr_eb, norm_weight=1)
+        script2 = generate_query(
+            q, question, narr, q_eb, qstn_eb, narr_eb, norm_weight=1
+        )
 
         pprint.pprint(script, open("blah.txt", "w+"))
         pprint.pprint(script2, open("blah2.txt", "w+"))
 
         assert script == script2
+
 
 def generate_query(
     q,
@@ -148,7 +151,11 @@ def generate_query(
                                 }
                             },
                         ],
-                        "filter": {"range": {"date": {"gte": "2019-12-31"},}},
+                        "filter": {
+                            "range": {
+                                "date": {"gte": "2019-12-31"},
+                            }
+                        },
                     }
                 },
                 "script": {

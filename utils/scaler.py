@@ -6,7 +6,7 @@ def unpack_scores(results):
     for raw_result in results:
         topic_num, result = raw_result
         for res in result["hits"]["hits"]:
-            score = float(res['_score'])
+            score = float(res["_score"])
 
             scores[topic_num] = score
 
@@ -17,7 +17,7 @@ def get_z_value(cosine_ceiling, bm25_ceiling):
     return bm25_ceiling ** (1 / float(cosine_ceiling))
 
 
-#class Scaler:
+# class Scaler:
 #    def __init__(self, gold_standard, qwt, cwt):
 #        self.scores = []
 #

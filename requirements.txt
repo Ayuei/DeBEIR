@@ -11,4 +11,7 @@ numpy==1.22.3
 spacy==3.2.4
 toml~=0.10.2
 pandas
-dill
+dill~=0.3.4
+requests~=2.27.1
+loguru
+https://github.com/Ayuei/analysis_tools/releases/download/python/analysis_tools_ir-0.0.1-py3-none-any.whl

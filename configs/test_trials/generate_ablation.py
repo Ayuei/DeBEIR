@@ -5,7 +5,7 @@ import toml
 baseline_template = {
     "query_type": "query",
     "query_field_usage": None,
-    "index": "test_trials"
+    "index": "test_trials",
 }
 
 embedding_template = {
@@ -14,20 +14,31 @@ embedding_template = {
     "embed_field_usage": None,
     "automatic": True,
     "encoder_fp": "./model/",
-    "index": "test_trials"
+    "index": "test_trials",
 }
 
-template_dict = {
-    "query": baseline_template,
-    "embedding": embedding_template
-}
+template_dict = {"query": baseline_template, "embedding": embedding_template}
 
 query_types = ["query", "embedding"]
-field_usages = ["best_recall_fields", "all", "best_map_fields", "best_embed_fields",
-               "sensible", "sensible_embed", "sensible_embed_safe"]
+field_usages = [
+    "best_recall_fields",
+    "all",
+    "best_map_fields",
+    "best_embed_fields",
+    "sensible",
+    "sensible_embed",
+    "sensible_embed_safe",
+]
 
-translator_lst = ["recall", "all", "map", "best_embed",
-                  "sensible", "sensible_embed", "embed_safe"]
+translator_lst = [
+    "recall",
+    "all",
+    "map",
+    "best_embed",
+    "sensible",
+    "sensible_embed",
+    "embed_safe",
+]
 
 translator = dict()
 
@@ -64,6 +75,8 @@ if __name__ == "__main__":
     for query_type in query_types:
         for query_field in field_usages:
             for embed_field in field_usages:
-                generate_name(query_type=query_type,
-                              query_field_usage=query_field,
-                              embed_field_usage=embed_field)
+                generate_name(
+                    query_type=query_type,
+                    query_field_usage=query_field,
+                    embed_field_usage=embed_field,
+                )
