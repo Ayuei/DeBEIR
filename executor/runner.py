@@ -54,6 +54,11 @@ class Executor:
     async def run_all_queries(
         self, serialize=False, query_type="query", return_results=False, *args, **kwargs
     ):
+
+        if not await self.client.ping():
+            await self.client.close()
+            raise RuntimeError(f"Elasticsearch instance cannot be reached at {self.client}")
+
         tasks = [
             self.execute_query(
                 topic_num=topic_num, query_type=query_type, *args, **kwargs
@@ -236,7 +241,7 @@ class MarcoExecutor(ClinicalTrialsExecutor):
     async def execute_query(
         self, query=None, topic_num=None, ablation=False, query_type="query", **kwargs
     ):
-        return super().execute_query(query, topic_num, ablation, query_type, **kwargs)
+        return super().execute_query(query, topic_num, ablation, query_type=query_type, **kwargs)
 
 
 class GenericExecutor(MarcoExecutor):

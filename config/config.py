@@ -2,7 +2,7 @@ import dataclasses
 from dataclasses import dataclass
 from query_builder.embeddings import Encoder
 import toml
-from typing import List
+from typing import List, Dict, MutableMapping
 
 
 @dataclass(init=True)
@@ -19,6 +19,10 @@ class Config:
     cosine_weights: List[float] = None
     evaluate: bool = False
     qrels: str = None
+    config_fn: str = None
+    query_fn: str = None
+    parser_fn: str = None
+    executor_fn: str = None
 
     def validate(self):
         raise NotImplementedError()
@@ -33,6 +37,10 @@ class Config:
     def from_toml(cls, fp: str, field_class, *args, **kwargs):
         args_dict = toml.load(fp)
 
+        return cls.from_args(args_dict, field_class, *args, **kwargs)
+
+    @classmethod
+    def from_args(cls, args_dict: MutableMapping, field_class, *args, **kwargs):
         field_names = set(f.name for f in dataclasses.fields(field_class))
         obj = field_class(**{k: v for k, v in args_dict.items() if k in field_names})
         if obj.encoder_fp:
@@ -119,3 +127,23 @@ def apply_config(func):
         return func(self, *args, **kwargs)
 
     return use_config
+
+
+str_to_config_cls = {
+    "clinical_trials": TrialsQueryConfig,
+    "test_trials": TrialsQueryConfig,
+    "med-marco": MarcoQueryConfig,
+    "generic": MarcoQueryConfig,
+}
+
+
+def config_factory(path: str, config_cls: Config = None):
+    args_dict = toml.load(path)
+
+    if not config_cls:
+        if 'config_fn' in args_dict:
+            config_cls = str_to_config_cls[args_dict['config_fn']]
+        else:
+            raise NotImplementedError()
+
+    return config_cls.from_args(args_dict, config_cls)

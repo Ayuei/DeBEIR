@@ -32,7 +32,7 @@ class XMLParser(Parser):
             temp = {}
             for field in cls.parse_fields:
                 try:
-                    temp[field] = topic.find(field)
+                    temp[field] = topic.find(field).text
                 except:
                     continue
 

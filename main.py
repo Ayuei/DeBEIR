@@ -7,13 +7,14 @@ from elasticsearch import AsyncElasticsearch
 from executor.evaluator import Evaluator
 from query_builder.embeddings import Encoder
 from utils.scaler import unpack_scores
+from utils.index import es_isup
 from config.factory import factory_fn
 import asyncio
 from loguru import logger
 
 
-@logger.catch
 @plac.opt("topics_path", "Path to query topics", type=str)
+@plac.opt("config", "Path to Run Config File", type=str)
 @plac.opt("address", "Elasticsearch Address", type=str)
 @plac.opt("es_port", "Elasticsearch Port Number", type=int)
 @plac.opt("model_path", "Path to Sentence Encoder model", type=str)
@@ -21,32 +22,31 @@ from loguru import logger
 @plac.opt("norm_weight", "Norm Weight", type=str)
 @plac.opt("index_name", "Name of Elasticsearch Index", type=str)
 @plac.opt("output_file", "Output file name and/or path", type=str)
-@plac.opt("config_path", "Path to Run Config File", type=str)
 @plac.flg("delete", "Overwrite output file it exists")
 @plac.opt("size", "Retrieved Input Size", type=int)
 def main(
     topics_path,
-    address=None,
-    es_port=None,
+    config,
+    address="localhost",
+    es_port="9200",
     model_path=None,
     query_type=None,
     index_name=None,
     norm_weight="2.15",
     output_file=None,
-    config_path=None,
     delete=False,
     size=1000,
 ):
     encoder = None
     results = None
 
-    es = AsyncElasticsearch([{"host": address, "port": es_port}], timeout=1800)
+    es = AsyncElasticsearch(f"http://{address}:{es_port}", request_timeout=1800)
     loop = asyncio.get_event_loop()
 
     if output_file is None:
         os.makedirs(name=f"outputs/{index_name}", exist_ok=True)
         output_file = (
-            f"outputs/{index_name}/{config_path.split('/')[-1].replace('.toml', '')}"
+            f"outputs/{index_name}/{config.split('/')[-1].replace('.toml', '')}"
         )
         logger.info(f"Output file not specified, writing to: {output_file}")
 
@@ -54,15 +54,13 @@ def main(
         logger.info(f"Output file exists: {output_file}. Exiting...")
         sys.exit(0)
 
-    query, config, parser, executor = factory_fn(topics, config_path, index_name)
+    query, config, topics, executor = factory_fn(topics_path, config, index_name)
     assert (
         query_type or config.query_type
     ), "At least config or argument must be provided for query type"
 
     index_name = config.index if config.index else index_name
     assert index_name is not None, "Must provide an index name somewhere"
-
-    topics = parser.get_topics(open(topics_path))
 
     if model_path:
         encoder = Encoder(model_path)
@@ -112,9 +110,9 @@ def main(
     loop.run_until_complete(es.close())
     loop.close()
 
-    if config.evaluate:
-        evaluator = Evaluator(config.qrels)
-        results = evaluator.evaluate_runs(output_file)
+    #if config.evaluate:
+    #    evaluator = Evaluator(config.qrels, depths=[10], metrics=["NDCG"])
+    #    results = evaluator.evaluate_runs(output_file)
 
 
 if __name__ == "__main__":

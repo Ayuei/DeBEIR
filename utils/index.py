@@ -1,3 +1,5 @@
+import elasticsearch
+
 class DummyIndex:
     def get_documents(self):
         pass
@@ -7,3 +9,7 @@ class DummyIndex:
 
     def scorer(self):
         pass
+
+
+async def es_isup(es_client: elasticsearch.AsyncElasticsearch):
+    return await es_client.ping()

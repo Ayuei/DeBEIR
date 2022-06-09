@@ -2,7 +2,7 @@ import sentence_transformers
 import torch
 import torch.nn.functional as F
 import spacy
-from utils.cache import Cache
+from analysis_tools_ir.utils import cache
 
 
 class Encoder:
@@ -10,7 +10,7 @@ class Encoder:
         self,
         model_path,
         normalize=True,
-        spacy_model="en_core_sci_sm",
+        spacy_model="en_core_sci_md",
         max_length=2000000,
     ):
         self.model = sentence_transformers.SentenceTransformer(model_path)
@@ -21,7 +21,7 @@ class Encoder:
         self.nlp.max_length = max_length
         self.normalize = normalize
 
-    @Cache
+    @cache.Cache
     def encode(self, topic):
         sentences = [
             " ".join(sent.text.split())

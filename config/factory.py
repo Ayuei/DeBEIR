@@ -1,6 +1,8 @@
-from config.config import MarcoQueryConfig, TrialsQueryConfig, Config
+from typing import Dict
+
+from config.config import Config, config_factory
 from query_builder.elasticsearch.query import GenericQuery, TrialsQuery, Query
-from executor.runner import Executor, ClinicalTrialsExecutor, MarcoExecutor
+from executor.runner import Executor, ClinicalTrialsExecutor, MarcoExecutor, GenericExecutor
 from parsers.query_topic_parsers import (
     Parser,
     TrecCovidParser,
@@ -10,16 +12,11 @@ from parsers.query_topic_parsers import (
     CSVParser,
 )
 
-config_factory = {
-    "clinical_trials": TrialsQueryConfig,
-    "test_trials": TrialsQueryConfig,
-    "med-marco": MarcoQueryConfig,
-}
 
 query_factory = {
     "clinical_trials": TrialsQuery,
     "test_trials": TrialsQuery,
-    "med-marco": GenericQuery,
+    "generic": GenericQuery,
 }
 
 parser_factory = {
@@ -31,8 +28,9 @@ parser_factory = {
 }
 
 executor_factory = {
-    "trec_covid": ClinicalTrialsExecutor,
+    "clinical": ClinicalTrialsExecutor,
     "med-marco":  MarcoExecutor,
+    "generic": GenericExecutor
 }
 
 
@@ -45,20 +43,20 @@ def get_index_name(config_fp):
     return None
 
 
-def factory_fn(topics, config_fp, index=None) -> (Query, Config, Parser, Executor):
+def factory_fn(topics_path, config_fp, index=None) -> (Query, Config, Dict, Executor):
     if index is None:
         index = get_index_name(config_fp)
         assert (
             index is not None
         ), "Index must be provided in the config file or as an an argument"
 
-    config_fct = config_factory[index]
-    query_fct = query_factory[index]
-    config = config_fct.from_toml(config_fp)
-    parser = parser_factory[index]
-    executor = executor_factory[index]
+    config = config_factory(config_fp)
+    query_fct = query_factory[config.query_fn]
+    parser = parser_factory[config.parser_fn]
+    executor = executor_factory[config.executor_fn]
     query_type = config.query_type
 
+    topics = parser.get_topics(open(topics_path))
     query = query_fct(topics=topics, query_type=query_type, config=config)
 
-    return query, config, parser, executor
+    return query, config, topics, executor

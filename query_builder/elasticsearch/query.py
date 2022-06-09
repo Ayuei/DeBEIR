@@ -410,7 +410,7 @@ class GenericQuery:
 
         return qfield, query, should
 
-    def generate_query(self, topic_num):
+    def generate_query(self, topic_num, *args, **kwargs):
         _, _, should = self._generate_base_query(topic_num)
 
         query = {
