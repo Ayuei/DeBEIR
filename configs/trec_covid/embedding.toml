@@ -1,12 +1,12 @@
 query_type = "embedding"
-query_field_usage = "best_recall_fields"
-embed_field_usage = "best_embed_fields"
 automatic = true
 encoder_fp = "./model/"
-index = "clinicalcovid-bert-nli"
-parser = "trec_covid"
+index = "trec-covid"
 
 config_fn = "generic"
-query_fn = "generic"
+query_fn = "trec_covid"
 parser_fn = "trec_covid"
 executor_fn = "generic"
+
+qrels = "./assets/qrels-covid_d5_j0.5-5.txt"
+topics_path="./assets/topics-rdn5.xml"

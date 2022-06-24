@@ -1,5 +1,6 @@
 import elasticsearch
 
+
 class DummyIndex:
     def get_documents(self):
         pass

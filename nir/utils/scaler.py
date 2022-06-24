@@ -4,6 +4,9 @@ def unpack_scores(results):
         results = results[0]
 
     for raw_result in results:
+        if raw_result is None:
+            continue
+
         topic_num, result = raw_result
         for res in result["hits"]["hits"]:
             score = float(res["_score"])

@@ -1,4 +1,6 @@
 import copy
+from typing import Union, Dict
+from nir.utils.embeddings import EMBEDDING_DIM_SIZE
 
 base_script = {
     "lang": "painless",
@@ -30,22 +32,28 @@ class SourceBuilder:
         if ignore_below_one:
             self._add_line(
                 "def log_score = _score < 1.0 ? 0.0 : Math.log(_score)/Math.log(params.norm_weight);"
+                # "def log_score = Math.log(_score)/Math.log(params.norm_weight);"
             )
         else:
             self._add_line(
                 "def log_score = _score <= 0.0 ? 0.0 : Math.log(_score)/Math.log(params.norm_weight);"
+                # "def log_score = Math.log(_score)/Math.log(params.norm_weight);"
             )
 
         return self
 
-    def add_embed_field(self, field) -> "SourceBuilder":
-        if "Embedding" not in field:
+    def add_embed_field(self, qfield, field) -> "SourceBuilder":
+        if "embedding" not in field.lower():
             field = field.replace(".", "_") + "_Embedding"
 
+        variable_name = f"{field}_{qfield}_score"
+
         self._add_line(
-            f"double {field}_score = doc['{field}'].size() == 0 ? 0 : weights[{self.i}]*cosineSimilarity(params.q_eb, '{field}') + params.offset;"
+            f"double {variable_name} = doc['{field}'].size() < {EMBEDDING_DIM_SIZE} ? 0 : params.weights[{self.i}]*cosineSimilarity(params.{qfield}"
+            f", '{field}') + params.offset; "
+            # f"double {variable_name} = cosineSimilarity(params.{qfield}, '{field}') + 1.0; "
         )
-        self.variables.append(f"{field}_score")
+        self.variables.append(variable_name)
 
         self.i += 1
 
@@ -60,12 +68,16 @@ class SourceBuilder:
         return self.s
 
 
-def generate_source(fields) -> str:
-
+def generate_source(qfields: Union[list, str], fields) -> str:
     sb = SourceBuilder()
     sb.add_log_score(ignore_below_one=True)
-    for field in fields:
-        sb.add_embed_field(field)
+
+    if isinstance(qfields, str):
+        qfields = [qfields]
+
+    for qfield in qfields:
+        for field in fields:
+            sb.add_embed_field(qfield, field)
 
     s = sb.finish()
 
@@ -97,18 +109,22 @@ def generate_source(fields) -> str:
 #    return s
 
 
-def check_params(params):
-    assert "q_eb" in params
+def check_params_is_valid(params, qfields):
+    for qfield in qfields:
+        assert qfield in params
+
     assert "weights" in params
     assert "offset" in params
 
 
-def generate_script(fields, params, source_generator=generate_source):
+def generate_script(
+    fields, params, source_generator=generate_source, qfields="q_eb"
+) -> Dict:
     script = copy.deepcopy(base_script)
-    check_params(params)
+    check_params_is_valid(params, qfields)
 
     script["lang"] = "painless"
-    script["source"] = source_generator(fields)
+    script["source"] = source_generator(qfields, fields)
     script["params"] = params
 
     return script
