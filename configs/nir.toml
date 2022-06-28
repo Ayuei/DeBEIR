@@ -12,6 +12,7 @@
     protocol = "http"
     ip = "127.0.0.1"
     port = "9200"
+    timeout = 600
 
     [search.engines.solr]
     ip = "127.0.0.1"
@@ -21,7 +22,7 @@
 [nir]
     [nir.default_settings]
     norm_weight = "2.15"
-    remove = true
+    overwrite_output_if_exists = true
     evaluate = true
     return_size = 1000
     output_directory = "./outputs/"

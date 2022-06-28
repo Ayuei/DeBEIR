@@ -23,7 +23,16 @@ from loguru import logger
 # sleep 10
 
 
-def change_bm25_params(client: elasticsearch.Elasticsearch, k: float, b: float):
+def change_bm25_params(client: elasticsearch.Elasticsearch, k1: float, b: float):
+    """
+    Change the BM25 parameters of the elasticsearch BM25 ranker.
+
+    :param client: The elasticsearch client object
+    :param k1: The k parameter for BM25 (default 1.2) [Usually 0-3] [Term saturation constant] ->
+               The higher the k value, the more weight given to document that repeat terms.
+    :param b: The b parameter for BM25 (default 0.75) [Usually 0-1] [Document length constant] ->
+              The higher the b value, the higher it penalises longer documents.
+    """
     logger.info("blah")
     base_url = "localhost:9200/{index}"
 
@@ -44,7 +53,7 @@ def change_bm25_params(client: elasticsearch.Elasticsearch, k: float, b: float):
         }
       }
      }""" % (
-        k,
+        k1,
         b,
     )
 

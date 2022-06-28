@@ -6,6 +6,9 @@ from analysis_tools_ir import evaluate, sigtests
 
 
 class Evaluator:
+    """
+    Evaluation class for computing metrics from TREC-style files
+    """
     def __init__(self, qrels: str, metrics: List[str]):
         self.qrels = qrels
         self.metrics = []
@@ -30,19 +33,41 @@ class Evaluator:
             self.metrics.append(metric)
             self.depths.append(int(depth))
 
-    def evaluate_runs(self, res: Union[str, List[str]]):
+    def evaluate_runs(self, res: Union[str, List[str]], **kwargs):
+        """
+        Evaluates the TREC-style results from an input result list or file
+
+        :param res: Results file path or raw results list
+        :param kwargs: Keyword arguments to pass to the underlying analysis_tools_ir.parse_run library
+        :return:
+        """
         results = defaultdict(lambda: {})
         for metric, depth in zip(self.metrics, self.depths):
             results[metric][depth] = evaluate.parse_run(
-                res, self.qrels, metric=metric, depth=depth
+                res, self.qrels,
+                metric=metric, depth=depth,
+                **kwargs
             )
 
         return results
 
     def average_all_metrics(self, runs: Dict, logger: loguru.logger):
+        """
+        Averages the metric per topic scores into a single averaged score.
+
+        :param runs: Parsed run dictionary: {metric_name@depth: Run object}
+        :param logger: Logger to print metrics
+        """
         for metric, depth in zip(self.metrics, self.depths):
             run = runs[metric][depth].run
             logger.info(f"{metric}@{depth} Average: {sum(run.values()) / len(run):.4}")
 
     def sigtests(self, results_a, results_b):
+        """
+        Run a paired significance test on two result files
+
+        :param results_a:
+        :param results_b:
+        :return:
+        """
         return sigtests.paired.paired_t_test(results_a, results_b, self.qrels)

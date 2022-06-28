@@ -5,13 +5,13 @@ from dataclasses import dataclass
 from typing import Dict, Union, Optional, List
 from elasticsearch import AsyncElasticsearch as Elasticsearch
 
-from classes.common.executor import GenericExecutor
-from classes.common.query import GenericElasticsearchQuery
+from nir.common.executor import GenericExecutor
+from nir.common.query import GenericElasticsearchQuery
 from engines.elasticsearch.generate_script_score import generate_script
 
-from classes.common.config import GenericConfig, apply_config
-from nir.parsers.parser import Parser
-from nir.utils.embeddings import Encoder
+from nir.common.config import GenericConfig, apply_config
+from nir.common.parser import Parser
+from rankers.transformer_encoder import Encoder
 from nir.utils.scaler import get_z_value
 
 
@@ -22,6 +22,9 @@ class TrialsQueryConfig(GenericConfig):
     fields: List[str] = None
 
     def validate(self):
+        """
+        Checks if query type is included, and checks if an encoder is included for embedding queries
+        """
         if self.query_type == "embedding":
             assert self.query_field_usage and self.embed_field_usage, (
                 "Must have both field usages" " if embedding query"
@@ -53,6 +56,9 @@ class TrialsQueryConfig(GenericConfig):
 
 
 class TrialsElasticsearchQuery(GenericElasticsearchQuery):
+    """
+    Elasticsearch Query object for the Clinical Trials Index
+    """
     topics: Dict[int, Dict[str, str]]
     query_type: str
     fields: List[int]
@@ -311,7 +317,16 @@ class TrialsElasticsearchQuery(GenericElasticsearchQuery):
         }
 
     @apply_config
-    def generate_query(self, topic_num, query_field_usage, **kwargs):
+    def generate_query(self, topic_num, query_field_usage, **kwargs) -> Dict:
+        """
+        Generates a query for the clinical trials index
+
+        :param topic_num: Topic number to search
+        :param query_field_usage: Which document facets to search over
+        :param kwargs:
+        :return:
+            A basic elasticsearch query for clinical trials
+        """
         fields = self.field_usage[query_field_usage]
         should = {"should": []}
 
@@ -338,6 +353,12 @@ class TrialsElasticsearchQuery(GenericElasticsearchQuery):
         return query
 
     def generate_query_ablation(self, topic_num, **kwargs):
+        """
+        Only search one document facet at a time
+        :param topic_num:
+        :param kwargs:
+        :return:
+        """
         query = {"query": {"match": {}}}
 
         for field in self.fields:
@@ -364,6 +385,23 @@ class TrialsElasticsearchQuery(GenericElasticsearchQuery):
         automatic_scores=None,
         **kwargs,
     ):
+        """
+        Computes the NIR score for a given topic
+
+        Score = log(BM25)/log(norm_weight) + embedding_score
+
+        :param topic_num:
+        :param encoder:
+        :param query_field_usage:
+        :param embed_field_usage:
+        :param cosine_weights:
+        :param query_weight:
+        :param norm_weight:
+        :param ablations:
+        :param automatic_scores:
+        :param kwargs:
+        :return:
+        """
         should = {"should": []}
 
         assert norm_weight or automatic_scores
@@ -421,6 +459,9 @@ class TrialsElasticsearchQuery(GenericElasticsearchQuery):
 
 
 class ClinicalTrialsExecutor(GenericExecutor):
+    """
+    Executes queries given a query object.
+    """
     query: TrialsElasticsearchQuery
 
     def __init__(
@@ -456,6 +497,9 @@ class ClinicalTrialsExecutor(GenericExecutor):
 
 
 class ClinicalTrialParser(Parser):
+    """
+    Parser for Clinical Trials topics
+    """
     @classmethod
     def get_topics(cls, csvfile) -> Dict[int, Dict[str, str]]:
         topics = {}

@@ -1,3 +1,5 @@
+from typing import List
+
 import sentence_transformers
 import torch
 import torch.nn.functional as F
@@ -9,6 +11,14 @@ EMBEDDING_DIM_SIZE = 768
 
 
 class Encoder:
+    """
+    A wrapper for the Sentence Transformer Encoder used in Universal Sentence Embeddings (USE) for ranking or reranking.
+
+    :param model_path: The path to a sentence transformer or transformer model.
+    :param normalize: Normalize the output vectors to unit length for dot product retrieval rather than cosine.
+    :param spacy_model: the spacy or scispacy model to use for sentence boundary detection.
+    :param max_length: Maximum input length for the spacy nlp model.
+    """
     def __init__(
             self,
             model_path,
@@ -25,7 +35,16 @@ class Encoder:
         self.normalize = normalize
 
     @cache.Cache(hash_self=True, cache_dir="./cache/embedding_cache/")
-    def encode(self, topic):
+    def encode(self, topic: str) -> List:
+        """
+        Computes sentence embeddings for a given topic, uses spacy for sentence segmentation.
+        By default, uses a cache to store previously computed vectors. Pass "disable_cache" as a kwarg to disable this.
+
+        :param topic: The topic (a list of sentences) to encode. Should be a raw string.
+        :param disable_cache: keyword argument, pass as True to disable encoding caching.
+        :return:
+            Returns a list of encoded tensors is returned.
+        """
         sentences = [
             " ".join(sent.text.split())
             for sent in self.nlp(topic).sents

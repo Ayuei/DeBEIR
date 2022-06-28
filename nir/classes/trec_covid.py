@@ -1,7 +1,7 @@
 from typing import Dict
 
-from classes.common.query import GenericElasticsearchQuery
-from nir.parsers.parser import XMLParser
+from common.query import GenericElasticsearchQuery
+from common.parser import XMLParser
 
 
 class TrecCovidParser(XMLParser):

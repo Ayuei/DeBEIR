@@ -1,10 +1,13 @@
 from typing import Dict
 
-from classes.common.query import GenericElasticsearchQuery
-from nir.parsers.parser import CSVParser
+from common.query import GenericElasticsearchQuery
+from common.parser import CSVParser
 
 
 class BioRedditSubmissionParser(CSVParser):
+    """
+    Parser for the BioReddit Submission Dataset
+    """
     parse_fields = ["id", "body"]
 
     @classmethod
@@ -13,6 +16,9 @@ class BioRedditSubmissionParser(CSVParser):
 
 
 class BioRedditCommentParser(CSVParser):
+    """
+    Parser for the BioReddit Comment Dataset
+    """
     parse_fields = ["id", "parent_id", "selftext", "title"]
 
     @classmethod
@@ -29,6 +35,9 @@ class BioRedditCommentParser(CSVParser):
 
 
 class BioRedditElasticsearchQuery(GenericElasticsearchQuery):
+    """
+    Elasticsearch Query object for the BioReddit
+    """
     def __init__(self, topics, config, *args, **kwargs):
         super().__init__(topics, config, *args, **kwargs)
         self.mappings = ["Text"]

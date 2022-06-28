@@ -1,24 +1,23 @@
 import argparse
 import logging
-import os
 import sys
 import asyncio
 from typing import Type
 
-import shutup;
+import shutup
 
-from classes.common.executor import GenericExecutor
-from classes.common.query import GenericElasticsearchQuery
-
-shutup.please()
+from nir.common.executor import GenericExecutor
+from nir.common.query import GenericElasticsearchQuery
 
 from elasticsearch import AsyncElasticsearch
 from loguru import logger
 
-from nir.classes.common.config import GenericConfig
+from engines.client import Client
+from nir.common.config import GenericConfig
 from nir.classes.factory import apply_nir_config
 from nir.evaluation.evaluator import Evaluator
 from nir.classes.factory import factory_fn
+from nir.utils.utils import create_output_file
 
 
 @apply_nir_config
@@ -26,47 +25,42 @@ async def run_config_es(topics, config: GenericConfig,
                         config_fp: str,
                         executor_cls: Type[GenericExecutor],
                         query_obj: GenericElasticsearchQuery,
-                        address="127.0.0.1",
-                        es_port="9200",
+                        client: Client,
                         query_type=None,
-                        index_name=None,
                         norm_weight="2.15",
                         output_file=None,
-                        remove=False,
+                        overwrite_output_if_exists=False,
                         size=1000,
                         evaluate=False,
                         **kwargs):
+    """
+    Use the NIR library on elasticsearch search engine given an NIR config, an Index config and a set of topics
 
-    if output_file is None:
-        os.makedirs(name=f"{kwargs['output_directory']}/{config.index}", exist_ok=True)
-        output_file = (
-            f"{kwargs['output_directory']}/{config.index}/{config_fp.split('/')[-1].replace('.toml', '')}"
-        )
-        logger.info(f"Output file not specified, writing to: {output_file}")
+    :param topics: Set of query topics to run
+    :param config: Configuration file for the index
+    :param config_fp: Configuration file path
+    :param executor_cls: Which executor class is to be used
+    :param query_obj: Query object to generate queries
+    :param client: Generic client object to use for search
+    :param query_type: Which query type to execute: embedding or bm25 only
+    :param norm_weight: Normalization constant for NIR-style scoring
+    :param output_file: Output file for results
+    :param overwrite_output_if_exists: Overwrite the output file if it exists
+    :param size: The number of documents to retrieve for each query topic from the index
+    :param evaluate: Evaluate the results given the metric config
+    :param kwargs: Miscellaneous parameters
+    """
+    if not client.es_client:
+        # Initialise client object to be shared amongst all config runs
+        client.es_client = AsyncElasticsearch(f"{kwargs['protocol']}://{kwargs['ip']}:{kwargs['port']}",
+                                              timeout=kwargs['timeout'])
 
-    if os.path.exists(output_file) and not remove:
-        logger.info(f"Output file exists: {output_file}. Exiting...")
-        sys.exit(0)
-
-    assert (
-            query_type or config.query_type
-    ), "At least config or argument must be provided for query type"
-
-    index_name = config.index if config.index else index_name
-    assert index_name is not None, "Must provide an index name somewhere"
-
-    if norm_weight != "automatic":
-        norm_weight = float(norm_weight)
-
-    if remove:
-        open(output_file, "w+").close()
-
-    es = AsyncElasticsearch(f"http://{address}:{es_port}", request_timeout=1800)
+    output_file = create_output_file(config, config_fp, overwrite_output_if_exists, output_file, **kwargs)
 
     query_executor = executor_cls(
         topics=topics,
-        client=es,
-        index_name=index_name,
+        client=client.es_client,
+        index_name=config.index,
         output_file=output_file,
         return_size=size,
         query=query_obj,
@@ -79,28 +73,36 @@ async def run_config_es(topics, config: GenericConfig,
     logger.info(f"Running {config.query_type} queries")
 
     await query_executor.run_all_queries(
-        serialize=True, query_type=query_type, norm_weight=norm_weight
+        serialize=True, query_type=query_type, norm_weight=float(norm_weight) if norm_weight.isdigit() else norm_weight,
     )
-
-    await es.close()
 
     if evaluate:
         evaluator = Evaluator(
             config.qrels,
             metrics=kwargs['metrics'],
         )
-        results = evaluator.evaluate_runs(output_file)
-        evaluator.average_all_metrics(results, logger=logger)
+        parsed_run = evaluator.evaluate_runs(output_file, disable_cache=True)
+        evaluator.average_all_metrics(parsed_run, logger=logger)
 
 
-def main(
+async def main(
         topics,
         configs,
         debug=False,
         **kwargs
 ):
+    """
+    Main function loop. Executes the passed config files and executes them all asynchronously.
+
+    :param topics:
+    :param configs:
+    :param debug:
+    :param kwargs:
+    """
     logger.remove()
     logger.add("logs/output.log", enqueue=True)
+
+    client = Client()
 
     if debug:
         logger.add(sys.stderr, level="DEBUG")
@@ -112,7 +114,10 @@ def main(
     for config_fp in configs:
         query_cls, config, parsed_topics, executor_cls = factory_fn(topics, config_fp)
         if kwargs['elasticsearch']:
-            asyncio.run(run_config_es(parsed_topics, config, config_fp, executor_cls, query_cls, **kwargs))
+            await run_config_es(parsed_topics, config, config_fp, executor_cls, query_cls, client=client,
+                                engine='elasticsearch', **kwargs)
+
+    await client.close()
 
 
 if __name__ == "__main__":
@@ -128,4 +133,4 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    main(**vars(args))
+    asyncio.run(main(**vars(args)))

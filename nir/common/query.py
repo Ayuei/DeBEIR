@@ -2,20 +2,29 @@ import dataclasses
 
 import loguru
 
-from typing import Dict
+from typing import Dict, Union
 
-from classes.common.config import apply_config, GenericConfig
+from nir.common.config import apply_config, GenericConfig
 from engines.elasticsearch.generate_script_score import generate_script
 from utils.scaler import get_z_value
 
 
 @dataclasses.dataclass(init=True)
 class Query:
+    """
+    A query interface class
+    :param topics: Topics that the query will be composed of
+    :param config: Config object that contains the settings for querying
+    """
     topics: Dict[int, Dict[str, str]]
     config: GenericConfig
 
 
 class GenericElasticsearchQuery(Query):
+    """
+    A generic elasticsearch query. Contains methods for NIR-style (embedding) queries and normal BM25 queries.
+    Requires topics, configs to be included
+    """
     id_mapping: str = "id"
 
     def __init__(self, topics, config, top_bm25_scores=None, *args, **kwargs):
@@ -54,6 +63,13 @@ class GenericElasticsearchQuery(Query):
         return qfield, query, should
 
     def generate_query(self, topic_num, *args, **kwargs):
+        """
+        Generates a simple BM25 query based off the query facets. Searches over all the document facets.
+        :param topic_num:
+        :param args:
+        :param kwargs:
+        :return:
+        """
         _, _, should = self._generate_base_query(topic_num)
 
         query = {
@@ -64,16 +80,40 @@ class GenericElasticsearchQuery(Query):
 
         return query
 
-    def set_bm25_scores(self, scores):
+    def set_bm25_scores(self, scores: Dict[Union[str, int], Union[int, float]]):
+        """
+        Sets BM25 scores that are used for NIR-style scoring. The top BM25 score for each topic is used
+        for log normalization.
+
+        Score = log(bm25)/log(z) + embed_score
+        :param scores: Top BM25 Scores of the form {topic_num: top_bm25_score}
+        """
         self.top_bm25_scores = scores
 
     def has_bm25_scores(self):
+        """
+        Checks if BM25 scores have been set
+        :return:
+        """
         return self.has_bm25_scores is not None
 
     @apply_config
     def generate_query_embedding(
         self, topic_num, encoder, norm_weight=2.15, ablations=False, *args, **kwargs
     ):
+        """
+        Generates an embedding script score query for Elasticsearch as part of the NIR scoring function.
+
+        :param topic_num: The topic number to search for
+        :param encoder: The encoder that will be used for encoding the topics
+        :param norm_weight: The BM25 log normalization constant
+        :param ablations: Whether to execute ablation style queries (i.e. one query facet
+                          or one document facet at a time)
+        :param args:
+        :param kwargs: Pass disable_cache to disable encoder caching
+        :return:
+            An elasticsearch script_score query
+        """
         qfields = list(self.topics[topic_num].keys())
         should = {"should": []}
 
@@ -126,4 +166,11 @@ class GenericElasticsearchQuery(Query):
         return query
 
     def get_id_mapping(self, hit):
+        """
+        Get the document ID
+
+        :param hit: The raw document result
+        :return:
+            The document's ID
+        """
         return hit[self.id_mapping]

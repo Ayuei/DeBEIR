@@ -3,10 +3,10 @@ from typing import Dict, Union, Optional
 
 from elasticsearch import AsyncElasticsearch as Elasticsearch
 
-from classes.common.config import GenericConfig
-from classes.common.executor import GenericExecutor
-from classes.common.query import GenericElasticsearchQuery
-from nir.utils.embeddings import Encoder
+from nir.common.config import GenericConfig
+from nir.common.executor import GenericExecutor
+from nir.common.query import GenericElasticsearchQuery
+from rankers.transformer_encoder import Encoder
 
 
 class MarcoExecutor(GenericExecutor):

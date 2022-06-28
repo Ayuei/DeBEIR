@@ -1,6 +1,6 @@
 import copy
 from typing import Union, Dict
-from nir.utils.embeddings import EMBEDDING_DIM_SIZE
+from rankers.transformer_encoder import EMBEDDING_DIM_SIZE
 
 base_script = {
     "lang": "painless",
@@ -11,6 +11,12 @@ base_script = {
 
 
 class SourceBuilder:
+    """
+    Builds Script Score source for NIR-style queries in elasticsearch
+    Uses the painless language
+
+    This is a string builder class
+    """
     def __init__(self):
         self.s = ""
         self.i = 0
@@ -20,6 +26,10 @@ class SourceBuilder:
         self.s = self.s + line.strip() + "\n"
 
     def add_preamble(self):
+        """
+        Adds preamble to the internal string
+        This will return the bm25 score if the normalization constant is below 0
+        """
         self._add_line(
             """
             if (params.norm_weight < 0.0) {
@@ -29,6 +39,12 @@ class SourceBuilder:
         )
 
     def add_log_score(self, ignore_below_one=False) -> "SourceBuilder":
+        """
+        Adds the BM25 log score line
+        :param ignore_below_one: Ignore all scores below 1.0 as Log(1) = 0. Otherwise, just ignore Log(0 and under).
+        :return:
+            SourceBuilder
+        """
         if ignore_below_one:
             self._add_line(
                 "def log_score = _score < 1.0 ? 0.0 : Math.log(_score)/Math.log(params.norm_weight);"
@@ -43,6 +59,12 @@ class SourceBuilder:
         return self
 
     def add_embed_field(self, qfield, field) -> "SourceBuilder":
+        """
+        Adds a cosine score line.
+        :param qfield: Query field
+        :param field: Document facet field
+        :return:
+        """
         if "embedding" not in field.lower():
             field = field.replace(".", "_") + "_Embedding"
 
@@ -60,6 +82,11 @@ class SourceBuilder:
         return self
 
     def finish(self):
+        """
+        Finalises the script score and returns the internal string
+        :return:
+            A string containing the script score query
+        """
         self._add_line("double embed_score = " + " + ".join(self.variables) + ";")
         self._add_line(
             "return params.disable_bm25 == true ? log_score : embed_score + log_score;"
@@ -69,6 +96,13 @@ class SourceBuilder:
 
 
 def generate_source(qfields: Union[list, str], fields) -> str:
+    """
+    Generates the script source based off a set of input fields and facets
+
+    :param qfields: Query fields (or topic fields)
+    :param fields: Document facets to compute cosine similarity on
+    :return:
+    """
     sb = SourceBuilder()
     sb.add_log_score(ignore_below_one=True)
 
@@ -110,6 +144,12 @@ def generate_source(qfields: Union[list, str], fields) -> str:
 
 
 def check_params_is_valid(params, qfields):
+    """
+    Validate if the parameters for the script score passes a simple sanity check.
+
+    :param params:
+    :param qfields:
+    """
     for qfield in qfields:
         assert qfield in params
 
@@ -120,6 +160,15 @@ def check_params_is_valid(params, qfields):
 def generate_script(
     fields, params, source_generator=generate_source, qfields="q_eb"
 ) -> Dict:
+    """
+    Parameters for creating the script
+
+    :param fields: Document fields to search
+    :param params: Parameters for the script
+    :param source_generator:  Function that will generate the script
+    :param qfields: Query fields to search from (topic facets)
+    :return:
+    """
     script = copy.deepcopy(base_script)
     check_params_is_valid(params, qfields)
 

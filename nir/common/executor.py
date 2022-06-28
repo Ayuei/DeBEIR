@@ -3,14 +3,17 @@ from typing import Dict, Union, Optional
 import loguru
 from elasticsearch import AsyncElasticsearch as Elasticsearch
 
-from nir.classes.common.query import GenericElasticsearchQuery
+from common.query import GenericElasticsearchQuery
 from nir.engines.elasticsearch.executor import ElasticsearchExecutor
-from nir.classes.common.config import apply_config
-from nir.utils.embeddings import Encoder
-from utils.scaler import unpack_scores
+from common.config import apply_config
+from rankers.transformer_encoder import Encoder
+from nir.utils.scaler import unpack_elasticsearch_scores
 
 
 class GenericExecutor(ElasticsearchExecutor):
+    """
+    Generic Executor class for Elasticsearch
+    """
     query: GenericElasticsearchQuery
 
     def __init__(
@@ -43,6 +46,14 @@ class GenericExecutor(ElasticsearchExecutor):
         }
 
     def generate_query(self, topic_num, best_fields=True, **kwargs):
+        """
+        Generates a standard BM25 query given the topic number
+
+        :param topic_num: Query topic number to generate
+        :param best_fields: Whether to use a curated list of fields
+        :param kwargs:
+        :return:
+        """
         return self.query.generate_query(topic_num, **kwargs)
 
     #def generate_query_ablation(self, topic_num, **kwargs):
@@ -57,6 +68,17 @@ class GenericExecutor(ElasticsearchExecutor):
         automatic_scores=None,
         **kwargs,
     ):
+        """
+        Executes an NIR-style query with combined scoring.
+
+        :param topic_num:
+        :param cosine_weights:
+        :param query_weights:
+        :param norm_weight:
+        :param automatic_scores:
+        :param kwargs:
+        :return:
+        """
         assert self.encoder is not None or self.config.encoder is not None
 
         if "encoder" not in kwargs:
@@ -75,6 +97,16 @@ class GenericExecutor(ElasticsearchExecutor):
     async def execute_query(
         self, query=None, topic_num=None, ablation=False, query_type="query", **kwargs
     ):
+        """
+        Executes a query using the underlying elasticsearch client.
+
+        :param query:
+        :param topic_num:
+        :param ablation:
+        :param query_type:
+        :param kwargs:
+        :return:
+        """
         if ablation:
             query_type = "ablation"
 
@@ -104,6 +136,10 @@ class GenericExecutor(ElasticsearchExecutor):
             return [topic_num, res]
 
     async def run_automatic_adjustment(self):
+        """
+        Get the normalization constant to be used in NIR-style queries for all topics given an initial
+        run of BM25 results.
+        """
         loguru.logger.info("Running automatic BM25 weight adjustment")
 
         # Backup variables temporarily
@@ -116,7 +152,7 @@ class GenericExecutor(ElasticsearchExecutor):
 
         results = await self.run_all_queries(serialize=False, return_results=True)
 
-        results = unpack_scores(results)
+        results = unpack_elasticsearch_scores(results)
         self.return_size = size
         self.config.query_type = prev_qt
         self.query.set_bm25_scores(results)
