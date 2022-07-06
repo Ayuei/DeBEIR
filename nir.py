@@ -14,9 +14,9 @@ from loguru import logger
 
 from engines.client import Client
 from nir.common.config import GenericConfig
-from nir.classes.factory import apply_nir_config
+from nir_datasets.factory import apply_nir_config
 from nir.evaluation.evaluator import Evaluator
-from nir.classes.factory import factory_fn
+from nir_datasets.factory import factory_fn
 from nir.utils.utils import create_output_file
 
 
@@ -94,10 +94,10 @@ async def main(
     """
     Main function loop. Executes the passed config files and executes them all asynchronously.
 
-    :param topics:
-    :param configs:
-    :param debug:
-    :param kwargs:
+    :param topics: Input topics (file path)
+    :param configs: File paths to configs
+    :param debug: Debug flag
+    :param kwargs: Additional arguments from cmd args to pass to run configs
     """
     logger.remove()
     logger.add("logs/output.log", enqueue=True)
