@@ -20,10 +20,20 @@ class ReRanker:
         pass
 
     def rerank(self) -> List:
+        """
+        Re-ranks 
+
+        :return:
+        """
         return self.rrerank(self.ranked_list)
 
     @classmethod
     def rrerank(cls, ranked_list: List) -> List:
+        """
+
+        :param ranked_list:
+        :return:
+        """
         ranking = []
 
         for document in ranked_list:

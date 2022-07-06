@@ -50,6 +50,7 @@ class Encoder:
             for sent in self.nlp(topic).sents
             if sent.text.strip()
         ]
+
         embeddings = self.model.encode(sentences, convert_to_tensor=True,
                                        show_progress_bar=False)
 
