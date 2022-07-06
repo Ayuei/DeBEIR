@@ -11,7 +11,7 @@ from engines.elasticsearch.generate_script_score import generate_script
 
 from nir.common.config import GenericConfig, apply_config
 from nir.common.parser import Parser
-from rankers.transformer_encoder import Encoder
+from rankers.transformer_sent_encoder import Encoder
 from nir.utils.scaler import get_z_value
 
 

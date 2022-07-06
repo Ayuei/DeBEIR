@@ -5,21 +5,21 @@ import toml
 from common.config import GenericConfig, _NIRMasterConfig, SolrConfig, ElasticsearchConfig, MetricsConfig, \
     NIRConfig, Config
 from common.query import GenericElasticsearchQuery
-from classes.clinical_trials import TrialsElasticsearchQuery
-from classes.trec_covid import TrecElasticsearchQuery
+from nir_datasets.clinical_trials import TrialsElasticsearchQuery
+from nir_datasets.trec_covid import TrecElasticsearchQuery
 from engines.elasticsearch.executor import ElasticsearchExecutor
-from nir.classes.clinical_trials import (
+from nir_datasets.clinical_trials import (
     ClinicalTrialsExecutor,
     ClinicalTrialParser,
     TrialsQueryConfig,
 )
-from nir.classes.marco import MarcoExecutor, MarcoQueryConfig
+from nir_datasets.marco import MarcoExecutor, MarcoQueryConfig
 from common.executor import GenericExecutor
 from common.parser import (
     CSVParser,
 )
-from nir.classes.bioreddit import BioRedditSubmissionParser, BioRedditCommentParser
-from nir.classes.trec_covid import TrecCovidParser
+from nir_datasets.bioreddit import BioRedditSubmissionParser, BioRedditCommentParser
+from nir_datasets.trec_covid import TrecCovidParser
 
 str_to_config_cls = {
     "clinical_trials": TrialsQueryConfig,

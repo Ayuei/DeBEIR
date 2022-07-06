@@ -6,7 +6,7 @@ from typing import List, MutableMapping, Dict
 
 import toml
 
-from rankers.transformer_encoder import Encoder
+from rankers.transformer_sent_encoder import Encoder
 
 
 class Config:
