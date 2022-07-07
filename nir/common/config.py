@@ -1,9 +1,11 @@
 import abc
 import dataclasses
+import os
 from abc import ABC
 from dataclasses import dataclass
 from typing import List, MutableMapping, Dict
 
+import loguru
 import toml
 
 from rankers.transformer_sent_encoder import Encoder
@@ -13,6 +15,7 @@ class Config:
     """
     Config Interface with creation class methods
     """
+
     def __update__(self, **kwargs):
         attrs = vars(self)
         kwargs.update(attrs)
@@ -195,6 +198,7 @@ def apply_config(func):
     :param func: Decorated function
     :return:
     """
+
     def use_config(self, *args, **kwargs):
         """
         Replaces keywords and args passed to the function with ones from self.config.
@@ -210,3 +214,56 @@ def apply_config(func):
         return func(self, *args, **kwargs)
 
     return use_config
+
+
+def override_with_toml_config(func):
+    """
+    Configuration decorator. Overwrite a functions kwargs and args with a specified toml config file.
+    Pass override_with_config=path/to/config
+
+    :param func: Decorated function
+    :return:
+    """
+
+    def override_with(override_with_config_: str = None, *args, **kwargs):
+        """
+        Replaces keywords and args passed to the function with ones from self.config.
+
+        :param override_with_config_: Path to config else None
+        :param args: To be updated
+        :param kwargs: To be updated
+        :return:
+        """
+
+        if f"override_{func.__name__}_with_config_" in kwargs:
+            override_with_config_ = f"override_{func.__name__}_with_config_"
+
+        if override_with_config_ is not None:
+            if os.path.exists(override_with_config_):
+                toml_kwargs = toml.load(override_with_config_)
+                kwargs = kwargs.update(**toml_kwargs)
+
+        return func(*args, **kwargs)
+
+    return override_with
+
+
+def save_kwargs_to_file(func):
+    def save_kwargs(save_kwargs_to_: str = None, *args, **kwargs):
+        """
+        Replaces keywords and args passed to the function with ones from self.config.
+
+        :param save_kwargs_to_: Path to save location for config else None
+        :param args: To be updated
+        :param kwargs: To be updated
+        :return:
+        """
+        if save_kwargs_to_ is not None:
+            if os.path.exists(save_kwargs_to_):
+                output_file = f"{save_kwargs_to_}_{func.__name__}.toml"
+                loguru.logger.info(f"Saving kwargs to {output_file}")
+                toml.dump(kwargs, open(output_file, "w+"))
+
+        return func(*args, **kwargs)
+
+    return save_kwargs
