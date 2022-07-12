@@ -1,14 +1,14 @@
 from functools import partial
 from typing import List, Union
 
-import nir_datasets
+import datasets
 import transformers
 
 from sentence_transformers.evaluation import SentenceEvaluator
 from transformers import SchedulerType, Trainer, AutoModel, TrainingArguments
 
-from rankers.training.utils import _train_sentence_transformer, tokenize_function
-from nir_datasets.utils import InputExample, RelevanceExample
+from nir.rankers.training.utils import _train_sentence_transformer, tokenize_function
+from nir.dataset.types import InputExample, RelevanceExample
 
 
 def train_biencoder(model_fp_or_name: str, output_dir: str, train_examples: List[InputExample],
@@ -42,10 +42,10 @@ def train_huggingface_transformer(model_fp_or_name_or_cls: Union[str, transforme
                                   tokenizer: transformers.PreTrainedTokenizer,
                                   output_dir: str,
                                   compute_metric_fn,
-                                  metric: nir_datasets.Metric,
-                                  dataset: nir_datasets.DatasetDict = None,
-                                  train_dataset: List[Union[RelevanceExample, InputExample, nir_datasets.Dataset]] = None,
-                                  eval_dataset: List[Union[RelevanceExample, InputExample, nir_datasets.Dataset]] = None,
+                                  metric: datasets.Metric,
+                                  dataset: datasets.DatasetDict = None,
+                                  train_dataset: List[Union[RelevanceExample, InputExample, datasets.Dataset]] = None,
+                                  eval_dataset: List[Union[RelevanceExample, InputExample, datasets.Dataset]] = None,
                                   train_batch_size=32, num_epochs=3,
                                   learning_rate=5e-5,
                                   lr_scheduler_type: SchedulerType = SchedulerType.CONSTANT_WITH_WARMUP,

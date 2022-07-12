@@ -8,7 +8,7 @@ from typing import List, MutableMapping, Dict
 import loguru
 import toml
 
-from rankers.transformer_sent_encoder import Encoder
+from nir.rankers.transformer_sent_encoder import Encoder
 
 
 class Config:
@@ -251,16 +251,18 @@ def override_with_toml_config(func):
 def save_kwargs_to_file(func):
     def save_kwargs(save_kwargs_to_: str = None, *args, **kwargs):
         """
-        Replaces keywords and args passed to the function with ones from self.config.
+        Save kwargs passed to the function output_file = f"{save_kwargs_to_}_{func.__name__}.toml"
 
-        :param save_kwargs_to_: Path to save location for config else None
+        :param save_kwargs_to_: Path to save location for config else None. This should be a DIRECTORY.
         :param args: To be updated
         :param kwargs: To be updated
         :return:
         """
         if save_kwargs_to_ is not None:
+            os.makedirs(save_kwargs_to_, exist_ok=True)
+
             if os.path.exists(save_kwargs_to_):
-                output_file = f"{save_kwargs_to_}_{func.__name__}.toml"
+                output_file = f"{save_kwargs_to_}/{func.__name__}.toml"
                 loguru.logger.info(f"Saving kwargs to {output_file}")
                 toml.dump(kwargs, open(output_file, "w+"))
 

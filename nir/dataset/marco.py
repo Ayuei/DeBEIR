@@ -6,7 +6,7 @@ from elasticsearch import AsyncElasticsearch as Elasticsearch
 from nir.common.config import GenericConfig
 from nir.common.executor import GenericExecutor
 from nir.common.query import GenericElasticsearchQuery
-from rankers.transformer_sent_encoder import Encoder
+from nir.rankers.transformer_sent_encoder import Encoder
 
 
 class MarcoExecutor(GenericExecutor):

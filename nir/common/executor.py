@@ -3,10 +3,10 @@ from typing import Dict, Union, Optional
 import loguru
 from elasticsearch import AsyncElasticsearch as Elasticsearch
 
-from common.query import GenericElasticsearchQuery
+from nir.common.query import GenericElasticsearchQuery
 from nir.engines.elasticsearch.executor import ElasticsearchExecutor
-from common.config import apply_config
-from rankers.transformer_sent_encoder import Encoder
+from nir.common.config import apply_config
+from nir.rankers.transformer_sent_encoder import Encoder
 from nir.utils.scaler import unpack_elasticsearch_scores
 
 

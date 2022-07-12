@@ -1,6 +1,6 @@
 import copy
 from typing import Union, Dict
-from rankers.transformer_sent_encoder import EMBEDDING_DIM_SIZE
+from nir.rankers.transformer_sent_encoder import EMBEDDING_DIM_SIZE
 
 base_script = {
     "lang": "painless",

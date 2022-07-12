@@ -4,11 +4,11 @@ from typing import List, Union, Dict
 import numpy as np
 from sklearn.model_selection import KFold, StratifiedKFold
 
-from evaluation.evaluator import Evaluator
+from nir.evaluation.evaluator import Evaluator
 
 import datasets
 
-from nir_datasets.utils import InputExample
+from nir.dataset.types import InputExample
 
 
 class CrossValidatorTypes(Enum):
@@ -37,7 +37,7 @@ class CrossValidator:
          List[Dict] -> {"data": Data, "label": label}
          Huggingface Dataset Object -> Data(set="train", label = "label").select(idx)
     """
-    def __init__(self, evaluator: Evaluator, dataset: Union[List, List[Dict], datasets.Dataset],
+    def __init__(self, evaluator: 'Evaluator', dataset: Union[List, List[Dict], datasets.Dataset],
                  x_idx_label_or_attr: Union[str, int], y_idx_label_or_attr: Union[str, int],
                  cross_validator_type: [str, CrossValidatorTypes] = CrossValidatorTypes.Stratified,
                  seed=42, n_splits=5):

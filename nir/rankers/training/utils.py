@@ -4,7 +4,7 @@ from sentence_transformers import SentenceTransformer, losses, models
 from sentence_transformers.evaluation import SentenceEvaluator, EmbeddingSimilarityEvaluator
 from torch.utils.data import DataLoader
 
-from nir_datasets.utils import InputExample, RelevanceExample
+from nir.dataset.types import InputExample, RelevanceExample
 
 
 def _train_sentence_transformer(model_fp_or_name: str, output_dir: str,

@@ -2,7 +2,7 @@ import abc
 import dataclasses
 from typing import Union, Dict, List
 
-from utils.utils import flatten
+from nir.utils.utils import flatten
 
 
 @dataclasses.dataclass

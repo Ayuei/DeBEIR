@@ -5,8 +5,8 @@ import loguru
 from typing import Dict, Union
 
 from nir.common.config import apply_config, GenericConfig
-from engines.elasticsearch.generate_script_score import generate_script
-from utils.scaler import get_z_value
+from nir.engines.elasticsearch.generate_script_score import generate_script
+from nir.utils.scaler import get_z_value
 
 
 @dataclasses.dataclass(init=True)

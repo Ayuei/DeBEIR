@@ -3,9 +3,9 @@ from typing import Dict, Optional, Union, List
 import tqdm.asyncio
 from elasticsearch import AsyncElasticsearch as Elasticsearch
 
-from rankers.transformer_sent_encoder import Encoder
-from common.query import GenericElasticsearchQuery
-from common.config import apply_config
+from nir.rankers.transformer_sent_encoder import Encoder
+from nir.common.query import GenericElasticsearchQuery
+from nir.common.config import apply_config
 from nir.utils.utils import unpack_coroutine
 
 
