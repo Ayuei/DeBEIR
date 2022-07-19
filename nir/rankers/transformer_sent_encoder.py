@@ -68,6 +68,9 @@ class Encoder:
 
         return embeddings
 
+    def __call__(self, topic, *args, **kwargs) -> List:
+        return self.encode(topic)
+
     def __eq__(self, other):
         return (
                 self.model_path == other.model_path

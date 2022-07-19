@@ -6,17 +6,17 @@ from typing import Type
 
 import shutup
 
-from nir.common.executor import GenericExecutor
-from nir.common.query import GenericElasticsearchQuery
+from nir.interfaces.executor import GenericExecutor
+from nir.interfaces.query import GenericElasticsearchQuery
 
 from elasticsearch import AsyncElasticsearch
 from loguru import logger
 
 from engines.client import Client
-from nir.common.config import GenericConfig
-from nir_datasets.factory import apply_nir_config
+from nir.interfaces.config import GenericConfig
+from datasets.factory import apply_nir_config
 from nir.evaluation.evaluator import Evaluator
-from nir_datasets.factory import factory_fn
+from datasets.factory import factory_fn
 from nir.utils.utils import create_output_file
 
 

@@ -4,28 +4,25 @@ from typing import List, Union, Dict
 import numpy as np
 from sklearn.model_selection import KFold, StratifiedKFold
 
+from datasets.types import DatasetTypes
 from nir.evaluation.evaluator import Evaluator
 
 import datasets
 
-from nir.dataset.types import InputExample
+from nir.datasets.types import InputExample
 
 
 class CrossValidatorTypes(Enum):
+    """
+    Cross Validator Strategies for separating the dataset
+    """
     Stratified = "StratifiedKFold"
     KFold = "KFold"
 
 
-class DatasetTypes(Enum):
-    List: "List"
-    ListInputExample: "ListInputExample"
-    ListDict: "ListDict"
-    HuggingfaceDataset: "HuggingfaceDataset"
-
-
 str_to_fn = {
     "StratifiedKFold": StratifiedKFold,
-    "KFold": "KFold"
+    "KFold": KFold
 }
 
 

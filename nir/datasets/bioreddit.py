@@ -1,7 +1,7 @@
 from typing import Dict
 
-from nir.common.query import GenericElasticsearchQuery
-from nir.common.parser import CSVParser
+from nir.interfaces.query import GenericElasticsearchQuery
+from nir.interfaces.parser import CSVParser
 
 
 class BioRedditSubmissionParser(CSVParser):

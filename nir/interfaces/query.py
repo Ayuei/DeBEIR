@@ -4,7 +4,7 @@ import loguru
 
 from typing import Dict, Union
 
-from nir.common.config import apply_config, GenericConfig
+from nir.interfaces.config import apply_config, GenericConfig
 from nir.engines.elasticsearch.generate_script_score import generate_script
 from nir.utils.scaler import get_z_value
 

@@ -4,8 +4,8 @@ import tqdm.asyncio
 from elasticsearch import AsyncElasticsearch as Elasticsearch
 
 from nir.rankers.transformer_sent_encoder import Encoder
-from nir.common.query import GenericElasticsearchQuery
-from nir.common.config import apply_config
+from nir.interfaces.query import GenericElasticsearchQuery
+from nir.interfaces.config import apply_config
 from nir.utils.utils import unpack_coroutine
 
 

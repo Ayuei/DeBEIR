@@ -5,12 +5,12 @@ from dataclasses import dataclass
 from typing import Dict, Union, Optional, List
 from elasticsearch import AsyncElasticsearch as Elasticsearch
 
-from nir.common.executor import GenericExecutor
-from nir.common.query import GenericElasticsearchQuery
+from nir.interfaces.executor import GenericExecutor
+from nir.interfaces.query import GenericElasticsearchQuery
 from nir.engines.elasticsearch.generate_script_score import generate_script
 
-from nir.common.config import GenericConfig, apply_config
-from nir.common.parser import Parser
+from nir.interfaces.config import GenericConfig, apply_config
+from nir.interfaces.parser import Parser
 from nir.rankers.transformer_sent_encoder import Encoder
 from nir.utils.scaler import get_z_value
 

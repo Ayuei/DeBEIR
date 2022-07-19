@@ -7,8 +7,8 @@ import transformers
 from sentence_transformers.evaluation import SentenceEvaluator
 from transformers import SchedulerType, Trainer, AutoModel, TrainingArguments
 
-from nir.rankers.training.utils import _train_sentence_transformer, tokenize_function
-from nir.dataset.types import InputExample, RelevanceExample
+from models.training.utils import _train_sentence_transformer, tokenize_function
+from nir.datasets.types import InputExample, RelevanceExample
 
 
 def train_biencoder(model_fp_or_name: str, output_dir: str, train_examples: List[InputExample],

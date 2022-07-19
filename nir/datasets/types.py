@@ -1,5 +1,6 @@
 import string
 from collections import defaultdict
+from enum import Enum
 from typing import List, Union
 
 
@@ -83,3 +84,13 @@ class RelevanceExample(InputExample):
             Returns a normalised score for relevance between 0 - 1
         """
         return self.label / self.max_score
+
+
+class DatasetTypes(Enum):
+    """
+    A collection of common dataset types that is usable in the library.
+    """
+    List: "List"
+    ListInputExample: "ListInputExample"
+    ListDict: "ListDict"
+    HuggingfaceDataset: "HuggingfaceDataset"

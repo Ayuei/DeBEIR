@@ -2,8 +2,8 @@ from typing import List
 
 from sentence_transformers.evaluation import SentenceEvaluator
 
-from nir.rankers.training.utils import _train_sentence_transformer
-from nir.dataset.types import RelevanceExample
+from models.training.utils import _train_sentence_transformer
+from nir.datasets.types import RelevanceExample
 
 
 def train_cross_encoder_reranker(model_fp_or_name: str, output_dir: str, train_dataset: List[RelevanceExample],

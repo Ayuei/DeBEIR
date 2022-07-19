@@ -3,9 +3,9 @@ from typing import Dict, Union, Optional
 
 from elasticsearch import AsyncElasticsearch as Elasticsearch
 
-from nir.common.config import GenericConfig
-from nir.common.executor import GenericExecutor
-from nir.common.query import GenericElasticsearchQuery
+from nir.interfaces.config import GenericConfig
+from nir.interfaces.executor import GenericExecutor
+from nir.interfaces.query import GenericElasticsearchQuery
 from nir.rankers.transformer_sent_encoder import Encoder
 
 

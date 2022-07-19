@@ -2,8 +2,9 @@
 
 import datasets
 
-from nir.dataset.types import InputExample
-from nir.evaluation.cross_validation import CrossValidator, DatasetTypes
+from nir.datasets.types import InputExample
+from nir.evaluation.cross_validation import CrossValidator
+from datasets.types import DatasetTypes
 from nir.evaluation.evaluator import Evaluator
 
 

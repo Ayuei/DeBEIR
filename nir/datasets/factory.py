@@ -2,24 +2,24 @@ from typing import Dict, Type
 
 import toml
 
-from nir.common.config import GenericConfig, _NIRMasterConfig, SolrConfig, ElasticsearchConfig, MetricsConfig, \
+from nir.interfaces.config import GenericConfig, _NIRMasterConfig, SolrConfig, ElasticsearchConfig, MetricsConfig, \
     NIRConfig, Config
-from nir.common.query import GenericElasticsearchQuery
-from nir.dataset.clinical_trials import TrialsElasticsearchQuery
-from nir.dataset.trec_covid import TrecElasticsearchQuery
+from nir.interfaces.query import GenericElasticsearchQuery
+from nir.datasets.clinical_trials import TrialsElasticsearchQuery
+from nir.datasets.trec_covid import TrecElasticsearchQuery
 from nir.engines.elasticsearch.executor import ElasticsearchExecutor
-from nir.dataset.clinical_trials import (
+from nir.datasets.clinical_trials import (
     ClinicalTrialsExecutor,
     ClinicalTrialParser,
     TrialsQueryConfig,
 )
-from nir.dataset.marco import MarcoExecutor, MarcoQueryConfig
-from nir.common.executor import GenericExecutor
-from nir.common.parser import (
+from nir.datasets.marco import MarcoExecutor, MarcoQueryConfig
+from nir.interfaces.executor import GenericExecutor
+from nir.interfaces.parser import (
     CSVParser,
 )
-from nir.dataset.bioreddit import BioRedditSubmissionParser, BioRedditCommentParser
-from nir.dataset.trec_covid import TrecCovidParser
+from nir.datasets.bioreddit import BioRedditSubmissionParser, BioRedditCommentParser
+from nir.datasets.trec_covid import TrecCovidParser
 
 str_to_config_cls = {
     "clinical_trials": TrialsQueryConfig,
