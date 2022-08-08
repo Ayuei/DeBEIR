@@ -4,12 +4,12 @@ from typing import List, Union, Dict
 import numpy as np
 from sklearn.model_selection import KFold, StratifiedKFold
 
-from datasets.types import DatasetTypes
+from data_sets.types import DatasetTypes
 from nir.evaluation.evaluator import Evaluator
 
 import datasets
 
-from nir.datasets.types import InputExample
+from nir.data_sets.types import InputExample
 
 
 class CrossValidatorTypes(Enum):
@@ -28,17 +28,17 @@ str_to_fn = {
 
 class CrossValidator:
     """
-    Cross Validator Class for different types of datasets
+    Cross Validator Class for different types of data_sets
 
     E.g. List -> [[Data], label]
          List[Dict] -> {"data": Data, "label": label}
          Huggingface Dataset Object -> Data(set="train", label = "label").select(idx)
     """
-    def __init__(self, evaluator: 'Evaluator', dataset: Union[List, List[Dict], datasets.Dataset],
+    def __init__(self, dataset: Union[List, List[Dict], datasets.Dataset],
                  x_idx_label_or_attr: Union[str, int], y_idx_label_or_attr: Union[str, int],
                  cross_validator_type: [str, CrossValidatorTypes] = CrossValidatorTypes.Stratified,
                  seed=42, n_splits=5):
-        self.evaluator = evaluator
+        #self.evaluator = evaluator
         self.cross_vali_fn = str_to_fn[cross_validator_type](n_splits=n_splits,
                                                              shuffle=True,
                                                              random_state=seed)

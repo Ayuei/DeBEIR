@@ -1,14 +1,14 @@
-torch==1.12.0
+#torch==1.12.0
 elasticsearch[async]==8.3.1
 plac
-sentence-transformers=2.2.2
+sentence-transformers==2.2.2
+spacy~=3.2.4
 scispacy
 https://s3-us-west-2.amazonaws.com/ai2-s2-scispacy/releases/v0.5.0/en_core_sci_md-0.5.0.tar.gz
 tqdm~=4.64.0
 pandas
 trectools
 numpy~=1.22.4
-spacy==3.3.1
 toml~=0.10.2
 dill~=0.3.5.1
 requests~=2.28.0
@@ -21,3 +21,4 @@ datasets~=2.3.2
 jupyterlab
 scikit-learn~=1.1.1
 scipy~=1.8.1
+optuna~=2.10.1

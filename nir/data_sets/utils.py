@@ -2,9 +2,9 @@
 
 import datasets
 
-from nir.datasets.types import InputExample
+from nir.data_sets.types import InputExample
 from nir.evaluation.cross_validation import CrossValidator
-from datasets.types import DatasetTypes
+from data_sets.types import DatasetTypes
 from nir.evaluation.evaluator import Evaluator
 
 
@@ -29,7 +29,7 @@ class CrossValidatorDataset:
         """
         Prepare the cross validator dataset object that will internally produce the folds.
 
-        :param data: Dataset to be used. Should be a list of dicts, or list of [x,y] or a Dataset object from datasets
+        :param data: Dataset to be used. Should be a list of dicts, or list of [x,y] or a Dataset object from data_sets
         :param evaluator: Evaluator to use for checking results
         :param n_splits: Number of cross validation splits, k-fold (stratified)
         :param seed: Seed to use (default 42)

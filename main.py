@@ -12,11 +12,11 @@ from nir.interfaces.query import GenericElasticsearchQuery
 from elasticsearch import AsyncElasticsearch
 from loguru import logger
 
-from engines.client import Client
+from nir.engines.client import Client
 from nir.interfaces.config import GenericConfig
-from datasets.factory import apply_nir_config
+from nir.data_sets.factory import apply_nir_config
 from nir.evaluation.evaluator import Evaluator
-from datasets.factory import factory_fn
+from nir.data_sets.factory import factory_fn
 from nir.utils.utils import create_output_file
 
 
@@ -35,7 +35,6 @@ async def run_config_es(topics, config: GenericConfig,
                         **kwargs):
     """
     Use the NIR library on elasticsearch search engine given an NIR config, an Index config and a set of topics
-
     :param topics: Set of query topics to run
     :param config: Configuration file for the index
     :param config_fp: Configuration file path
