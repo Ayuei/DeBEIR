@@ -11,6 +11,18 @@ import datasets
 
 from nir.data_sets.types import InputExample
 
+def split_k_fold(n_fold, data_files):
+    percentage = 100 // n_fold
+
+    vals_ds = datasets.load_dataset('csv', split=[
+        f'train[{k}%:{k + percentage}%]' for k in range(0, 100, percentage)
+    ], data_files=data_files)
+
+    trains_ds = datasets.load_dataset('csv', split=[
+        f'train[:{k}%]+train[{k + percentage}%:]' for k in range(0, 100, percentage)
+    ], data_files=data_files)
+
+    return trains_ds, vals_ds
 
 class CrossValidatorTypes(Enum):
     """

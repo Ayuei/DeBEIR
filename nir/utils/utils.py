@@ -4,6 +4,7 @@ import inspect
 import loguru
 import os
 import sys
+from collections.abc import MutableMapping
 
 
 def create_output_file(config, config_fp, remove, output_file, output_directory, **kwargs):
@@ -70,7 +71,7 @@ def flatten(d, parent_key="", sep="_"):
     items = []
     for k, v in d.items():
         new_key = parent_key + sep + k if parent_key else k
-        if isinstance(v, collections.MutableMapping):
+        if isinstance(v, MutableMapping):
             items.extend(flatten(v, new_key, sep=sep).items())
         else:
             items.append((new_key, None))
