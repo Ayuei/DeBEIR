@@ -1,7 +1,7 @@
 import abc
 import dataclasses
 from enum import Enum
-from typing import Sequence
+from typing import Sequence, Dict
 
 import optuna
 
@@ -19,8 +19,8 @@ class HparamFloat(Hparam):
     name: str
     low: float
     high: float
-    step: float
-    log: bool
+    log: bool = False
+    step: float = None
 
     def suggest(self, trial: optuna.Trial):
         return trial.suggest_float(self.name, self.low, self.high, step=self.step, log=self.log)
@@ -31,9 +31,8 @@ class HparamInt(Hparam):
     name: str
     low: int
     high: int
-    step: int
-    log: bool
-    func: str = "suggest_int"
+    log: bool = False
+    step: int = 1
 
     def suggest(self, trial: optuna.Trial):
         return trial.suggest_int(self.name, self.low, self.high, step=self.step, log=self.log)
@@ -83,10 +82,11 @@ class HparamDiscreteUniform(Hparam):
         return trial.suggest_discrete_uniform(self.name, self.low, self.high, self.q)
 
 
-class HparamTypes(Enum):
-    float: HparamFloat
-    int: HparamInt
-    categorical: HparamCategorical
-    uniform: HparamUniform
-    loguniform: HparamLogUniform
-    discrete_uniform: HparamDiscreteUniform
+HparamTypes = {
+    "float": HparamFloat,
+    "int": HparamInt,
+    "categorical": HparamCategorical,
+    "uniform": HparamUniform,
+    "loguniform": HparamLogUniform,
+    "discrete_uniform": HparamDiscreteUniform
+}

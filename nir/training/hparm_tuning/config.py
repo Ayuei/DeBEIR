@@ -1,7 +1,8 @@
 import dataclasses
+import json
 from typing import Dict
 
-from training.hparm_tuning.types import HparamTypes
+from nir.training.hparm_tuning.types import HparamTypes
 from nir.interfaces.config import Config
 
 
@@ -27,10 +28,13 @@ class HparamConfig(Config):
 
     hparams: Dict[str, Dict]
 
+    @classmethod
+    def from_json(cls, fp) -> "HparamConfig":
+        return HparamConfig(json.load(open(fp)))
+
     def validate(self):
         # Self-validating, errors will be raised if initializations of any object fails.
         return True
-
 
     def parse_config_to_py(self):
         """
@@ -39,14 +43,15 @@ class HparamConfig(Config):
         hparams = {}
 
         for hparam, value in self.hparams.items():
-            hparam_type = HparamTypes[hparam]
-
-            if "args" in value:  # Of the form {"learning rate": {args: [0.1, 1.0, 0.1]}}
-                hparam_obj = hparam_type.__init__(name=hparam, *value["args"])
-
-            else:
+            #if "args" in value:  # Of the form {"learning rate": {args: [0.1, 1.0, 0.1]}}
+            #    hparam_obj = hparam_type(name=hparam, *value["args"])
+            if isinstance(value, Dict) and "type" in value:
+                hparam_type = HparamTypes[value['type']]
                 value.pop("type")
-                hparam_obj = hparam_type.__init__(name=hparam, **value)
+                hparam_obj = hparam_type(name=hparam, **value)
+            else:
+                hparam_obj = value
 
             hparams[hparam] = hparam_obj
+
         return hparams
