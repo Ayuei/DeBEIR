@@ -8,7 +8,6 @@ from typing import List, MutableMapping, Dict
 import loguru
 import toml
 
-from nir.rankers.transformer_sent_encoder import Encoder
 
 
 class Config:
@@ -43,12 +42,15 @@ class Config:
         """
         Instantiates a Config object from arguments
 
+
         :param args_dict:
         :param field_class:
         :param args:
         :param kwargs:
         :return:
         """
+        from nir.rankers.transformer_sent_encoder import Encoder
+
         field_names = set(f.name for f in dataclasses.fields(field_class))
         obj = field_class(**{k: v for k, v in args_dict.items() if k in field_names})
         if hasattr(obj, 'encoder_fp') and obj.encoder_fp:
@@ -67,6 +69,8 @@ class Config:
         :param kwargs:
         :return:
         """
+        from nir.rankers.transformer_sent_encoder import Encoder
+
         if "encoder_fp" in kwargs and kwargs["encoder_fp"]:
             kwargs["encoder"] = Encoder(kwargs["encoder_fp"])
 
@@ -96,7 +100,7 @@ class GenericConfig(Config, ABC):
     ablations: bool = False
     norm_weight: float = None
     automatic: bool = None
-    encoder: Encoder = None
+    encoder: object = None
     encoder_fp: str = None
     query_weights: List[float] = None
     cosine_weights: List[float] = None

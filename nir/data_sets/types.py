@@ -31,17 +31,17 @@ class InputExample:
     def get_label(self):
         return self.label
 
-    def __getitem__(self, key):
-        if key == "label":
-            return self.get_label()
+    #def __getattr__(self, key):
+    #    if key == "label":
+    #        return self.get_label()
 
-        if key == "texts":
-            return self.texts
+    #    if key == "texts":
+    #        return self.texts
 
-        if key in ["guid", "id"]:
-            return self.guid
+    #    if key in ["guid", "id"]:
+    #        return self.guid
 
-        raise KeyError()
+    #    raise KeyError()
 
     @classmethod
     def to_dict(cls, data: List['InputExample']):

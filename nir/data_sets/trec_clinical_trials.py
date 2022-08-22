@@ -1,3 +1,4 @@
+import os
 import pathlib
 import xml.etree.ElementTree as ET
 from collections import defaultdict
@@ -5,7 +6,9 @@ from typing import Dict, List
 
 import pandas as pd
 
+from nir.interfaces.converters import ParsedTopicsToDataset
 from nir.interfaces.parser import XMLParser, JsonLinesParser
+from nir.training.utils import DatasetToSentTrans
 
 
 class TREClinicalTrialDocumentParser(XMLParser):
@@ -62,3 +65,6 @@ TrecClinicalTrialTripletParser = JsonLinesParser(
     secondary_id="doc_id",
     ignore_full_match=True
 )
+
+
+
