@@ -1,0 +1,24 @@
+{
+  "lr": {
+    "type": "float",
+    "low": 1e-6,
+    "high": 1e-2,
+    "log": true
+  },
+  "warmup_steps": {
+    "type": "int",
+    "low": 0,
+    "high": 1000
+  },
+  "optimizer": {
+    "type": "categorical",
+    "choices": ["Adam","DiffGrad", "RAdam", "Yogi"]
+  },
+  "model_name": {
+    "type": "categorical",
+    "choices": ["squeezebert/squeezebert-uncased", "outputs/cross_encoder/contrastive_passage/4926"]
+  },
+  "epochs": 2,
+  "loss_fn": "OnlineContrastiveLoss",
+  "batch_size": 64
+}

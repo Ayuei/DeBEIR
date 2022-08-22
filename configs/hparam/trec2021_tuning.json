@@ -1,0 +1,28 @@
+{
+  "lr": {
+    "type": "float",
+    "low": 1e-6,
+    "high": 1e-2,
+    "log": true
+  },
+  "warmup_steps": {
+    "type": "int",
+    "low": 0,
+    "high": 1000
+  },
+  "optimizer": {
+    "type": "categorical",
+    "choices": ["Adam", "RAdam", "Yogi"]
+  },
+  "scheduler":{
+    "type": "categorical",
+    "choices": ["constantlr", "warmupconstant", "warmuplinear", "warmupcosine", "warmupcosinewithhardrestarts"]
+  },
+  "model_name": {
+    "type": "categorical",
+    "choices": ["squeezebert/squeezebert-uncased", "outputs/cross_encoder/contrastive_passage/4926", "/home/vin/Projects/nir/outputs/biencoder/contrastive_metamap_marco_passage/5500"]
+  },
+  "batch_size": 32,
+  "epochs": 5,
+  "loss_fn": "OnlineContrastiveLoss"
+}
