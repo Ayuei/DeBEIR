@@ -1,12 +1,60 @@
 from typing import List, Union
 
 import datasets
+import loguru
 from sentence_transformers import SentenceTransformer, losses, models
 from sentence_transformers.evaluation import SentenceEvaluator, EmbeddingSimilarityEvaluator
+from torch.optim.lr_scheduler import LambdaLR
 from torch.utils.data import DataLoader
 from wandb import wandb
+import transformers
 
-from nir.data_sets.types import InputExample, RelevanceExample
+from nir.data_sets.types import RelevanceExample, InputExample
+# from sentence_transformers import InputExample
+
+
+class LoggingScheduler:
+    def __init__(self, scheduler: LambdaLR, wandb: wandb):
+        self.scheduler = scheduler
+        self.wandb = wandb
+
+    def step(self, epoch=None):
+        self.scheduler.step(epoch)
+
+        last_lr = self.scheduler.get_last_lr()
+
+        for i, lr in enumerate(last_lr):
+            self.wandb.log({f"lr_{i}": lr})
+
+    def __getattr__(self, attr):
+        return getattr(self.scheduler, attr)
+
+
+def get_scheduler_with_wandb(wdb: wandb, optimizer, scheduler: str, warmup_steps: int, t_total: int):
+    """
+    Returns the correct learning rate scheduler. Available scheduler: constantlr, warmupconstant, warmuplinear, warmupcosine, warmupcosinewithhardrestarts
+    """
+    scheduler = scheduler.lower()
+    loguru.logger.info(f"Creating scheduler: {scheduler}")
+
+    if scheduler == 'constantlr':
+        sched = transformers.get_constant_schedule(optimizer)
+    elif scheduler == 'warmupconstant':
+        sched = transformers.get_constant_schedule_with_warmup(optimizer, num_warmup_steps=warmup_steps)
+    elif scheduler == 'warmuplinear':
+        sched = transformers.get_linear_schedule_with_warmup(optimizer, num_warmup_steps=warmup_steps,
+                                                             num_training_steps=t_total)
+    elif scheduler == 'warmupcosine':
+        sched = transformers.get_cosine_schedule_with_warmup(optimizer, num_warmup_steps=warmup_steps,
+                                                             num_training_steps=t_total)
+    elif scheduler == 'warmupcosinewithhardrestarts':
+        sched = transformers.get_cosine_with_hard_restarts_schedule_with_warmup(optimizer,
+                                                                                num_warmup_steps=warmup_steps,
+                                                                                num_training_steps=t_total)
+    else:
+        raise ValueError("Unknown scheduler {}".format(scheduler))
+
+    return LoggingScheduler(sched, wdb)
 
 
 class LoggingLoss:
@@ -21,6 +69,29 @@ class LoggingLoss:
 
     def __getattr__(self, attr):
         return getattr(self.loss_fn, attr)
+
+
+class TokenizerOverload:
+    def __init__(self, tokenizer, tokenizer_kwargs, debug=False):
+        self.tokenizer = tokenizer
+        self.tokenizer_kwargs = tokenizer_kwargs
+        self.debug = debug
+        self.max_length = -1
+
+    def __call__(self, *args, **kwargs):
+        if self.debug:
+            print(str(args), str(kwargs))
+
+        kwargs.update(self.tokenizer_kwargs)
+        output = self.tokenizer(*args, **kwargs)
+
+        return output
+
+    def __getattr__(self, attr):
+        if self.debug:
+            print(str(attr))
+
+        return getattr(self.tokenizer, attr)
 
 
 class LoggingEvaluator:
@@ -39,7 +110,7 @@ class LoggingEvaluator:
 
 
 class DatasetToSentTrans:
-    def __init__(self, dataset: datasets.Dataset, text_cols: List[str], label_col: str = "label"):
+    def __init__(self, dataset: datasets.Dataset, text_cols: List[str], label_col: str = None):
         self.dataset = dataset
         self.text_cols = text_cols
         self.label_col = label_col
@@ -56,7 +127,6 @@ class DatasetToSentTrans:
 
         if self.label_col:
             example.label = item[self.label_col]
-
         else:
             example.label = 1
 
@@ -121,3 +191,15 @@ def tokenize_function(tokenizer, examples, padding_strategy, truncate):
     return tokenizer(examples["text"],
                      padding=padding_strategy,
                      truncation=truncate)
+
+
+def get_max_seq_length(tokenizer, dataset, x_labels, dataset_key="train"):
+    dataset = dataset.map(lambda example: tokenizer([example[x_label] for x_label in x_labels]))
+
+    max_length = -1
+    for example in dataset[dataset_key]['attention_mask']:
+        length = max(sum(x) for x in example)
+        if length > max_length:
+            max_length = length
+
+    return max_length

@@ -2,7 +2,7 @@ from typing import List
 
 from sentence_transformers.evaluation import SentenceEvaluator
 
-from training.utils import _train_sentence_transformer
+from examples.trec2022.training import _train_sentence_transformer
 from nir.data_sets.types import RelevanceExample
 
 
