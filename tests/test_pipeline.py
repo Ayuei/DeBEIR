@@ -4,7 +4,23 @@ import pytest
 import main
 
 
-def test_queries():
+def setup_elasticsearch_index():
+    pass
+
+
+def test_embedder():
+    pass
+
+
+def test_evaluation():
+    pass
+
+
+def test_bm25_change():
+    pass
+
+
+def test_embedding_queries():
     asyncio.run(
         main.main(
             topics="../assets/topics-rnd5.xml",

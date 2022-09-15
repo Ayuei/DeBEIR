@@ -15,7 +15,10 @@ def _import_helper(sub_module):
 
         module_path = ".".join(list(im.parts)[1:])[:-3]
 
-        importlib.import_module(module_path)
+        try:
+            importlib.import_module(module_path)
+        except ModuleNotFoundError as e:
+            raise Exception(f"Unable to import {im.name}", str(e))
 
 
 def test_datasets_imports():
@@ -26,6 +29,10 @@ def test_engines_imports():
     _import_helper("engines")
 
 
+def test_evaluation_imports():
+    _import_helper("evaluation")
+
+
 def test_interfaces_imports():
     _import_helper("interfaces")
 
@@ -34,12 +41,12 @@ def test_models_imports():
     _import_helper("models")
 
 
-def test_evaluation_imports():
-    _import_helper("evaluation")
-
-
 def test_rankers_imports():
     _import_helper("rankers")
+
+
+def test_training_import():
+    _import_helper("training")
 
 
 def test_utils_import():
