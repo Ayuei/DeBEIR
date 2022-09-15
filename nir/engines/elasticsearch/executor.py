@@ -117,11 +117,10 @@ class ElasticsearchExecutor:
             for rank, result in enumerate(res["hits"]["hits"], start=1):
                 doc_id = None
 
-                if self.return_id_only:
-                    # doc_id = result["fields"]["IDInfo.NctID"][0]
-                    doc_id = self.query.get_id_mapping(result["fields"])[0]
-                else:
-                    doc_id = self.query.get_id_mapping(result["_source"])
+                #if self.return_id_only:
+                #    doc_id = self.query.get_id_mapping(result["fields"])[0]
+                #else:
+                doc_id = self.query.get_id_mapping(result["_source"])
 
                 line = f"{topic_num}\tQ0\t{doc_id}\t{rank}\t{result['_score']}\t{run_name}\n"
                 writer.write(line)

@@ -1,0 +1,16 @@
+query_type = "embedding"
+automatic = false
+encoder_fp = "/home/vin/Projects/nir/outputs/submission/trec_model/"
+index = "new_trec_clinical_2022"
+ablations = true
+#norm_weight = 2.5413111942656768
+
+config_fn = "generic"
+query_fn = "trec_clinical"
+parser_fn = "trec_clinical"
+executor_fn = "generic"
+
+qrels = "./assets/qrels2021.txt"
+topics_path="./assets/topics2021.xml"
+
+ouput_path = "./outputs/trec2022/embedding_only.txt"

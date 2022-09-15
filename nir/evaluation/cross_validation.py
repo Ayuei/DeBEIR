@@ -3,13 +3,11 @@ from typing import List, Union, Dict
 
 import numpy as np
 from sklearn.model_selection import KFold, StratifiedKFold
-
-from data_sets.types import DatasetTypes
-from nir.evaluation.evaluator import Evaluator
+from nir.data_sets.types import DatasetTypes
+from nir.data_sets.types import InputExample
 
 import datasets
 
-from nir.data_sets.types import InputExample
 
 def split_k_fold(n_fold, data_files):
     percentage = 100 // n_fold
@@ -23,6 +21,7 @@ def split_k_fold(n_fold, data_files):
     ], data_files=data_files)
 
     return trains_ds, vals_ds
+
 
 class CrossValidatorTypes(Enum):
     """

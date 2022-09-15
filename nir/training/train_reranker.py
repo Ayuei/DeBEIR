@@ -1,8 +1,7 @@
 from typing import List
 
 from sentence_transformers.evaluation import SentenceEvaluator
-
-from examples.trec2022.training import _train_sentence_transformer
+from nir.training.utils import _train_sentence_transformer
 from nir.data_sets.types import RelevanceExample
 
 
@@ -10,7 +9,8 @@ def train_cross_encoder_reranker(model_fp_or_name: str, output_dir: str, train_d
                                  dev_dataset: List[RelevanceExample], train_batch_size=32, num_epochs=3, warmup_steps=None,
                                  evaluate_every_n_step: int = 1000,
                                  special_tokens=None, pooling_mode=None, loss_func=None,
-                                 evaluator: SentenceEvaluator = None, *args, **kwargs):
+                                 evaluator: SentenceEvaluator = None,
+                                 *args, **kwargs):
     """
     Trains a reranker with relevance signals
 

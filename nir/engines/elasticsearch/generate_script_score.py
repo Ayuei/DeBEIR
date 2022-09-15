@@ -47,7 +47,8 @@ class SourceBuilder:
         """
         if ignore_below_one:
             self._add_line(
-                "def log_score = _score < 1.0 ? 0.0 : Math.log(_score)/Math.log(params.norm_weight);"
+                #"def log_score = _score < 1.0 ? 0.0 : Math.log(_score)/Math.log(params.norm_weight);"
+                "def log_score = params.disable_bm25 ? 0.0 : Math.log(_score)/Math.log(params.norm_weight);"
                 # "def log_score = Math.log(_score)/Math.log(params.norm_weight);"
             )
         else:
@@ -71,7 +72,7 @@ class SourceBuilder:
         variable_name = f"{field}_{qfield}_score"
 
         self._add_line(
-            f"double {variable_name} = doc['{field}'].size() < {EMBEDDING_DIM_SIZE} ? 0 : params.weights[{self.i}]*cosineSimilarity(params.{qfield}"
+            f"double {variable_name} = doc['{field}'].isEmpty() ? 0.0 : params.weights[{self.i}]*cosineSimilarity(params.{qfield}"
             f", '{field}') + params.offset; "
             # f"double {variable_name} = cosineSimilarity(params.{qfield}, '{field}') + 1.0; "
         )
@@ -89,7 +90,8 @@ class SourceBuilder:
         """
         self._add_line("double embed_score = " + " + ".join(self.variables) + ";")
         self._add_line(
-            "return params.disable_bm25 == true ? log_score : embed_score + log_score;"
+            #"return params.disable_bm25 == true ? embed_score : embed_score + log_score;"
+            "return embed_score + log_score;"
         )
 
         return self.s

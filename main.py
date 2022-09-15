@@ -1,11 +1,14 @@
 import argparse
+import json
 import logging
 import sys
 import asyncio
 from typing import Type
 
+import loguru
 import shutup
 
+from nir.evaluation.residual_scoring import ResidualEvaluator
 from nir.interfaces.executor import GenericExecutor
 from nir.interfaces.query import GenericElasticsearchQuery
 
@@ -15,7 +18,6 @@ from loguru import logger
 from nir.engines.client import Client
 from nir.interfaces.config import GenericConfig
 from nir.data_sets.factory import apply_nir_config
-from nir.evaluation.evaluator import Evaluator
 from nir.data_sets.factory import factory_fn
 from nir.utils.utils import create_output_file
 
@@ -30,7 +32,7 @@ async def run_config_es(topics, config: GenericConfig,
                         norm_weight="2.15",
                         output_file=None,
                         overwrite_output_if_exists=False,
-                        size=1000,
+                        return_size=1000,
                         evaluate=False,
                         **kwargs):
     """
@@ -45,7 +47,7 @@ async def run_config_es(topics, config: GenericConfig,
     :param norm_weight: Normalization constant for NIR-style scoring
     :param output_file: Output file for results
     :param overwrite_output_if_exists: Overwrite the output file if it exists
-    :param size: The number of documents to retrieve for each query topic from the index
+    :param return_size: The number of documents to retrieve for each query topic from the index
     :param evaluate: Evaluate the results given the metric config
     :param kwargs: Miscellaneous parameters
     """
@@ -55,13 +57,14 @@ async def run_config_es(topics, config: GenericConfig,
                                               timeout=kwargs['timeout'])
 
     output_file = create_output_file(config, config_fp, overwrite_output_if_exists, output_file, **kwargs)
+    logger.info(f"Return size: {return_size}")
 
     query_executor = executor_cls(
         topics=topics,
         client=client.es_client,
         index_name=config.index,
         output_file=output_file,
-        return_size=size,
+        return_size=return_size,
         query=query_obj,
         config=config,
     )
@@ -76,12 +79,15 @@ async def run_config_es(topics, config: GenericConfig,
     )
 
     if evaluate:
-        evaluator = Evaluator(
+        evaluator = ResidualEvaluator(
             config.qrels,
             metrics=kwargs['metrics'],
+            filter_ids=json.load(open(kwargs['filter_ids'])) if kwargs['filter_ids'] else None
         )
-        parsed_run = evaluator.evaluate_runs(output_file, disable_cache=True)
-        evaluator.average_all_metrics(parsed_run, logger=logger)
+        parsed_run = evaluator.evaluate_with_binary(output_file, disable_cache=True)
+        #evaluator.average_all_metrics(parsed_run, logger=logger)
+        print(parsed_run)
+        return parsed_run
 
 
 async def main(
@@ -122,12 +128,14 @@ async def main(
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Run the NIR model')
     parser.add_argument('--topics', help="Path to topic file")
+    parser.add_argument('--filter_ids', help="For residual scoring")
     parser.add_argument('--configs', nargs='*',
                         help="Run Config to run, can add multiple configs")
     parser.add_argument('--nir_config', default="./configs/nir.toml",
                         help="NIR Server Config")
     parser.add_argument('--elasticsearch', action='store_true', help="Use the Elasticsearch Engine")
     parser.add_argument('--solr', action='store_true', help="Use the Lucene Solr Engine")
+    parser.add_argument('--trec_binary_loc', default=None, help="Load the TREC binary instead of using trectools")
     parser.add_argument('--debug', action='store_true', help="Turn on debug logging")
 
     args = parser.parse_args()

@@ -1,1 +1,9 @@
 venv/
+*model/
+assets/
+*logs/
+tests/test_set/
+tests/logs
+tests/cache
+tests/.pytest_cache
+tests/go-clinical-indexer/

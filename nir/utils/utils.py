@@ -76,3 +76,14 @@ def flatten(d, parent_key="", sep="_"):
         else:
             items.append((new_key, None))
     return dict(items)
+
+
+def remove_excess_whitespace(s):
+    s = s.replace("\r\n\r\n", "\n")
+    s = s.replace("\r\n", " ")
+
+    # Get rid of excess whitespace efficiently
+    while '  ' in s:
+        s = s.replace('  ', ' ')
+
+    return s

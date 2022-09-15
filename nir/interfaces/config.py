@@ -76,7 +76,7 @@ class Config:
 
         field_names = set(f.name for f in dataclasses.fields(data_class))
         obj = data_class(**{k: v for k, v in kwargs.items() if k in field_names})
-        obj.validate()
+        obj.validate(0)
 
         return obj
 

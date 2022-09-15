@@ -10,7 +10,7 @@ from queue import Queue
 from tqdm import tqdm
 from elasticsearch import helpers, Elasticsearch
 
-BUF_SIZE = 1000
+BUF_SIZE = 10000
 N_THREADS = 6
 
 
@@ -26,6 +26,29 @@ class ProducerThread(threading.Thread):
             q.put(document)
 
         return
+
+
+class ConsumerThread(threading.Thread):
+    def __init__(self, client, index, queue: Queue):
+        super().__init__()
+        self.client = client
+        self.index = index
+        self.q = queue
+
+    def run(self):
+        while not self.q.empty():
+            document = self.q.get()
+            self.index_document(document)
+
+    def index_document(self, document):
+        update_doc = {}
+        doc = document["_source"]
+        update_doc["docid"] = doc["IDInfo"]["NctID"]
+
+        if update_doc:
+            self.client.update(index=self.index,
+                               id=document['_id'],
+                               doc=update_doc)
 
 
 if __name__ == "__main__":
@@ -50,13 +73,9 @@ if __name__ == "__main__":
                        queue=q)
 
     p.start()
+    import time; time.sleep(2)
 
-    for _ in range(N_THREADS):
-        indexer_t = SemanticElasticsearchIndexer(es_client_thread,
-                                                 encoder=Encoder("/home/vin/Projects/nir/outputs/submission/trec_model/"),
-                                                 index=config.index,
-                                                 fields_to_encode=['BriefTitle', 'BriefSummary',
-                                                                   'DetailedDescription'],
-                                                 queue=q)
+    threads = [ConsumerThread(es_client_thread, config.index, q) for _ in range(N_THREADS)]
 
-        indexer_t.start()
+    for i in range(N_THREADS):
+        threads[i].start()

@@ -51,9 +51,9 @@ class XMLParser(Parser):
     """
     Load topics from an XML file
     """
-    parse_fields: List[str]
     topic_field_name: str
     id_field: str
+    parse_fields: List[str]
 
     # def _topic_iterator(self, all_topics):
     #    if self.topic_field_name:
@@ -103,7 +103,7 @@ class XMLParser(Parser):
                 qtopics[_id] = temp
             else:
                 #  The topic contains the text
-                qtopics[_id] = topic.text.strip()
+                qtopics[_id] = {"query": topic.text.strip()}
 
         return qtopics
 

@@ -1,3 +1,5 @@
+import json
+
 import elasticsearch
 import requests
 from loguru import logger
@@ -23,7 +25,7 @@ from loguru import logger
 # sleep 10
 
 
-def change_bm25_params(client: elasticsearch.Elasticsearch, k1: float, b: float):
+def change_bm25_params(index, k1: float, b: float):
     """
     Change the BM25 parameters of the elasticsearch BM25 ranker.
 
@@ -33,36 +35,39 @@ def change_bm25_params(client: elasticsearch.Elasticsearch, k1: float, b: float)
     :param b: The b parameter for BM25 (default 0.75) [Usually 0-1] [Document length constant] ->
               The higher the b value, the higher it penalises longer documents.
     """
-    logger.info("blah")
-    base_url = "localhost:9200/{index}"
+    base_url = f"http://localhost:9200/{index}"
 
-    resp = requests.get(base_url + "/_close?pretty")
+    resp = requests.post(base_url + "/_open?pretty")
 
     if not resp.ok:
-        raise RuntimeError("Response code:", resp)
+        raise RuntimeError("Response code:", resp.status_code, resp.text)
+
+    resp = requests.post(base_url + "/_close?pretty")
+
+    if not resp.ok:
+        raise RuntimeError("Response code:", resp.status_code, resp.text)
 
     headers = {"Content-type": "application/json"}
-    data = """"{
+
+    data = {
       "index": {
         "similarity": {
           "default": {
             "type": "BM25",
-            "b": %f,
-            "k1": %f, 
+            "b": b,
+            "k1": k1,
           }
         }
       }
-     }""" % (
-        k1,
-        b,
-    )
+     }
 
-    resp = requests.get(base_url, headers=headers, data=data)
+    resp = requests.put(base_url+"/_settings", headers=headers, data=json.dumps(data))
 
     if not resp.ok:
-        raise RuntimeError("Response code:", resp)
+        import pdb; pdb.set_trace()
+        raise RuntimeError("Response code:", resp.status_code, resp.text)
 
-    resp = requests.get(base_url + "/_close?pretty")
+    resp = requests.post(base_url + "/_open?pretty")
 
     if not resp.ok:
-        raise RuntimeError("Response code:", resp)
+        raise RuntimeError("Response code:", resp.status_code, resp.text)

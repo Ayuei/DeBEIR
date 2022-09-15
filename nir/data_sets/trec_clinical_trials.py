@@ -6,6 +6,7 @@ from typing import Dict, List
 
 import pandas as pd
 
+from nir.interfaces.query import GenericElasticsearchQuery
 from nir.interfaces.converters import ParsedTopicsToDataset
 from nir.interfaces.parser import XMLParser, JsonLinesParser
 from nir.training.utils import DatasetToSentTrans
@@ -66,5 +67,43 @@ TrecClinicalTrialTripletParser = JsonLinesParser(
     ignore_full_match=True
 )
 
+TrecClinicalTrialsParser = XMLParser(
+    parse_fields=None,
+    id_field="number",
+    topic_field_name="topic")
 
 
+class TrecClincialElasticsearchQuery(GenericElasticsearchQuery):
+    def __init__(self, topics, config, *args, **kwargs):
+        super().__init__(topics, config, *args, **kwargs)
+
+        #self.mappings = ['BriefTitle_Text',
+        #                 'BriefSummary_Text',
+        #                 'DetailedDescription_Text']
+
+        self.mappings = [
+            "BriefSummary_Text",
+            "BriefTitle_Text",
+            'DetailedDescription_Text',
+            'Eligibility.Criteria.Textblock'
+            'Eligibility.StudyPop.Textblock',
+            'ConditionBrowse.MeshTerm',
+            'InterventionBrowse.MeshTerm',
+            'Condition',
+            'Eligibility.Gender',
+            "OfficialTitle"]
+
+        self.topics = topics
+        self.config = config
+        self.query_type = self.config.query_type
+
+        self.embed_mappings = ['BriefTitle_Embedding',
+                               'BriefSummary_Embedding',
+                               'DetailedDescription_Embedding']
+
+        self.id_mapping = "docid"
+
+        self.query_funcs = {
+            "query": self.generate_query,
+            "embedding": self.generate_query_embedding,
+        }

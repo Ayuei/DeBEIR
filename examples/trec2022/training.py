@@ -29,8 +29,8 @@ def get_dataset(dataset_save_path=".", override=False):
         converted_dataset = ParsedTopicsToDataset.convert(TrecClinicalTrialTripletParser, topics)
 
         converted_dataset = converted_dataset.map(lambda example: {"label": int(int(example['rel']) > 0)})
-        converted_dataset = converted_dataset.shuffle().train_test_split(test_size=0.25)
-
+        # Map the topic ids, and then filter based on topic id
+        converted_dataset = converted_dataset.shuffle().train_test_split(test_size=0.15)
         dill.dump(converted_dataset, open("converted_dataset.dill", "wb+"))
 
         train_dataset = DatasetToSentTrans(converted_dataset['train'], text_cols=["q_text", "brief_title"],

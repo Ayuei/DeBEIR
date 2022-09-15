@@ -2,7 +2,7 @@ import dataclasses
 
 import loguru
 
-from typing import Dict, Union
+from typing import Dict, Union, Optional
 
 from nir.interfaces.config import apply_config, GenericConfig
 from nir.engines.elasticsearch.generate_script_score import generate_script
@@ -95,11 +95,11 @@ class GenericElasticsearchQuery(Query):
         Checks if BM25 scores have been set
         :return:
         """
-        return self.has_bm25_scores is not None
+        return self.top_bm25_scores is not None
 
     @apply_config
     def generate_query_embedding(
-        self, topic_num, encoder, norm_weight=2.15, ablations=False, *args, **kwargs
+        self, topic_num, encoder, norm_weight=2.15, ablations=False, cosine_ceiling=Optional[float], *args, **kwargs
     ):
         """
         Generates an embedding script score query for Elasticsearch as part of the NIR scoring function.
@@ -109,19 +109,23 @@ class GenericElasticsearchQuery(Query):
         :param norm_weight: The BM25 log normalization constant
         :param ablations: Whether to execute ablation style queries (i.e. one query facet
                           or one document facet at a time)
+        :param cosine_ceiling: Cosine ceiling used for automatic z-log normalization parameter calculation
         :param args:
         :param kwargs: Pass disable_cache to disable encoder caching
         :return:
             An elasticsearch script_score query
         """
+
         qfields = list(self.topics[topic_num].keys())
         should = {"should": []}
 
         if self.has_bm25_scores():
+            cosine_ceiling = len(self.embed_mappings) * len(qfields) if cosine_ceiling is None else cosine_ceiling
             norm_weight = get_z_value(
-                cosine_ceiling=len(self.embed_mappings) * len(qfields),
+                cosine_ceiling=cosine_ceiling,
                 bm25_ceiling=self.top_bm25_scores[topic_num],
             )
+            loguru.logger.debug(f"Automatic norm_weight: {norm_weight}")
 
         params = {
             "weights": [1] * (len(self.embed_mappings) * len(self.mappings)),

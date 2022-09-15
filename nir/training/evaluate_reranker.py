@@ -4,7 +4,6 @@ from typing import List, Dict, Union
 from nir.evaluation.evaluator import Evaluator
 from datasets import Dataset
 from nir.rankers.transformer_sent_encoder import Encoder
-#from sentence_transformers.util import dot_score, cos_sim
 from sklearn.metrics.pairwise import cosine_similarity
 import numpy as np
 

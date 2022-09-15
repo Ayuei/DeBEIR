@@ -4,6 +4,7 @@
              "rprec@1000",
              "p@1", "p@5", "p@10", "p@15", "p@20",
              "bpref@1000",
+             "recall@1000",
              "rprec@1000",
              "r@1000"]
 
@@ -23,6 +24,6 @@
     [nir.default_settings]
     norm_weight = "2.15"
     overwrite_output_if_exists = true
-    evaluate = true
+    evaluate = false
     return_size = 1000
-    output_directory = "./outputs/"
+    output_directory = "./outputs/newest_submission/"

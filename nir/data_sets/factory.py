@@ -2,6 +2,7 @@ from typing import Dict, Type
 
 import toml
 
+from nir.data_sets.trec_clinical_trials import TrecClincialElasticsearchQuery, TrecClinicalTrialsParser
 from nir.interfaces.config import GenericConfig, _NIRMasterConfig, SolrConfig, ElasticsearchConfig, MetricsConfig, \
     NIRConfig, Config
 from nir.interfaces.query import GenericElasticsearchQuery
@@ -33,6 +34,7 @@ query_factory = {
     "test_trials": TrialsElasticsearchQuery,
     "generic": GenericElasticsearchQuery,
     "trec_covid": TrecElasticsearchQuery,
+    "trec_clinical": TrecClincialElasticsearchQuery,
 }
 
 parser_factory = {
@@ -41,6 +43,7 @@ parser_factory = {
     "bioreddit-submission": BioRedditSubmissionParser,
     "test_trials": ClinicalTrialParser,
     "med-marco": CSVParser,
+    "trec_clinical": TrecClinicalTrialsParser
 }
 
 executor_factory = {
@@ -125,10 +128,11 @@ def apply_nir_config(func):
     :param func:
     :return:
     """
-    def parse_nir_config(*args, **kwargs):
+    def parse_nir_config(*args, ignore_errors=False, **kwargs):
         """
         Parses the NIR config for the different setting groups: Search Engine, Metrics and NIR settings
         Applies these settings to the current function
+        :param ignore_errors:
         :param args:
         :param kwargs:
         :return:
@@ -144,7 +148,7 @@ def apply_nir_config(func):
                 search_engine_config = config_factory(args_dict=main_config.get_search_engine_settings(search_engine),
                                                       config_cls=supported_search_engines[search_engine])
 
-        if search_engine_config is None:
+        if not ignore_errors and search_engine_config is None:
             raise RuntimeError("Unable to get a search engine configuration.")
 
         metrics_config = config_factory(args_dict=main_config.get_metrics(), config_cls=MetricsConfig)
