@@ -1,3 +1,5 @@
 #!/bin/sh
 
-sudo docker stop elasticsearch_debir_test
+docker stop elasticsearch_debir_test
+rm -r go-clinical-indexer/
+rm -r test_set/
