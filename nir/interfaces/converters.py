@@ -1,14 +1,17 @@
 from collections import defaultdict
 from typing import Dict, Union
 from nir.interfaces.parser import Parser
-
 import datasets
 
+
 class ParsedTopicsToDataset:
+    """
+    Converts a parser's output to a huggingface dataset object.
+    """
     @classmethod
     def convert(cls, parser: Parser, output: Dict[Union[str, int], Dict]):
         """
-        Convert from a Dict of shape
+        Flatten a Dict of shape (traditional parser output)
         {topic_id: {
                 "Facet_1": ...
                 "Facet_2": ...
@@ -17,6 +20,7 @@ class ParsedTopicsToDataset:
 
         ->
 
+        To a flattened arrow-like dataset.
         {
         topic_ids: [],
         Facet_1s: [],

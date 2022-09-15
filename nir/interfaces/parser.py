@@ -22,11 +22,24 @@ class Parser:
     parse_fields: List[str]
 
     @classmethod
-    def normalize(cls, input_dict):
+    def normalize(cls, input_dict) -> Dict:
+        """
+        Flatten the dictionary, i.e. from Dict[int, Dict] -> Dict[str, str_or_int]
+
+        :param input_dict:
+        :return:
+        """
         return pd.io.json.json_normalize(input_dict,
                                          sep=".").to_dict(orient='records')[0]
 
     def get_topics(self, path, *args, **kwargs):
+        """
+        Instance method for getting topics, forwards instance self parameters to the _get_topics class method.
+        """
+
+        self_kwargs = vars(self)
+        kwargs.update(self_kwargs)
+
         return self._get_topics(path, *args, **kwargs)
 
     @classmethod
@@ -55,16 +68,15 @@ class XMLParser(Parser):
     id_field: str
     parse_fields: List[str]
 
-    # def _topic_iterator(self, all_topics):
-    #    if self.topic_field_name:
-    #        for topic in all_topics.findall(self.topic_field_name):
-    #            yield topic
-
-    #    elif self.parse_fields:
-    #        for parse_field in self.parse_fields:
-    #            yield all_topics.find(parse_field)
     @classmethod
     def _recurse_to_child_node(cls, node: ET.Element, track: List):
+        """
+        Helper method to get all children nodes for text extraction in an xml.
+
+        :param node: Current node
+        :param track: List to track nodes
+        :return:
+        """
         if len(node.getchildren()) > 0:
             for child in node.getchildren():
                 track.append(cls._recurse_to_child_node(child, track))
@@ -73,6 +85,12 @@ class XMLParser(Parser):
 
     @classmethod
     def unwrap(cls, doc_dict, key):
+        """
+        Converts defaultdict to dict and list of size 1 to just the element
+
+        :param doc_dict:
+        :param key:
+        """
         if isinstance(doc_dict[key], defaultdict):
             doc_dict[key] = dict(doc_dict[key])
 
@@ -135,15 +153,14 @@ class JsonLinesParser(Parser):
     """
     Loads topics from a jsonl file,
     a JSON per line
+
+    Provide parse_fields, id_field and whether to ignore full matches on json keys
+    secondary_id appends to the primary id as jsonlines are flattened structure and may contain duplicate ids.
     """
     parse_fields: List[str]
     id_field: str
     ignore_full_match: bool = True
     secondary_id: str = None
-
-    def get_topics(self, path, *args, **kwargs) -> Dict[str, Dict[str, str]]:
-        return self._get_topics(path, self.id_field, self.parse_fields, self.ignore_full_match,
-                                self.secondary_id)
 
     @classmethod
     def _get_topics(cls, jsonlfile, id_field, parse_fields,

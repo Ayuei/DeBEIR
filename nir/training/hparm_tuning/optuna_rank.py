@@ -3,7 +3,7 @@ import optuna
 from functools import partial
 
 from optuna.integration.wandb import WeightsAndBiasesCallback
-from optuna.structs import TrialState
+from optuna.trial import TrialState
 from torch.utils.data import DataLoader
 
 from nir.training.hparm_tuning.trainer import Trainer
