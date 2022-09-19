@@ -110,6 +110,8 @@ class GenericConfig(Config, ABC):
     query_fn: str = None
     parser_fn: str = None
     executor_fn: str = None
+    cosine_ceiling: float = None
+    topics_path: str = None
 
 
 @dataclass(init=True)

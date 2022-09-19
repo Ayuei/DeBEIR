@@ -51,3 +51,20 @@ def test_training_import():
 
 def test_utils_import():
     _import_helper("utils")
+
+
+def test_bootstrap_import():
+    import sys, os
+
+    sys.path.insert(0, os.path.dirname("../main.py"))
+
+    import nir
+    import nir.data_sets
+    import nir.rankers
+    import nir.evaluation
+    import nir.interfaces
+    import nir.models
+    import nir.rankers
+    import nir.training
+    import nir.utils
+
