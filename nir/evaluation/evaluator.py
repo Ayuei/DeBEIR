@@ -4,6 +4,8 @@ from collections import defaultdict
 
 from analysis_tools_ir import evaluate, sigtests
 
+from nir.interfaces.config import MetricsConfig, GenericConfig
+
 
 class Evaluator:
     """
@@ -71,3 +73,7 @@ class Evaluator:
         :return:
         """
         return sigtests.paired.paired_t_test(results_a, results_b, self.qrels)
+
+    @classmethod
+    def build_from_config(cls, config: GenericConfig, metrics_config: MetricsConfig):
+        return cls(config.qrels, metrics_config.metrics)

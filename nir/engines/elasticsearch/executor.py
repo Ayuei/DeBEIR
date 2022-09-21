@@ -63,8 +63,12 @@ class ElasticsearchExecutor:
         raise NotImplementedError
 
     @apply_config
+    def _update_kwargs(self, **kwargs):
+        return kwargs
+
     async def run_all_queries(
-        self, serialize=False, query_type="query", return_results=False, *args, **kwargs
+        self, serialize=False, query_type="query", return_results=False,
+            return_size: int = None, return_id_only: bool = False, **kwargs
     ) -> List:
         """
         A generic function that will asynchronously run all topics using the execute_query() method
@@ -75,6 +79,8 @@ class ElasticsearchExecutor:
                from self.query.query_funcs: Dict[str, func]
         :param return_results: Whether to return raw results from the client. Useful for analysing results directly or
                for computing the BM25 scores for log normalization in NIR-style scoring
+        :param return_size: Number of documents to return. Overrides the config value if exists.
+        :param return_id_only: Return the ID of the document only, rather than the full source document.
         :param args: Arguments to pass to the execute_query method
         :param kwargs: Keyword arguments to pass to the execute_query method
         :return:
@@ -86,9 +92,21 @@ class ElasticsearchExecutor:
                 f"Elasticsearch instance cannot be reached at {self.client}"
             )
 
+        kwargs = self._update_kwargs(**kwargs)
+
+        if return_size is None:
+            return_size = self.return_size
+
+        if return_id_only is None:
+            return_id_only = self.return_id_only
+
         tasks = [
             self.execute_query(
-                topic_num=topic_num, query_type=query_type, *args, **kwargs
+                topic_num=topic_num,
+                query_type=query_type,
+                return_size=return_size,
+                return_id_only=return_id_only,
+                **kwargs
             )
             for topic_num in self.topics
         ]

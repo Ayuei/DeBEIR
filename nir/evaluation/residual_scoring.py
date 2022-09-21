@@ -38,12 +38,15 @@ class ResidualEvaluator(Evaluator):
 
         return tmpfp
 
-    def evaluate_runs(self, res: Union[str, List[str]], **kwargs):
+    def evaluate_runs(self, res: Union[str, List[str]], with_trec_binary=False, **kwargs):
+        if with_trec_binary:
+            return self._evaluate_with_binary(res, **kwargs)
+
         fp = self._filter_run(res)
 
         return super().evaluate_runs(fp, **kwargs)
 
-    def evaluate_with_binary(self, res, **kwargs):
+    def _evaluate_with_binary(self, res, **kwargs):
         fp = self._filter_run(res)
 
         output = subprocess.check_output(["trec_eval", self.qrels_fp, fp]).decode()

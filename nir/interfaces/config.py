@@ -9,7 +9,6 @@ import loguru
 import toml
 
 
-
 class Config:
     """
     Config Interface with creation class methods
@@ -112,6 +111,7 @@ class GenericConfig(Config, ABC):
     executor_fn: str = None
     cosine_ceiling: float = None
     topics_path: str = None
+    return_id_only: bool = False
 
 
 @dataclass(init=True)

@@ -12,7 +12,32 @@ class Client:
     solr_client: object = None
     generic_client: object = None
 
-    async def close(self):
+    @classmethod
+    def build_from_config(cls, engine_type, engine_config) -> 'Client':
+        """
+        Build client from engine config
+        :param engine_type:
+        :param engine_config:
+        :return:
+        """
+
+        client = Client()
+
+        if engine_type == "elasticsearch":
+            es_client = AsyncElasticsearch(
+                f"{engine_config['protocol']}://{engine_config.ip}:{engine_config.port}",
+                timeout=engine_config.timeout
+            )
+
+            client.es_client = es_client
+
+        return client
+
+    def get_client(self, engine):
+        if engine == "elasticsearch":
+            return self.es_client
+
+    def close(self):
         """
         Generically close all contained client objects
         """

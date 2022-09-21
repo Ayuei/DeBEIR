@@ -4,12 +4,12 @@ from typing import Dict, Union, Optional
 from elasticsearch import AsyncElasticsearch as Elasticsearch
 
 from nir.interfaces.config import GenericConfig
-from nir.interfaces.executor import GenericExecutor
+from nir.interfaces.executor import GenericElasticsearchExecutor
 from nir.interfaces.query import GenericElasticsearchQuery
 from nir.rankers.transformer_sent_encoder import Encoder
 
 
-class MarcoExecutor(GenericExecutor):
+class MarcoElasticsearchExecutor(GenericElasticsearchExecutor):
     query: GenericElasticsearchQuery
 
     def __init__(

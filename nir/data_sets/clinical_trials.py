@@ -5,7 +5,7 @@ from dataclasses import dataclass
 from typing import Dict, Union, Optional, List
 from elasticsearch import AsyncElasticsearch as Elasticsearch
 
-from nir.interfaces.executor import GenericExecutor
+from nir.interfaces.executor import GenericElasticsearchExecutor
 from nir.interfaces.query import GenericElasticsearchQuery
 from nir.engines.elasticsearch.generate_script_score import generate_script
 
@@ -458,7 +458,7 @@ class TrialsElasticsearchQuery(GenericElasticsearchQuery):
         return hit[self.id_mapping]
 
 
-class ClinicalTrialsExecutor(GenericExecutor):
+class ClinicalTrialsElasticsearchExecutor(GenericElasticsearchExecutor):
     """
     Executes queries given a query object.
     """

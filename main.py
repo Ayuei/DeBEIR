@@ -9,7 +9,7 @@ import loguru
 import shutup
 
 from nir.evaluation.residual_scoring import ResidualEvaluator
-from nir.interfaces.executor import GenericExecutor
+from nir.interfaces.executor import GenericElasticsearchExecutor
 from nir.interfaces.query import GenericElasticsearchQuery
 
 from elasticsearch import AsyncElasticsearch
@@ -25,7 +25,7 @@ from nir.utils.utils import create_output_file
 @apply_nir_config
 async def run_config_es(topics, config: GenericConfig,
                         config_fp: str,
-                        executor_cls: Type[GenericExecutor],
+                        executor_cls: Type[GenericElasticsearchExecutor],
                         query_obj: GenericElasticsearchQuery,
                         client: Client,
                         query_type=None,
@@ -84,7 +84,7 @@ async def run_config_es(topics, config: GenericConfig,
             metrics=kwargs['metrics'],
             filter_ids=json.load(open(kwargs['filter_ids'])) if kwargs['filter_ids'] else None
         )
-        parsed_run = evaluator.evaluate_with_binary(output_file, disable_cache=True)
+        parsed_run = evaluator.evaluate_runs(output_file, disable_cache=True, with_trec_binary=True)
         #evaluator.average_all_metrics(parsed_run, logger=logger)
         print(parsed_run)
         return parsed_run
