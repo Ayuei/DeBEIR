@@ -3,11 +3,14 @@ import dataclasses
 from collections import defaultdict
 from dataclasses import dataclass
 import csv
-from typing import Dict, List
+from typing import Dict, List, Optional
 from xml.etree import ElementTree as ET
 import dill
 import json
+
+import loguru
 import pandas as pd
+
 
 # TODO: Parse fields can come from a config or ID_fields
 # TODO: move _get_topics to private cls method with arguments, and expose get_topics as an instance method.
@@ -126,26 +129,52 @@ class XMLParser(Parser):
         return qtopics
 
 
-@dataclasses.dataclass(init=True)
+@dataclasses.dataclass
 class CSVParser(Parser):
     """
     Loads topics from a CSV file
     """
-    parse_fields = ["id", "text"]
+    id_field = "id"
+    parse_fields = ["text"]
+
+    def __init__(self, parsed_fields=None):
+        if parsed_fields is None:
+            self.parsed_fields = ["id", "text"]
 
     @classmethod
-    def _get_topics(cls, csvfile, *args, **kwargs) -> Dict[int, Dict[str, str]]:
+    def _get_topics(cls, csvfile, dialect="excel",
+                    id_field: str=None,
+                    parse_fields: List[str]=None,
+                    *args, **kwargs) -> Dict[int, Dict[str, str]]:
         topics = {}
-        reader = csv.DictReader(csvfile)
-        for i, row in enumerate(reader):
+
+        if isinstance(csvfile, str):
+            csvfile = open(csvfile, 'rt')
+
+        if id_field is None:
+            id_field = cls.id_field
+
+        if parse_fields is None:
+            parse_fields = cls.parse_fields
+
+        reader = csv.DictReader(csvfile, dialect=dialect)
+        for row in reader:
             temp = {}
 
-            for field in cls.parse_fields:
+            for field in parse_fields:
                 temp[field] = row[field]
 
-            topics[i] = temp
+            topics[row[id_field]] = temp
 
         return topics
+
+
+@dataclasses.dataclass(init=True)
+class TSVParser(CSVParser):
+
+    @classmethod
+    def _get_topics(cls, tsvfile, *args, **kwargs) -> Dict[int, Dict[str, str]]:
+        return CSVParser._get_topics(tsvfile, *args, dialect='excel-tab', **kwargs)
 
 
 @dataclasses.dataclass(init=True)
@@ -173,7 +202,7 @@ class JsonLinesParser(Parser):
                 _id = json_dict.pop(id_field)
 
                 if secondary_id:
-                    _id = str(_id)+"_"+str(json_dict[secondary_id])
+                    _id = str(_id) + "_" + str(json_dict[secondary_id])
 
                 for key in list(json_dict.keys()):
                     found = False

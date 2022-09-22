@@ -27,9 +27,13 @@ class GenericElasticsearchQuery(Query):
     """
     id_mapping: str = "id"
 
-    def __init__(self, topics, config, top_bm25_scores=None, *args, **kwargs):
+    def __init__(self, topics, config, top_bm25_scores=None, mappings=None, *args, **kwargs):
         super().__init__(topics, config)
-        self.mappings = ["Text"]
+
+        if mappings is None:
+            self.mappings = ["Text"]
+        else:
+            self.mappings = mappings
 
         self.topics = topics
         self.config = config
@@ -99,8 +103,8 @@ class GenericElasticsearchQuery(Query):
 
     @apply_config
     def generate_query_embedding(
-        self, topic_num, encoder, norm_weight=2.15, ablations=False, cosine_ceiling=Optional[float], *args, **kwargs
-    ):
+        self, topic_num, encoder, *args, norm_weight=2.15, ablations=False, cosine_ceiling=Optional[float],
+            cosine_offset: float = 1.0, **kwargs):
         """
         Generates an embedding script score query for Elasticsearch as part of the NIR scoring function.
 
@@ -129,7 +133,7 @@ class GenericElasticsearchQuery(Query):
 
         params = {
             "weights": [1] * (len(self.embed_mappings) * len(self.mappings)),
-            "offset": 1.0,
+            "offset": cosine_offset,
             "norm_weight": norm_weight,
             "disable_bm25": ablations,
         }
@@ -169,7 +173,8 @@ class GenericElasticsearchQuery(Query):
         loguru.logger.debug(query)
         return query
 
-    def get_id_mapping(self, hit):
+    @classmethod
+    def get_id_mapping(cls, hit):
         """
         Get the document ID
 
@@ -177,4 +182,4 @@ class GenericElasticsearchQuery(Query):
         :return:
             The document's ID
         """
-        return hit[self.id_mapping]
+        return hit[cls.id_mapping]

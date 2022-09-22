@@ -1,9 +1,10 @@
-from typing import Dict, Type
+from pathlib import Path
+from typing import Dict, Type, Union
 
 import toml
 
-from evaluation.evaluator import Evaluator
-from evaluation.residual_scoring import ResidualEvaluator
+from nir.evaluation.evaluator import Evaluator
+from nir.evaluation.residual_scoring import ResidualEvaluator
 from nir.data_sets.trec_clinical_trials import TrecClincialElasticsearchQuery, TrecClinicalTrialsParser
 from nir.interfaces.config import GenericConfig, _NIRMasterConfig, SolrConfig, ElasticsearchConfig, MetricsConfig, \
     NIRConfig, Config
@@ -20,7 +21,7 @@ from nir.data_sets.clinical_trials import (
 from nir.data_sets.marco import MarcoElasticsearchExecutor, MarcoQueryConfig
 from nir.interfaces.executor import GenericElasticsearchExecutor
 from nir.interfaces.parser import (
-    CSVParser, Parser,
+    CSVParser, Parser, TSVParser,
 )
 from nir.data_sets.bioreddit import BioRedditSubmissionParser, BioRedditCommentParser
 from nir.data_sets.trec_covid import TrecCovidParser
@@ -46,6 +47,7 @@ parser_factory = {
     "bioreddit-submission": BioRedditSubmissionParser,
     "test_trials": ClinicalTrialParser,
     "med-marco": CSVParser,
+    "tsv": TSVParser,
     "trec_clinical": TrecClinicalTrialsParser
 }
 
@@ -86,22 +88,16 @@ def factory_fn(config_fp, index=None) -> (Query, GenericConfig,
     :return:
         Query, Config, Parser, Executor, Evaluator
     """
-    if index is None:
-        index = get_index_name(config_fp)
-        assert (
-                index is not None
-        ), "Index must be provided in the config file or as an an argument"
-
     config = config_factory(config_fp)
+    assert config.index is not None
     query_cls = query_factory[config.query_fn]
     parser = parser_factory[config.parser_fn]
     executor = executor_factory[config.executor_fn]
-    evaluator = evaluator_factory[config.evaluator_fn]
 
-    return query_cls, config, parser, executor, evaluator
+    return query_cls, config, parser, executor
 
 
-def config_factory(path: str = None, config_cls: Type[Config] = None, args_dict: Dict = None):
+def config_factory(path: Union[str, Path] = None, config_cls: Type[Config] = None, args_dict: Dict = None):
     """
     Factory method for creating configs
 
@@ -123,17 +119,24 @@ def config_factory(path: str = None, config_cls: Type[Config] = None, args_dict:
     return config_cls.from_args(args_dict, config_cls)
 
 
-def get_nir_config(nir_config, ignore_errors=False, *args, **kwargs):
+def get_nir_config(nir_config, *args, ignore_errors=False, **kwargs):
     main_config = config_factory(nir_config, config_cls=_NIRMasterConfig)
     search_engine_config = None
 
     supported_search_engines = {"solr": SolrConfig,
                                 "elasticsearch": ElasticsearchConfig}
 
-    for search_engine in supported_search_engines:
-        if search_engine in kwargs and kwargs[search_engine] and kwargs['engine'] == search_engine:
-            search_engine_config = config_factory(args_dict=main_config.get_search_engine_settings(search_engine),
-                                                  config_cls=supported_search_engines[search_engine])
+    search_engine_config = None
+
+    if 'engine' in kwargs and kwargs['engine'] in supported_search_engines:
+        search_engine = kwargs['engine']
+        search_engine_config = config_factory(args_dict=main_config.get_search_engine_settings(search_engine),
+                                              config_cls=supported_search_engines[search_engine])
+
+    #for search_engine in supported_search_engines:
+    #    if search_engine in kwargs and kwargs[search_engine] and kwargs['engine'] == search_engine:
+    #        search_engine_config = config_factory(args_dict=main_config.get_search_engine_settings(search_engine),
+    #                                              config_cls=supported_search_engines[search_engine])
 
     if not ignore_errors and search_engine_config is None:
         raise RuntimeError("Unable to get a search engine configuration.")

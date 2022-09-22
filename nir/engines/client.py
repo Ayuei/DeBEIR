@@ -25,7 +25,7 @@ class Client:
 
         if engine_type == "elasticsearch":
             es_client = AsyncElasticsearch(
-                f"{engine_config['protocol']}://{engine_config.ip}:{engine_config.port}",
+                f"{engine_config.protocol}://{engine_config.ip}:{engine_config.port}",
                 timeout=engine_config.timeout
             )
 
@@ -37,7 +37,7 @@ class Client:
         if engine == "elasticsearch":
             return self.es_client
 
-    def close(self):
+    async def close(self):
         """
         Generically close all contained client objects
         """

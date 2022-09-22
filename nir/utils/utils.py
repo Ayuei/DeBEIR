@@ -19,6 +19,7 @@ def create_output_file(config, config_fp, remove, output_file, output_directory,
     :param kwargs: Compatibility arguments
     :return:
     """
+
     if output_file is None:
         os.makedirs(name=f"{output_directory}/{config.index}", exist_ok=True)
         output_file = (

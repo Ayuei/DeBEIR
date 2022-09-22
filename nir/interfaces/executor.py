@@ -94,10 +94,10 @@ class GenericElasticsearchExecutor(ElasticsearchExecutor):
             **kwargs,
         )
 
-    @apply_config
+    #@apply_config
     async def execute_query(
-        self, query, return_size: int, return_id_only: bool,
-            topic_num=None, ablation=False, query_type="query",
+        self, query=None, return_size: int=None, return_id_only: bool=None,
+            topic_num=None, ablation=False, query_type=None,
             **kwargs
     ):
         """
@@ -116,6 +116,8 @@ class GenericElasticsearchExecutor(ElasticsearchExecutor):
         if ablation:
             query_type = "ablation"
 
+        assert query is not None or topic_num is not None
+
         if query:
             if return_id_only:
                 # query["fields"] = [self.query.id_mapping]
@@ -130,7 +132,7 @@ class GenericElasticsearchExecutor(ElasticsearchExecutor):
         if topic_num:
             loguru.logger.debug(query_type)
             body = self.query_fns[query_type](topic_num=topic_num, **kwargs)
-            if self.return_id_only:
+            if return_id_only:
                 loguru.logger.debug("Skip")
                 body["_source"] = [self.query.id_mapping]
 
@@ -158,8 +160,7 @@ class GenericElasticsearchExecutor(ElasticsearchExecutor):
         results = await self.run_all_queries(query_type="query",
                                              return_results=True,
                                              return_size=1,
-                                             return_id_only=True,
-                                             serialize=False)
+                                             return_id_only=True)
 
         results = unpack_elasticsearch_scores(results)
         self.query.set_bm25_scores(results)

@@ -11,6 +11,7 @@ from nir.utils.utils import remove_excess_whitespace
 
 class Indexer:
     def __init__(self, client):
+        super().__init__()
         self.client = client
 
     @abc.abstractmethod
@@ -18,7 +19,7 @@ class Indexer:
         pass
 
 
-class SemanticElasticsearchIndexer(threading.Thread, Indexer):
+class SemanticElasticsearchIndexer(Indexer, threading.Thread):
     """
     Create a NIR-style index, with dense field representations with provided sentence encoder
     Assumes you've already indexed to start with.
@@ -26,29 +27,29 @@ class SemanticElasticsearchIndexer(threading.Thread, Indexer):
 
     def __init__(self, es_client: Elasticsearch, encoder: Encoder, index: str,
                  fields_to_encode: List[str], queue: Queue):
-        super(Indexer).__init__(es_client)
-        super(threading.Thread).__init__()
+        super().__init__(es_client)
         self.encoder = encoder
         self.index = index
         self.fields = fields_to_encode
         self.q = queue
-        self._update_mappings()
+        self.update_mappings(self.index, self.fields, self.client)
 
-    def _update_mappings(self):
+    @classmethod
+    def update_mappings(self, index, fields, client: Elasticsearch):
         mapping = {}
         value = {
             "type": "dense_vector",
             "dims": 768
         }
 
-        for field in self.fields:
+        for field in fields:
             mapping[field + "_Embedding"] = value
             mapping[field + "_Text"] = {"type": "text"}
 
-        self.client.indices.put_mapping(
+        client.indices.put_mapping(
             body={
                 "properties": mapping
-            }, index=self.index)
+            }, index=index)
 
     # async def create_index(self, document_itr=None):
     #    await self._update_mappings()
@@ -84,7 +85,7 @@ class SemanticElasticsearchIndexer(threading.Thread, Indexer):
             text_field = self.get_field(doc, field)
 
             if text_field:
-                embedding = self.encoder.encode(topic=text_field)
+                embedding = self.encoder.encode(self.encoder, topic=text_field, disable_cache=True)
                 update_doc[f"{field}_Embedding"] = embedding
                 update_doc[f"{field}_Text"] = text_field
 

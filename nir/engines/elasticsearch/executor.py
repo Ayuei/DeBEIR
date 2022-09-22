@@ -18,9 +18,6 @@ class ElasticsearchExecutor:
         1. Reranking
         2. End-to-End Neural IR
         3. Statistical keyword matching
-
-    As well as:
-        1. Serialisation of results to TREC-style format for further evaluation
     """
     def __init__(
         self,
@@ -67,14 +64,12 @@ class ElasticsearchExecutor:
         return kwargs
 
     async def run_all_queries(
-        self, serialize=False, query_type="query", return_results=False,
+        self, query_type=None, return_results=False,
             return_size: int = None, return_id_only: bool = False, **kwargs
     ) -> List:
         """
         A generic function that will asynchronously run all topics using the execute_query() method
 
-        :param serialize: Whether to serialize the results to TREC-style output.
-               Output file must be passed to the constructor
         :param query_type: Which query to execute. Query_type determines which method is used to generate the queries
                from self.query.query_funcs: Dict[str, func]
         :param return_results: Whether to return raw results from the client. Useful for analysing results directly or
@@ -100,6 +95,13 @@ class ElasticsearchExecutor:
         if return_id_only is None:
             return_id_only = self.return_id_only
 
+        if query_type is None:
+            query_type = self.config.query_type
+
+        kwargs.pop('return_size', None)
+        kwargs.pop('return_id_only', None)
+        kwargs.pop('query_type', None)
+
         tasks = [
             self.execute_query(
                 topic_num=topic_num,
@@ -116,29 +118,7 @@ class ElasticsearchExecutor:
         for f in tqdm.asyncio.tqdm.as_completed(tasks, desc="Running Queries"):
             res = await unpack_coroutine(f)
 
-            if serialize:
-                self.serialise_results(*res)
-
             if return_results:
                 results.append(res)
 
         return results
-
-    def serialise_results(self, topic_num, res, run_name="NO_RUN_NAME"):
-        """
-        Serialize results to self.output_file in a TREC-style format
-        :param topic_num: Topic number to serialize
-        :param res: Raw elasticsearch result
-        :param run_name: The run name for TREC-style runs (default: NO_RUN_NAME)
-        """
-        with open(self.output_file, "a+") as writer:
-            for rank, result in enumerate(res["hits"]["hits"], start=1):
-                doc_id = None
-
-                #if self.return_id_only:
-                #    doc_id = self.query.get_id_mapping(result["fields"])[0]
-                #else:
-                doc_id = self.query.get_id_mapping(result["_source"])
-
-                line = f"{topic_num}\tQ0\t{doc_id}\t{rank}\t{result['_score']}\t{run_name}\n"
-                writer.write(line)

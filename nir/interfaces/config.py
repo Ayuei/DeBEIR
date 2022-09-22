@@ -3,7 +3,8 @@ import dataclasses
 import os
 from abc import ABC
 from dataclasses import dataclass
-from typing import List, MutableMapping, Dict
+from pathlib import Path
+from typing import List, MutableMapping, Dict, Union
 
 import loguru
 import toml
@@ -21,7 +22,7 @@ class Config:
         return kwargs
 
     @classmethod
-    def from_toml(cls, fp: str, field_class, *args, **kwargs) -> 'Config':
+    def from_toml(cls, fp: Union[str, Path], field_class, *args, **kwargs) -> 'Config':
         """
         Instantiates a Config object from a toml file
 
@@ -112,6 +113,14 @@ class GenericConfig(Config, ABC):
     cosine_ceiling: float = None
     topics_path: str = None
     return_id_only: bool = False
+    overwrite_output_if_exists: bool = False
+    output_file: str = None
+    run_name: str = None
+
+
+    @classmethod
+    def from_toml(cls, fp: Union[str, Path], *args, **kwargs) -> 'GenericConfig':
+        return Config.from_toml(fp, cls, *args, **kwargs)
 
 
 @dataclass(init=True)
@@ -123,14 +132,28 @@ class _NIRMasterConfig(Config):
     search: Dict
     nir: Dict
 
-    def get_metrics(self, key='common'):
-        return self.metrics[key]
+    def get_metrics(self, key='common', return_as_instance=False):
+        metrics = self.metrics[key]
+        if return_as_instance:
+            return MetricsConfig.from_args(metrics, MetricsConfig)
 
-    def get_search_engine_settings(self, key='elasticsearch'):
-        return self.search['engines'][key]
+        return metrics
 
-    def get_nir_settings(self, key='default_settings'):
-        return self.nir[key]
+    def get_search_engine_settings(self, key='elasticsearch', return_as_instance=False):
+        engine_settings = self.search['engines'][key]
+        if return_as_instance:
+            return ElasticsearchConfig.from_args(engine_settings, ElasticsearchConfig)
+
+        return engine_settings
+
+
+    def get_nir_settings(self, key='default_settings', return_as_instance=False):
+        nir_settings = self.nir[key]
+
+        if return_as_instance:
+            return NIRConfig.from_args(nir_settings, NIRConfig)
+
+        return nir_settings
 
     def validate(self):
         return True
@@ -188,7 +211,6 @@ class NIRConfig(Config):
     Basic NIR configuration file settings from the master nir.toml file
     """
     norm_weight: str
-    overwrite_output_if_exists: bool
     evaluate: bool
     return_size: int
     output_directory: str
