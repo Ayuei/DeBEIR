@@ -13,7 +13,7 @@ from sentence_transformers.evaluation import TripletEvaluator
 from wandb import wandb
 import torch_optimizer as optim
 
-from nir.training.utils import get_scheduler_with_wandb
+from training.utils import get_scheduler_with_wandb
 
 from torch.utils.data import DataLoader
 
@@ -23,8 +23,7 @@ sys.path.append("/home/vin/Projects/nir/")
 # In[2]:
 
 
-from nir.training.train_sentence_encoder import train_huggingface_transformer
-from nir.training.utils import DatasetToSentTrans, TokenizerOverload, LoggingLoss, LoggingEvaluator
+from training.utils import DatasetToSentTrans, LoggingLoss, LoggingEvaluator
 
 TASK_NAME = "contrastive_metamap_marco_passage"
 OUTPUT_DIR = f"./outputs/biencoder/{TASK_NAME}/"
@@ -37,9 +36,8 @@ os.makedirs(OUTPUT_DIR, exist_ok=True)
 # In[3]:
 
 
-from transformers import AutoTokenizer
 import datasets
-from sentence_transformers import SentenceTransformer, LoggingHandler, util, models, evaluation, losses, InputExample
+from sentence_transformers import SentenceTransformer, losses
 
 dataset = datasets.load_dataset("csv", data_files={"train": "/home/vin/Datasets/marco-passage-ranking/med_marco_train_enriched.csv"})
 

@@ -2,13 +2,12 @@
 First and foremost. Check if we can import the library.
 """
 
-import pytest
 import importlib
 from pathlib import Path
 
 
 def _import_helper(sub_module):
-    imports = list(Path(f"../nir/{sub_module}").rglob("*.py"))
+    imports = list(Path(f"../src/debeir/{sub_module}").rglob("*.py"))
     for im in imports:
         if "__init__.py" in im.name:
             continue
@@ -57,14 +56,4 @@ def test_bootstrap_import():
     import sys, os
 
     sys.path.insert(0, os.path.dirname("../main.py"))
-
-    import nir
-    import nir.data_sets
-    import nir.rankers
-    import nir.evaluation
-    import nir.interfaces
-    import nir.models
-    import nir.rankers
-    import nir.training
-    import nir.utils
 

@@ -11,5 +11,4 @@ docker run --rm --network host --name indexer_test_elasticsearch debir/test:0.1
 
 cd ..
 
-source venv/bin/activate
-python examples/indexing/create_semantic_index.py -c tests/config.toml -n tests/nir_config.toml --fields Text -d 100_000 -w 2 -b 100
+python ./examples/indexing/create_semantic_index.py -c tests/config.toml -n tests/nir_config.toml --fields Text -d 100_000 -w 2 -b 100
