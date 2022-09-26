@@ -1,10 +1,7 @@
 import threading
 import sys
-sys.path.append("/home/vin/Projects/nir/")
 
-from nir.interfaces.indexer import SemanticElasticsearchIndexer
-from nir.interfaces.config import GenericConfig, ElasticsearchConfig
-from nir.rankers.transformer_sent_encoder import Encoder
+from debeir.interfaces import GenericConfig, ElasticsearchConfig
 
 from queue import Queue
 from tqdm import tqdm

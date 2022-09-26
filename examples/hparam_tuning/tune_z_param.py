@@ -1,24 +1,22 @@
 import asyncio
-import time
 from functools import partial
 
 import sys
 
 import elasticsearch
-import shutup
 from loguru import logger
 
 sys.path.append("/home/vin/Projects/nir/")
 
-from nir.engines.elasticsearch.change_bm25 import change_bm25_params
+from engines.elasticsearch.change_bm25 import change_bm25_params
 import joblib
 import optuna
 from optuna.integration import WeightsAndBiasesCallback
 
-from nir.engines.client import Client
-from nir.data_sets.factory import factory_fn
+from engines.client import Client
+from data_sets import factory_fn
 from main import run_config_es
-from nir.training.hparm_tuning.optuna_rank import print_optuna_stats
+from training.hparm_tuning.optuna_rank import print_optuna_stats
 
 from wandb import wandb
 

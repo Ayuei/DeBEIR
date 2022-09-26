@@ -6,12 +6,12 @@ import pytest
 import requests
 import toml
 
-from engines.client import Client
-from interfaces.pipeline import NIRPipeline
-from nir.data_sets.factory import query_factory, parser_factory, executor_factory, config_factory
-from nir.engines.elasticsearch.change_bm25 import change_bm25_params
-from nir.interfaces import config
-from nir.interfaces.config import _NIRMasterConfig
+from debeir.engines.client import Client
+from debeir.interfaces.pipeline import NIRPipeline
+from debeir.data_sets.factory import query_factory, parser_factory, executor_factory, config_factory
+from debeir.engines.elasticsearch.change_bm25 import change_bm25_params
+from debeir.interfaces import config
+from debeir.interfaces.config import _NIRMasterConfig
 
 
 @pytest.fixture(scope="session")
@@ -23,7 +23,7 @@ def config_file_dict(tmp_path_factory):
         "automatic": True,
         "encoder_fp": "sentence-transformers/distilbert-base-nli-mean-tokens",
         "index": "test",
-        "norm_weight": 50,
+        "norm_weight": 10,
 
         "config_fn": "generic",
         "query_fn": "generic",
@@ -31,7 +31,7 @@ def config_file_dict(tmp_path_factory):
         "executor_fn": "generic",
 
         "qrels": "test_set/qrels_dev.tsv",
-        "topics_path": "test_set/queries.tsv"
+        "topics_path": "test_set/queries.tsv",
     }
 
     fn = tmp_path_factory.mktemp("test_config") / "temp_config.toml"
@@ -56,7 +56,7 @@ def nir_config_dict(tmp_path_factory):
         [search.engines]
             [search.engines.elasticsearch]
             protocol = "http"
-            ip = "127.0.0.1"
+            ip = "localhost"
             port = "9200"
             timeout = 600
         
@@ -87,7 +87,7 @@ def check_config_instance_has_right_attributes(config, config_dict):
 
 
 def test_config_load(config_file_dict):
-    from nir.interfaces import config
+    from interfaces import config
 
     config_file, config_dict = config_file_dict
     c = config_factory(config_file, config.GenericConfig)
@@ -372,4 +372,4 @@ async def test_pipeline_api(config_file_dict, nir_config_dict):
                                       engine="elasticsearch",
                                       nir_config_fp=nir_config_dict[0])
 
-    results = await p.run_pipeline(cosine_offset=5.0)
+    results = await p.run_pipeline(cosine_offset=100.0)

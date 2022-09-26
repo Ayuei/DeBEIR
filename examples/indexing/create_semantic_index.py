@@ -1,15 +1,12 @@
 import threading
-import sys
 from pathlib import Path
 
 import plac
 
-sys.path.append("/home/vin/PycharmProjects/NIR/")
-
-from nir.data_sets.factory import config_factory
-from nir.interfaces.indexer import SemanticElasticsearchIndexer
-from nir.interfaces.config import GenericConfig, _NIRMasterConfig
-from nir.rankers.transformer_sent_encoder import Encoder
+from debeir.data_sets.factory import config_factory
+from debeir.interfaces.indexer import SemanticElasticsearchIndexer
+from debeir.interfaces.config import GenericConfig, _NIRMasterConfig
+from debeir.rankers.transformer_sent_encoder import Encoder
 
 from queue import Queue
 from tqdm import tqdm
