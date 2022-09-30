@@ -1,5 +1,13 @@
-[paths]
-other_script_location = "blah"
-models_dir = ""
-elasticsearch_port = ""
-elasticsearch_url = ""
+query_type = "embedding"
+automatic = true
+encoder_fp = "sentence-transformers/distilbert-base-nli-mean-tokens"
+index = "test"
+cosine_ceiling = 5.893593
+
+config_fn = "generic"
+query_fn = "generic"
+parser_fn = "tsv"
+executor_fn = "generic"
+
+qrels = "test_set/qrels_dev.tsv"
+topics_path = "test_set/queries.tsv"

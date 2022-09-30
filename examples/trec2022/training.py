@@ -8,13 +8,13 @@ sys.path.append("/home/vin/Projects/nir/")
 import os
 import dill
 
-from nir.training.utils import DatasetToSentTrans
-from nir.training.hparm_tuning.trainer import SentenceTransformerTrainer
+from training.utils import DatasetToSentTrans
+from training.hparm_tuning.trainer import SentenceTransformerTrainer
 
 from sentence_transformers import evaluation
-from nir.data_sets.trec_clinical_trials import TrecClinicalTrialTripletParser
-from nir.interfaces.converters import ParsedTopicsToDataset
-from nir.training.hparm_tuning.config import HparamConfig
+from data_sets.trec_clinical_trials import TrecClinicalTrialTripletParser
+from interfaces import ParsedTopicsToDataset
+from training.hparm_tuning.config import HparamConfig
 
 
 def get_dataset(dataset_save_path=".", override=False):

@@ -5,14 +5,14 @@ import os
 import dill
 
 from functools import partial
-from nir.training.utils import DatasetToSentTrans
-from nir.training.hparm_tuning.optuna_rank import run_optuna_with_wandb, print_optuna_stats
-from nir.training.hparm_tuning.trainer import SentenceTransformerHparamTrainer
+from training.utils import DatasetToSentTrans
+from training.hparm_tuning.optuna_rank import run_optuna_with_wandb, print_optuna_stats
+from training.hparm_tuning.trainer import SentenceTransformerHparamTrainer
 
 from sentence_transformers import evaluation
-from nir.data_sets.trec_clinical_trials import TrecClinicalTrialTripletParser
-from nir.interfaces.converters import ParsedTopicsToDataset
-from nir.training.hparm_tuning.config import HparamConfig
+from data_sets.trec_clinical_trials import TrecClinicalTrialTripletParser
+from interfaces import ParsedTopicsToDataset
+from training.hparm_tuning.config import HparamConfig
 
 
 TASK_NAME = "trec_contrastive_passage"
