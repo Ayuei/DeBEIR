@@ -14,7 +14,7 @@ setup(
                       'scispacy',
                       "en_core_sci_md @ git+https://s3-us-west-2.amazonaws.com/ai2-s2-scispacy/releases/v0.5.0/en_core_sci_md-0.5.0.tar.gz",
                       'tqdm~=4.64.0', 'pandas', 'trectools', 'numpy~=1.22.4', 'toml~=0.10.2',
-                       "analysis_tools_ir @ git+https://github.com/Ayuei/analysis_tools_ir/releases/download/v0.0.3/analysis_tools_ir-0.0.3-py3-none-any.whl",
+                       "https://github.com/Ayuei/analysis_tools_ir/releases/download/v0.0.3/analysis_tools_ir-0.0.3-py3-none-any.whl",
                       'dill~=0.3.5.1', 'requests~=2.28.0', 'loguru~=0.6.0',
                       'allRank @ git+https://github.com/Ayuei/allRank.git',
                       'transformers==4.22.0', 'shutup~=0.2.0', 'datasets==2.4.0', 'jupyterlab==3.4.7',
