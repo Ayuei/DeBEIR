@@ -8,10 +8,10 @@ from typing import List, Dict
 
 from tqdm import tqdm
 
-from utils import scaler
-from interfaces.document import Document
-from rankers.reranking.reranker import DocumentReRanker
-from rankers.transformer_sent_encoder import Encoder
+from debeir.utils import scaler
+from debeir.interfaces.document import Document
+from debeir.reranking.reranker import DocumentReRanker
+from debeir.rankers.transformer_sent_encoder import Encoder
 from scipy import spatial
 import math
 
