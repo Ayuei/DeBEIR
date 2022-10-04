@@ -1,4 +1,4 @@
-from rankers.reranking.nir import NIReRanker
+from debeir.rankers.reranking.nir import NIReRanker
 
 
 class USEReRanker(NIReRanker):
