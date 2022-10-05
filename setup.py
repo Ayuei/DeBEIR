@@ -1,4 +1,6 @@
 from setuptools import setup, find_packages
+from setuptools.command.install import install as _install
+import pip
 
 setup(
     name='DeBeIR',
@@ -10,13 +12,11 @@ setup(
     author='Vincent Nguyen',
     author_email='vincent.nguyen@anu.edu.au',
     description='Dense Bi-encoders for end-to-end Dense Information Retrieval',
-    install_requires=['analysis_tools_ir', 'torch', 'elasticsearch[async]==8.3.1', 'plac', 'sentence-transformers==2.2.2', 'spacy~=3.2.4',
+    install_requires=['torch==1.12.1', 'elasticsearch[async]==8.3.1', 'plac', 'sentence-transformers==2.2.2', 'spacy~=3.2.4',
                       'scispacy', 'tqdm~=4.64.0', 'pandas', 'trectools', 'numpy~=1.22.4', 'toml~=0.10.2',
                       'dill~=0.3.5.1', 'requests~=2.28.0', 'loguru~=0.6.0',
+                      'analysis_tools_ir @ git+https://github.com/Ayuei/analysis_tools_ir.git',
                       'allRank @ git+https://github.com/Ayuei/allRank.git',
                       'transformers==4.22.0', 'shutup~=0.2.0', 'datasets==2.4.0', 'jupyterlab==3.4.7',
-                      'scikit-learn==1.1.2', 'scipy~=1.9.1', 'optuna==3.0.2', 'wandb==0.13.3', 'torch_optimizer'],
-    dependency_links = [
-        "https://github.com/Ayuei/analysis_tools_ir/releases/download/v0.0.3/analysis_tools_ir-0.0.3-py3-none-any.whl",
-    ]
+                      'scikit-learn==1.1.2', 'scipy', 'optuna==3.0.2', 'wandb==0.13.3', 'torch_optimizer'],
 )
