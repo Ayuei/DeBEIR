@@ -2,14 +2,17 @@
 
 A **De**nse **B**i-**E**ncoder for **I**nformation **R**etrieval library for experimenting and using neural models (with a particular emphasis on bi-encoder models) for end-to-end ranking of documents.
 
+###
+Requires python >= 3.10
+
 ### Setup and installation
-It is recommended to set up a virtual environment and install the requirements
+It is recommended to set up a virtual environment and install from source
 
 ```bash
 python3 -m virtualenv venv
 source venv/bin/activate
 
-pip install -r requirements.txt
+pip install git+https://github.com/Ayuei/DeBEIR.git
 ```
 
 ### Usage
@@ -17,7 +20,7 @@ pip install -r requirements.txt
 The library has an emphasis on reproducibility and experimentation. With this in mind, settings are placed into configuration files to be used to build the pipeline. 
 
 ```python3
-from nir.interfaces.pipeline import NIRPipeline
+from debeir.interfaces.pipeline import NIRPipeline
 
 p = NIRPipeline.build_from_config(config_fp="./tests/config.toml",
                                   engine="elasticsearch",
@@ -26,7 +29,7 @@ p = NIRPipeline.build_from_config(config_fp="./tests/config.toml",
 results = await p.run_pipeline(cosine_offset=5.0)
 ```
 
-See examples/ for more use cases and where to get started.
+See ```examples/``` for more use cases and where to get started.
 
 Otherwise, html rendered documentation is available in docs/
 
