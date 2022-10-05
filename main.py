@@ -10,7 +10,7 @@ import shutup
 
 from debeir.evaluation.residual_scoring import ResidualEvaluator
 from debeir.interfaces.executor import GenericElasticsearchExecutor
-from ndebeirir.interfaces.query import GenericElasticsearchQuery
+from debeir.interfaces.query import GenericElasticsearchQuery
 
 from elasticsearch import AsyncElasticsearch
 from loguru import logger
