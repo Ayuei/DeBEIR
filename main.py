@@ -8,18 +8,18 @@ from typing import Type
 import loguru
 import shutup
 
-from nir.evaluation.residual_scoring import ResidualEvaluator
-from nir.interfaces.executor import GenericElasticsearchExecutor
-from nir.interfaces.query import GenericElasticsearchQuery
+from debeir.evaluation.residual_scoring import ResidualEvaluator
+from debeir.interfaces.executor import GenericElasticsearchExecutor
+from ndebeirir.interfaces.query import GenericElasticsearchQuery
 
 from elasticsearch import AsyncElasticsearch
 from loguru import logger
 
-from nir.engines.client import Client
-from nir.interfaces.config import GenericConfig
-from nir.data_sets.factory import apply_nir_config
-from nir.data_sets.factory import factory_fn
-from nir.utils.utils import create_output_file
+from debeir.engines.client import Client
+from debeir.interfaces.config import GenericConfig
+from debeir.data_sets.factory import apply_nir_config
+from debeir.data_sets.factory import factory_fn
+from debeir.utils.utils import create_output_file
 
 
 @apply_nir_config
