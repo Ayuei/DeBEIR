@@ -10,7 +10,7 @@ from tqdm import tqdm
 
 from debeir.utils import scaler
 from debeir.interfaces.document import Document
-from debeir.reranking.reranker import DocumentReRanker
+from debeir.rankers.reranking.reranker import DocumentReRanker
 from debeir.rankers.transformer_sent_encoder import Encoder
 from scipy import spatial
 import math

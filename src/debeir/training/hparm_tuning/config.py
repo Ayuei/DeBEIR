@@ -2,8 +2,8 @@ import dataclasses
 import json
 from typing import Dict
 
-from training.hparm_tuning.types import HparamTypes
-from interfaces.config import Config
+from debeir.training.hparm_tuning.types import HparamTypes
+from debeir.interfaces.config import Config
 
 
 @dataclasses.dataclass(init=True)

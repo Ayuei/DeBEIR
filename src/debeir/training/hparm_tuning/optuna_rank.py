@@ -5,7 +5,7 @@ from functools import partial
 from optuna.integration.wandb import WeightsAndBiasesCallback
 from optuna.trial import TrialState
 
-from training.hparm_tuning.trainer import Trainer
+from debeir.training.hparm_tuning.trainer import Trainer
 
 
 def objective(trainer: Trainer, trial: optuna.Trial):

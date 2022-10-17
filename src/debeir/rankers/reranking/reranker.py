@@ -5,7 +5,7 @@ General re-ranking interfaces to be implemented by child classes.
 import abc
 from typing import List, AnyStr
 
-from interfaces.document import Document
+from debeir.interfaces.document import Document
 
 
 class ReRanker:

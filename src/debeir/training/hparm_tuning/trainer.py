@@ -10,12 +10,12 @@ from datasets import DatasetDict, Dataset
 from sentence_transformers import SentenceTransformer, losses
 from torch.utils.data import DataLoader
 
-from training.hparm_tuning.config import HparamConfig
-from training.hparm_tuning.types import Hparam
+from debeir.training.hparm_tuning.config import HparamConfig
+from debeir.training.hparm_tuning.types import Hparam
 import torch_optimizer
 import torch
 
-from training.utils import LoggingLoss, LoggingEvaluator
+from debeir.training.utils import LoggingLoss, LoggingEvaluator
 
 
 class OptimizersWrapper:
