@@ -1,5 +1,6 @@
 import abc
 import dataclasses
+from collections import defaultdict
 from typing import Union, Dict, List
 
 from debeir.utils.utils import flatten
@@ -12,14 +13,18 @@ class Document:
     Used as an interface for interacting across multiple indexes with different mappings.
     """
     doc_id: Union[int, float, str]
-    facets: Dict
-    score: Union[float, int] = 0.0
+    topic_num: Union[int, str, float] = None
+    facets: Dict = None
+    score: Union[float, int] = 0.0 # Primay Score
+    scores: Dict[str, Union[float, int]] = dataclasses.field(default_factory=lambda: {}) # Include other scores if needed
 
     @classmethod
     @abc.abstractmethod
-    def from_results(cls) -> List['Document']:
+    def from_results(cls, results, *args, **kwargs) -> Dict[Union[int, float], 'Document']:
         """
         Produces a list of Document objects from raw results returned from the index
+
+        In the format {topic_num: [Document, ..., Document]}
         """
         pass
 
@@ -56,8 +61,8 @@ class Document:
             keys = key.split(sep)
 
             intermediate_repr = self.facets
-            for key in keys:
-                intermediate_repr = self._get_document_facet(intermediate_repr, key)
+            for k in keys:
+                intermediate_repr = self._get_document_facet(intermediate_repr, k)
 
             return intermediate_repr
 
@@ -90,25 +95,59 @@ class Document:
 
         return self
 
-    def _get_trec_format(self) -> str:
+    def to_trec_format(self, rank, run_name) -> str:
         """
         Returns TREC format for the document
         :return:
             A trec formatted string
         """
-        return f"{self.score}"
+
+        return f"{self.topic_num}\t" \
+               f"Q0\t" \
+               f"{self.doc_id}\t" \
+               f"{rank}\t" \
+               f"{self.score}\t" \
+               f"{run_name}\n"
 
     @classmethod
-    def get_trec_format(cls, ranked_list: List['Document'], sort=True):
+    def get_trec_format(cls, ranked_list: List['Document'], run_name="NO_RUN_NAME", sort=True, sorting_func=None):
         """
         Get the trec format of a list of ranked documents. This function is a generator.
 
         :param ranked_list: A list of Document-type objects
+        :param run_name: Run name to print in the TREC formatted string
         :param sort: Whether to sort the input list in descending order of score.
+        :param sorting_func: Custom sorting function will be used if provided
         """
 
         if sort:
-            ranked_list.sort(key=lambda doc: doc.score, reverse=True)
+            if sorting_func:
+                ranked_list = sorting_func(ranked_list)
+            else:
+                ranked_list.sort(key=lambda doc: doc.score, reverse=True)
 
-        for document in ranked_list:
-            yield document._get_trec_format()
+        for rank, document in enumerate(ranked_list, start=1):
+            yield document.to_trec_format(rank, run_name)
+
+
+class ElasticsearchDocument(Document):
+    @classmethod
+    def from_results(cls, results, query_cls, *args, **kwargs) -> Dict[Union[int, float], 'Document']:
+        documents = defaultdict(lambda: [])
+
+        for (topic_num, res) in results:
+            for rank, result in enumerate(res["hits"]["hits"], start=1):
+                doc_id = query_cls.get_id_mapping(result["_source"])
+
+                documents[topic_num].append(ElasticsearchDocument(doc_id,
+                                                       topic_num,
+                                                       score=float(result['_score'])))
+
+                documents[topic_num][-1].scores['rank'] = rank
+
+        return dict(documents)
+
+
+document_factory = {
+    "elasticsearch": ElasticsearchDocument
+}

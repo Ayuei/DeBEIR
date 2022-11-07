@@ -7,6 +7,7 @@ from debeir.rankers.transformer_sent_encoder import Encoder
 from debeir.interfaces.query import GenericElasticsearchQuery
 from debeir.interfaces.config import apply_config
 from debeir.utils.utils import unpack_coroutine
+from debeir.interfaces.document import document_factory
 
 
 class ElasticsearchExecutor:
@@ -41,6 +42,7 @@ class ElasticsearchExecutor:
         self.encoder = encoder
         self.return_id_only = return_id_only
         self.config = config
+        self.document_cls = document_factory['elasticsearch']
 
     def generate_query(self, topic_num):
         """

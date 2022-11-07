@@ -9,6 +9,8 @@ from debeir.data_sets.factory import factory_fn, get_nir_config
 from debeir.interfaces.executor import GenericElasticsearchExecutor
 from debeir.interfaces.config import Config, _NIRMasterConfig
 from debeir.interfaces.config import GenericConfig
+from debeir.interfaces.document import document_factory
+from debeir.interfaces.results import Results
 
 
 class Pipeline:
@@ -18,13 +20,15 @@ class Pipeline:
     output_file = None
 
     def __init__(self, engine: GenericElasticsearchExecutor,
+                 engine_name: str,
                  metrics_config,
                  engine_config,
                  nir_config,
                  run_config: Config,
-                 callbacks = None):
+                 callbacks=None):
 
         self.engine = engine
+        self.engine_name = engine_name
         self.run_config = run_config
         self.metrics_config = metrics_config
         self.engine_config = engine_config
@@ -60,6 +64,7 @@ class Pipeline:
 
         return cls(
             executor,
+            engine,
             metrics_config,
             search_engine_config,
             nir_config,
@@ -105,6 +110,7 @@ class NIRPipeline(Pipeline):
 
         await self.prehook()
         results = await self.run_engine(*args, **kwargs)
+        results = Results(results, self.engine_name)
 
         for cb in self.callbacks:
             cb.after(results)
