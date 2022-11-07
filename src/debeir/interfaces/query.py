@@ -155,9 +155,7 @@ class GenericElasticsearchQuery(Query):
                     }
                 )
 
-            params[f"{qfield}_eb"] = encoder.encode(
-                encoder, topic=self.topics[topic_num][qfield]
-            )
+            params[f"{qfield}_eb"] = encoder.encode(topic=self.topics[topic_num][qfield])
             embed_fields.append(f"{qfield}_eb")
 
         query = {
