@@ -85,7 +85,7 @@ class SemanticElasticsearchIndexer(Indexer, threading.Thread):
             text_field = self.get_field(doc, field)
 
             if text_field:
-                embedding = self.encoder.encode(self.encoder, topic=text_field, disable_cache=True)
+                embedding = self.encoder.encode(topic=text_field, disable_cache=True)
                 update_doc[f"{field}_Embedding"] = embedding
                 update_doc[f"{field}_Text"] = text_field
 
