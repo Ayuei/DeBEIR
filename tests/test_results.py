@@ -27,7 +27,7 @@ def config_file_dict(tmp_path_factory):
         "parser_fn": "tsv",
         "executor_fn": "generic",
 
-        "qrels": "test_set/qrels_dev.tsv",
+        "qrels": "test_set/qrels.tsv",
         "topics_path": "test_set/queries.tsv",
     }
 
