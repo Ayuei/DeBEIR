@@ -110,13 +110,28 @@ class NIRPipeline(Pipeline):
 
         await self.prehook()
         results = await self.run_engine(*args, **kwargs)
-        results = Results(results, self.engine_name)
+        results = Results(results, self.engine.query, self.engine_name)
 
         for cb in self.callbacks:
             cb.after(results)
 
-        if return_results:
-            return results
+        return results
 
     def register_callback(self, cb):
         self.callbacks.append(cb)
+
+
+class BM25Pipeline(NIRPipeline):
+    async def run_pipeline(self, *args, return_results=False, **kwargs):
+        for cb in self.callbacks:
+            cb.before(self)
+
+        results = await self.engine.run_all_queries(query_type="query",
+                                                    return_results=True)
+
+        results = Results(results, self.engine.query, self.engine_name)
+
+        for cb in self.callbacks:
+            cb.after(results)
+
+        return results

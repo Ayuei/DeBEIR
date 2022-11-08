@@ -142,7 +142,7 @@ class GenericElasticsearchExecutor(ElasticsearchExecutor):
 
             return [topic_num, res]
 
-    async def run_automatic_adjustment(self):
+    async def run_automatic_adjustment(self, return_results=False):
         """
         Get the normalization constant to be used in NIR-style queries for all topics given an initial
         run of BM25 results.
@@ -161,8 +161,11 @@ class GenericElasticsearchExecutor(ElasticsearchExecutor):
                                              return_size=1,
                                              return_id_only=True)
 
-        results = unpack_elasticsearch_scores(results)
-        self.query.set_bm25_scores(results)
+        res = unpack_elasticsearch_scores(results)
+        self.query.set_bm25_scores(res)
+
+        if return_results:
+            return results
 
     @classmethod
     def build_from_config(cls, topics: Dict, query_obj: GenericElasticsearchQuery, client,

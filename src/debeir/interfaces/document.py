@@ -15,8 +15,9 @@ class Document:
     doc_id: Union[int, float, str]
     topic_num: Union[int, str, float] = None
     facets: Dict = None
-    score: Union[float, int] = 0.0 # Primay Score
-    scores: Dict[str, Union[float, int]] = dataclasses.field(default_factory=lambda: {}) # Include other scores if needed
+    score: Union[float, int] = 0.0  # Primay Score
+    scores: Dict[str, Union[float, int]] = dataclasses.field(
+        default_factory=lambda: {})  # Include other scores if needed
 
     @classmethod
     @abc.abstractmethod
@@ -132,16 +133,23 @@ class Document:
 
 class ElasticsearchDocument(Document):
     @classmethod
-    def from_results(cls, results, query_cls, *args, **kwargs) -> Dict[Union[int, float], 'Document']:
+    def from_results(cls, results, query_cls, ignore_facets=True,
+                     *args, **kwargs) -> Dict[Union[int, float], 'Document']:
+
         documents = defaultdict(lambda: [])
 
         for (topic_num, res) in results:
             for rank, result in enumerate(res["hits"]["hits"], start=1):
                 doc_id = query_cls.get_id_mapping(result["_source"])
+                facets = {}
+
+                if not ignore_facets:
+                    facets = {k: v for (k, v) in result['_source'].items() if not k.startswith("_")}
 
                 documents[topic_num].append(ElasticsearchDocument(doc_id,
-                                                       topic_num,
-                                                       score=float(result['_score'])))
+                                                                  topic_num,
+                                                                  facets=facets,
+                                                                  score=float(result['_score'])))
 
                 documents[topic_num][-1].scores['rank'] = rank
 

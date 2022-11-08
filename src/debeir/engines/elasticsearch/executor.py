@@ -8,6 +8,7 @@ from debeir.interfaces.query import GenericElasticsearchQuery
 from debeir.interfaces.config import apply_config
 from debeir.utils.utils import unpack_coroutine
 from debeir.interfaces.document import document_factory
+from debeir.interfaces.results import Results
 
 
 class ElasticsearchExecutor:

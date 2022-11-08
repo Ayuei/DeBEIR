@@ -81,32 +81,23 @@ class SerializationCallback(Callback):
 
         self._after(results,
                     output_file=self.output_file,
-                    query_cls=self.query_cls,
                     run_name=self.config.run_name)
 
     @classmethod
-    def _after(self, results: List, output_file, query_cls, run_name=None):
+    def _after(self, results: List, output_file, run_name=None):
         if run_name is None:
             run_name = "NO_RUN_NAME"
 
         with open(output_file, "a+t") as writer:
-            for (topic_num, res) in results:
-                for rank, result in enumerate(res["hits"]["hits"], start=1):
-                    doc_id = None
+            for doc in results:
+                line = f"{doc.topic_num}\t" \
+                       f"Q0\t" \
+                       f"{doc.doc_id}\t" \
+                       f"{doc.scores['rank']}\t" \
+                       f"{doc.score}\t" \
+                       f"{run_name}\n"
 
-                    # if self.return_id_only:
-                    #    doc_id = self.query.get_id_mapping(result["fields"])[0]
-                    # else:
-                    doc_id = query_cls.get_id_mapping(result["_source"])
-
-                    line = f"{topic_num}\t" \
-                           f"Q0\t" \
-                           f"{doc_id}\t" \
-                           f"{rank}\t" \
-                           f"{result['_score']}\t" \
-                           f"{run_name}\n"
-
-                    writer.write(line)
+                writer.write(line)
 
 
 class EvaluationCallback(Callback):
@@ -131,12 +122,12 @@ class EvaluationCallback(Callback):
 
             SerializationCallback._after(results,
                                          output_file=fp,
-                                         query_cls=query,
                                          run_name=self.config.run_name)
 
             self.pipeline.output_file = fp
 
-        parsed_run = self.evaluator.evaluate_runs(self.pipeline.output_file, disable_cache=True)
+        parsed_run = self.evaluator.evaluate_runs(self.pipeline.output_file,
+                                                  disable_cache=True)
         self.parsed_run = parsed_run
 
         return self.parsed_run
