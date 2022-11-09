@@ -1,3 +1,4 @@
+import warnings
 from typing import Dict
 
 
@@ -36,6 +37,9 @@ def get_z_value(cosine_ceiling, bm25_ceiling) -> float:
     :return:
         The normalization parameter for NIR log normalization.
     """
+
+    assert bm25_ceiling > cosine_ceiling, "BM25 Ceiling cannot be lower than the cosine ceiling."
+
     return bm25_ceiling ** (1 / float(cosine_ceiling))
 
 
