@@ -10,4 +10,7 @@ class USEReRanker(NIReRanker):
         super().__init__(*args, **kwargs)
 
     def _compute_scores(self, document):
-        return self.pre_calc[document.id]["cosine_sum"]
+        if not self.pre_calc_finished:
+            self._compute_scores_helper()
+
+        return self.pre_calc[document.doc_id]["cosine_sum"]

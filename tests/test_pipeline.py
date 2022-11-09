@@ -23,14 +23,14 @@ def config_file_dict(tmp_path_factory):
         "automatic": True,
         "encoder_fp": "sentence-transformers/distilbert-base-nli-mean-tokens",
         "index": "test",
-        "norm_weight": 10,
+        "norm_weight": 100,
 
         "config_fn": "generic",
         "query_fn": "generic",
         "parser_fn": "tsv",
         "executor_fn": "generic",
 
-        "qrels": "test_set/qrels_dev.tsv",
+        "qrels": "test_set/qrels.tsv",
         "topics_path": "test_set/queries.tsv",
     }
 
@@ -69,7 +69,7 @@ def nir_config_dict(tmp_path_factory):
             [nir.default_settings]
             norm_weight = "2.15"
             evaluate = false
-            return_size = 5 
+            return_size = 10
             output_directory = "./output/test/"
     """
 
@@ -87,8 +87,6 @@ def check_config_instance_has_right_attributes(config, config_dict):
 
 
 def test_config_load(config_file_dict):
-    from interfaces import config
-
     config_file, config_dict = config_file_dict
     c = config_factory(config_file, config.GenericConfig)
 
@@ -262,9 +260,10 @@ def test_query_encoder(config_file_dict):
 
     for topic_num, topic in topics.items():
         text = topic['text']
-        encoded_text = c.encoder.encode(c.encoder, topic=text)
+        encoded_text = c.encoder.encode(topic=text)
 
-        embedding_query = query_obj.generate_query_embedding(topic_num=topic_num)
+        embedding_query = query_obj.generate_query_embedding(topic_num=topic_num,
+                                                             cosine_offset=100)
         encoded_query = embedding_query['query']['script_score']['script']['params']['text_eb']
 
         assert encoded_text == encoded_query
@@ -280,11 +279,21 @@ def test_query_encoder_cache(config_file_dict):
 
     import time
 
+    # Set up cache
+    for topic_num, topic in topics.items():
+        text = topic['text']
+        encoded_text = c.encoder.encode(topic=text)
+
+        embedding_query = query_obj.generate_query_embedding(topic_num=topic_num)
+        encoded_query = embedding_query['query']['script_score']['script']['params']['text_eb']
+
+        assert encoded_text == encoded_query
+
     start = time.time()
 
     for topic_num, topic in topics.items():
         text = topic['text']
-        encoded_text = c.encoder.encode(c.encoder, topic=text)
+        encoded_text = c.encoder.encode(topic=text)
 
         embedding_query = query_obj.generate_query_embedding(topic_num=topic_num)
         encoded_query = embedding_query['query']['script_score']['script']['params']['text_eb']
@@ -298,9 +307,10 @@ def test_query_encoder_cache(config_file_dict):
 
     for topic_num, topic in topics.items():
         text = topic['text']
-        encoded_text = c.encoder.encode(c.encoder, topic=text, disable_cache=True)
+        encoded_text = c.encoder.encode(topic=text, disable_cache=True)
 
-        embedding_query = query_obj.generate_query_embedding(topic_num=topic_num)
+        embedding_query = query_obj.generate_query_embedding(topic_num=topic_num,
+                                                             cosine_offset=100)
         encoded_query = embedding_query['query']['script_score']['script']['params']['text_eb']
 
         assert encoded_text == encoded_query
@@ -337,8 +347,7 @@ async def test_embedding_queries(config_file_dict, nir_config_dict):
     i = 0
 
     for topic_num, topic in topics.items():
-
-        query = query_obj.generate_query_embedding(topic_num=topic_num)
+        query = query_obj.generate_query_embedding(topic_num=topic_num, cosine_offset=100)
 
         q, res = await engine.execute_query(query, return_size=5,
                                             return_id_only=False)
@@ -349,7 +358,8 @@ async def test_embedding_queries(config_file_dict, nir_config_dict):
 
         t_num, res = await engine.execute_query(query=None, topic_num=topic_num, return_size=5,
                                                 return_id_only=False,
-                                                query_type="embedding")
+                                                query_type="embedding",
+                                                cosine_offset=100)
 
         t_documents = [doc['_source'] for doc in res['hits']['hits']]
 

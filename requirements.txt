@@ -20,7 +20,7 @@ shutup~=0.2.0
 datasets==2.4.0
 jupyterlab==3.4.7
 scikit-learn==1.1.2
-scipy~=1.9.1
+scipy
 optuna==3.0.2
 wandb==0.13.3
 torch_optimizer
