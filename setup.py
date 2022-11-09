@@ -4,7 +4,7 @@ import pip
 
 setup(
     name='DeBeIR',
-    version='0.0.1',
+    version='0.1.0',
     package_dir={'': 'src'},
     packages=find_packages('src'),
     url='',
