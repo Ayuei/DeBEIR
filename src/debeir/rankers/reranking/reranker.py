@@ -3,7 +3,7 @@ General re-ranking interfaces to be implemented by child classes.
 """
 
 import abc
-from typing import List, AnyStr
+from typing import List, AnyStr, Union
 
 from debeir.interfaces.document import Document
 
@@ -33,15 +33,6 @@ class ReRanker:
 
     def rerank(self) -> List:
         """
-        Re-ranks the internal list
-
-        :return:
-        """
-        return self.rrerank(self.ranked_list)
-
-    @classmethod
-    def rrerank(cls, ranked_list: List) -> List:
-        """
         Re-rank the passed ranked list based on implemented private _compute_scores method.
 
         :param ranked_list:
@@ -50,9 +41,9 @@ class ReRanker:
         """
         ranking = []
 
-        for document in ranked_list:
-            doc_id, doc_repr = cls._get_document_representation(document)
-            score = cls._compute_scores(doc_repr)
+        for document in self.ranked_list:
+            doc_id, doc_repr = self._get_document_representation(document)
+            score = self._compute_scores(doc_repr)
 
             ranking.append([doc_id, doc_repr, score])
 
@@ -74,5 +65,10 @@ class DocumentReRanker(ReRanker):
         pass
 
     @classmethod
-    def _get_document_representation(cls, document: Document) -> (AnyStr, AnyStr):
-        return " ".join(document.facets.values())
+    def _get_document_representation(cls, document: Document) -> (Union[int, str, float], Document):
+        return document.doc_id, document
+
+
+class ReRankerPool:
+    # Reranks per topic using threads.
+    pass

@@ -87,8 +87,6 @@ def check_config_instance_has_right_attributes(config, config_dict):
 
 
 def test_config_load(config_file_dict):
-    from interfaces import config
-
     config_file, config_dict = config_file_dict
     c = config_factory(config_file, config.GenericConfig)
 

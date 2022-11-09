@@ -4,11 +4,11 @@ import sys
 import pytest
 import toml
 
-from src.debeir.engines.client import Client
-from src.debeir.data_sets.factory import query_factory, parser_factory, executor_factory, config_factory
-from src.debeir.interfaces import config
-from src.debeir.interfaces.config import _NIRMasterConfig
-from src.debeir.interfaces.results import Results
+from debeir.engines.client import Client
+from debeir.data_sets.factory import query_factory, parser_factory, executor_factory, config_factory
+from debeir.interfaces import config
+from debeir.interfaces.config import _NIRMasterConfig
+from debeir.interfaces.results import Results
 
 
 @pytest.fixture(scope="session")

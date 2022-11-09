@@ -27,7 +27,7 @@ async def test_evaluation_cb(config_file_dict, nir_config_dict):
     p.engine.query.id_mapping = "Id"
     p.register_callback(cb)
 
-    results = await p.run_pipeline(cosine_offset=5.0)
+    await p.run_pipeline(cosine_offset=5.0)
 
     assert cb.parsed_run is not None
     assert len(cb.parsed_run) > 1
