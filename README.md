@@ -45,8 +45,7 @@ cd tests/
 
 ./build_test.env.sh
 
-pytest tests_imports.py 
-pytest test_pipeline.py
+pytest .
 ```
 
 A helper script for removing the development environment is provided in ```tests/cleanup.sh```
