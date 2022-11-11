@@ -11,6 +11,7 @@ import transformers
 
 from debeir.data_sets.types import RelevanceExample, InputExample
 # from sentence_transformers import InputExample
+from datasets import concatenate_datasets
 
 
 class LoggingScheduler:
@@ -109,11 +110,16 @@ class LoggingEvaluator:
         return getattr(self.evaluator, attr)
 
 
-class DatasetToSentTrans:
-    def __init__(self, dataset: datasets.Dataset, text_cols: List[str], label_col: str = None):
+class SentDataset:
+    def __init__(self, dataset: datasets.Dataset, text_cols: List[str],
+                 label_col: str = None, label=None):
         self.dataset = dataset
         self.text_cols = text_cols
         self.label_col = label_col
+        if label:
+            self.label = label
+        else:
+            self.label = 1
 
     def __getitem__(self, idx):
         item = self.dataset[idx]
@@ -128,12 +134,36 @@ class DatasetToSentTrans:
         if self.label_col:
             example.label = item[self.label_col]
         else:
-            example.label = 1
+            example.label = self.label
 
         return example
 
     def __len__(self):
         return len(self.dataset)
+
+
+class SentDatasetList:
+    def __init__(self, datasets: List[SentDataset]):
+        self.datasets = datasets
+        self.lengths = [len(dataset) for dataset in self.datasets]
+        self.total_length = sum(self.lengths)
+
+    def __getitem__(self, idx):
+        i = 0
+        cur_length = 0
+
+        for i, length in enumerate(self.lengths):
+            if idx < length:
+                break
+
+            cur_length += length
+
+        assert idx - cur_length >= 0
+
+        return self.datasets[i][idx - cur_length]
+
+    def __len__(self):
+        return self.total_length
 
 
 def _train_sentence_transformer(model_fp_or_name: str, output_dir: str,
