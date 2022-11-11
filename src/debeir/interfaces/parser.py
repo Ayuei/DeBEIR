@@ -16,12 +16,13 @@ import pandas as pd
 # TODO: move _get_topics to private cls method with arguments, and expose get_topics as an instance method.
 
 
-@dataclass(init=False)
+@dataclass(init=True)
 class Parser:
     """
     Parser interface
     """
 
+    id_field: object
     parse_fields: List[str]
 
     @classmethod
@@ -135,16 +136,21 @@ class CSVParser(Parser):
     Loads topics from a CSV file
     """
     id_field = "id"
-    parse_fields = ["text"]
+    parse_fields = ["Text"]
 
-    def __init__(self, parse_fields=None):
+    def __init__(self, id_field=None, parse_fields=None):
         if parse_fields is None:
-            self.parse_fields = ["id", "text"]
+            parse_fields = ["id", "text"]
+
+        if id_field is None:
+            id_field = "id"
+
+        super().__init__(id_field, parse_fields)
 
     @classmethod
     def _get_topics(cls, csvfile, dialect="excel",
-                    id_field: str=None,
-                    parse_fields: List[str]=None,
+                    id_field: str = None,
+                    parse_fields: List[str] = None,
                     *args, **kwargs) -> Dict[int, Dict[str, str]]:
         topics = {}
 
