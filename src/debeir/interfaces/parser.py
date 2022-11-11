@@ -137,9 +137,9 @@ class CSVParser(Parser):
     id_field = "id"
     parse_fields = ["text"]
 
-    def __init__(self, parsed_fields=None):
-        if parsed_fields is None:
-            self.parsed_fields = ["id", "text"]
+    def __init__(self, parse_fields=None):
+        if parse_fields is None:
+            self.parse_fields = ["id", "text"]
 
     @classmethod
     def _get_topics(cls, csvfile, dialect="excel",
