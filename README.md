@@ -13,6 +13,9 @@ python3 -m virtualenv venv
 source venv/bin/activate
 
 pip install git+https://github.com/Ayuei/DeBEIR.git
+
+# Sentence Segmentation Model install
+pip install https://s3-us-west-2.amazonaws.com/ai2-s2-scispacy/releases/v0.5.0/en_core_sci_md-0.5.0.tar.gz
 ```
 
 ### Usage
