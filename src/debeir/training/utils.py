@@ -15,9 +15,8 @@ from datasets import concatenate_datasets
 
 
 class LoggingScheduler:
-    def __init__(self, scheduler: LambdaLR, wandb: wandb):
+    def __init__(self, scheduler: LambdaLR):
         self.scheduler = scheduler
-        self.wandb = wandb
 
     def step(self, epoch=None):
         self.scheduler.step(epoch)
@@ -25,13 +24,13 @@ class LoggingScheduler:
         last_lr = self.scheduler.get_last_lr()
 
         for i, lr in enumerate(last_lr):
-            self.wandb.log({f"lr_{i}": lr})
+            wandb.log({f"lr_{i}": lr})
 
     def __getattr__(self, attr):
         return getattr(self.scheduler, attr)
 
 
-def get_scheduler_with_wandb(wdb: wandb, optimizer, scheduler: str, warmup_steps: int, t_total: int):
+def get_scheduler_with_wandb(optimizer, scheduler: str, warmup_steps: int, t_total: int):
     """
     Returns the correct learning rate scheduler. Available scheduler: constantlr, warmupconstant, warmuplinear, warmupcosine, warmupcosinewithhardrestarts
     """
@@ -55,17 +54,16 @@ def get_scheduler_with_wandb(wdb: wandb, optimizer, scheduler: str, warmup_steps
     else:
         raise ValueError("Unknown scheduler {}".format(scheduler))
 
-    return LoggingScheduler(sched, wdb)
+    return LoggingScheduler(sched)
 
 
 class LoggingLoss:
-    def __init__(self, loss_fn, wandb: wandb):
+    def __init__(self, loss_fn):
         self.loss_fn = loss_fn
-        self.wandb = wandb
 
     def __call__(self, *args, **kwargs):
         loss = self.loss_fn(*args, **kwargs)
-        self.wandb.log({'train_loss': loss})
+        wandb.log({'train_loss': loss})
         return loss
 
     def __getattr__(self, attr):
@@ -96,13 +94,12 @@ class TokenizerOverload:
 
 
 class LoggingEvaluator:
-    def __init__(self, evaluator, wandb: wandb):
+    def __init__(self, evaluator):
         self.evaluator = evaluator
-        self.wandb = wandb
 
     def __call__(self, *args, **kwargs):
         scores = self.evaluator(*args, **kwargs)
-        self.wandb.log({'val_acc': scores})
+        wandb.log({'val_acc': scores})
 
         return scores
 
@@ -116,10 +113,7 @@ class SentDataset:
         self.dataset = dataset
         self.text_cols = text_cols
         self.label_col = label_col
-        if label:
-            self.label = label
-        else:
-            self.label = 1
+        self.label = label
 
     def __getitem__(self, idx):
         item = self.dataset[idx]
@@ -134,7 +128,8 @@ class SentDataset:
         if self.label_col:
             example.label = item[self.label_col]
         else:
-            example.label = self.label
+            if self.label:
+                example.label = self.label
 
         return example
 
