@@ -149,18 +149,19 @@ class SentDatasetList:
         self.total_length = sum(self.lengths)
 
     def __getitem__(self, idx):
-        i = 0
-        cur_length = 0
+        i, c = 0, 0
 
         for i, length in enumerate(self.lengths):
-            if idx < length:
+            if idx - c == 0:
+                idx = 0
+                break
+            if idx - c < length:
+                idx = idx - c
                 break
 
-            cur_length += length
+            c = c + self.lengths[i]
 
-        assert idx - cur_length >= 0
-
-        return self.datasets[i][idx - cur_length]
+        return self.datasets[i][idx]
 
     def __len__(self):
         return self.total_length
