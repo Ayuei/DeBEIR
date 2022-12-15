@@ -44,6 +44,12 @@ This will take approximately 30 minutes to complete on a mid-range system.
 Requires: Docker and pip installation of requirements-dev.txt packages.
 
 ```bash
+virtualenv venv
+
+source virtualenv/venv/activate
+
+pip install -r requirements-dev.txt
+
 cd tests/
 
 ./build_test.env.sh
