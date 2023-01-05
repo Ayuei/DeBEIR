@@ -9,7 +9,7 @@ Requires python >= 3.10
 It is recommended to set up a virtual environment and install from source
 
 ```bash
-python3 -m virtualenv venv
+python3 -m venv venv
 source venv/bin/activate
 
 pip install git+https://github.com/Ayuei/DeBEIR.git
