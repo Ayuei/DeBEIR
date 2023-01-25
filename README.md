@@ -58,3 +58,14 @@ pytest .
 ```
 
 A helper script for removing the development environment is provided in ```tests/cleanup.sh```
+
+## Community Guidelines
+
+### An Issue?
+If you have any issue with the current library, please file an issue [create an issue](https://github.com/Ayuei/DeBEIR/issues/new/choose).
+
+### Contributing
+For those wanting to contribute to the library, please see ./CONTRIBUTING.md and submit a pull request!
+
+### Support
+If you wish to reach out to the author and maintainer of this library, please email vincent.nguyen@anu.edu.au
