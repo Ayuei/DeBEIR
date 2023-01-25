@@ -8,13 +8,13 @@ import abc
 import os
 import tempfile
 import uuid
-import loguru
-
 from typing import List
-from debeir.interfaces.pipeline import Pipeline
-from debeir.data_sets.factory import query_factory
+
+import loguru
+from debeir.datasets.factory import query_factory
 from debeir.evaluation.evaluator import Evaluator
-from debeir.interfaces.config import GenericConfig, NIRConfig
+from debeir.core.config import GenericConfig, NIRConfig
+from debeir.core.pipeline import Pipeline
 
 
 class Callback:

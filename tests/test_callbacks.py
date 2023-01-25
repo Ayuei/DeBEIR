@@ -1,12 +1,12 @@
 import pytest
 import os
 
-from debeir.interfaces import config
-from debeir.data_sets.factory import config_factory
-from debeir.interfaces.callbacks import EvaluationCallback, SerializationCallback
-from debeir.interfaces.config import _NIRMasterConfig
+from debeir.core import config
+from debeir.datasets.factory import config_factory
+from debeir.core.callbacks import EvaluationCallback, SerializationCallback
+from debeir.core.config import _NIRMasterConfig
 from debeir.evaluation.evaluator import Evaluator
-from debeir.interfaces.pipeline import NIRPipeline
+from debeir.core.pipeline import NIRPipeline
 
 from test_pipeline import config_file_dict, nir_config_dict
 

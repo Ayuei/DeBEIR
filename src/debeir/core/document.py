@@ -1,7 +1,7 @@
 import abc
 import dataclasses
 from collections import defaultdict
-from typing import Union, Dict, List
+from typing import Dict, List, Union
 
 from debeir.utils.utils import flatten
 

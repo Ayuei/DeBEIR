@@ -1,12 +1,13 @@
 from typing import List
-from sentence_transformers.evaluation import SentenceEvaluator
 
+from debeir.datasets.types import RelevanceExample
 from debeir.training.utils import _train_sentence_transformer
-from debeir.data_sets.types import RelevanceExample
+from sentence_transformers.evaluation import SentenceEvaluator
 
 
 def train_cross_encoder_reranker(model_fp_or_name: str, output_dir: str, train_dataset: List[RelevanceExample],
-                                 dev_dataset: List[RelevanceExample], train_batch_size=32, num_epochs=3, warmup_steps=None,
+                                 dev_dataset: List[RelevanceExample], train_batch_size=32, num_epochs=3,
+                                 warmup_steps=None,
                                  evaluate_every_n_step: int = 1000,
                                  special_tokens=None, pooling_mode=None, loss_func=None,
                                  evaluator: SentenceEvaluator = None,

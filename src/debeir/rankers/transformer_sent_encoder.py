@@ -1,11 +1,11 @@
+from hashlib import md5
 from typing import List
 
 import sentence_transformers
+import spacy
 import torch
 import torch.nn.functional as F
-import spacy
 from analysis_tools_ir.utils import cache
-from hashlib import md5
 
 EMBEDDING_DIM_SIZE = 768
 
@@ -19,6 +19,7 @@ class Encoder:
     :param spacy_model: the spacy or scispacy model to use for sentence boundary detection.
     :param max_length: Maximum input length for the spacy nlp model.
     """
+
     def __init__(
             self,
             model_path,

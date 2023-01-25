@@ -1,18 +1,16 @@
 import csv
-import loguru
-
 from dataclasses import dataclass
-from typing import Dict, Union, Optional, List
-from elasticsearch import AsyncElasticsearch as Elasticsearch
+from typing import Dict, List, Optional, Union
 
-from debeir.interfaces.executor import GenericElasticsearchExecutor
-from debeir.interfaces.query import GenericElasticsearchQuery
+import loguru
 from debeir.engines.elasticsearch.generate_script_score import generate_script
-
-from debeir.interfaces.config import GenericConfig, apply_config
-from debeir.interfaces.parser import Parser
+from debeir.core.config import GenericConfig, apply_config
+from debeir.core.executor import GenericElasticsearchExecutor
+from debeir.core.parser import Parser
+from debeir.core.query import GenericElasticsearchQuery
 from debeir.rankers.transformer_sent_encoder import Encoder
 from debeir.utils.scaler import get_z_value
+from elasticsearch import AsyncElasticsearch as Elasticsearch
 
 
 @dataclass(init=True, unsafe_hash=True)
@@ -30,14 +28,14 @@ class TrialsQueryConfig(GenericConfig):
                 "Must have both field usages" " if embedding query"
             )
             assert (
-                self.encoder_fp and self.encoder
+                    self.encoder_fp and self.encoder
             ), "Must provide encoder path for embedding model"
             assert self.norm_weight is not None or self.automatic is not None, (
                 "Norm weight be specified or be " "automatic "
             )
 
         assert (
-            self.query_field_usage is not None or self.fields is not None
+                self.query_field_usage is not None or self.fields is not None
         ), "Must have a query field"
         assert self.query_type in [
             "ablation",
@@ -373,17 +371,17 @@ class TrialsElasticsearchQuery(GenericElasticsearchQuery):
 
     @apply_config
     def generate_query_embedding(
-        self,
-        topic_num,
-        encoder,
-        query_field_usage,
-        embed_field_usage,
-        cosine_weights: List[float] = None,
-        query_weight: List[float] = None,
-        norm_weight=2.15,
-        ablations=False,
-        automatic_scores=None,
-        **kwargs,
+            self,
+            topic_num,
+            encoder,
+            query_field_usage,
+            embed_field_usage,
+            cosine_weights: List[float] = None,
+            query_weight: List[float] = None,
+            norm_weight=2.15,
+            ablations=False,
+            automatic_scores=None,
+            **kwargs,
     ):
         """
         Computes the NIR score for a given topic
@@ -465,18 +463,17 @@ class ClinicalTrialsElasticsearchExecutor(GenericElasticsearchExecutor):
     query: TrialsElasticsearchQuery
 
     def __init__(
-        self,
-        topics: Dict[Union[str, int], Dict[str, str]],
-        client: Elasticsearch,
-        index_name: str,
-        output_file: str,
-        query: TrialsElasticsearchQuery,
-        encoder: Optional[Encoder] = None,
-        config=None,
-        *args,
-        **kwargs,
+            self,
+            topics: Dict[Union[str, int], Dict[str, str]],
+            client: Elasticsearch,
+            index_name: str,
+            output_file: str,
+            query: TrialsElasticsearchQuery,
+            encoder: Optional[Encoder] = None,
+            config=None,
+            *args,
+            **kwargs,
     ):
-
         super().__init__(
             topics,
             client,
@@ -500,6 +497,7 @@ class ClinicalTrialParser(Parser):
     """
     Parser for Clinical Trials topics
     """
+
     @classmethod
     def get_topics(cls, csvfile) -> Dict[int, Dict[str, str]]:
         topics = {}

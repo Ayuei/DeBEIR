@@ -4,9 +4,8 @@ from collections import defaultdict
 from typing import Dict, List
 
 import pandas as pd
-
-from debeir.interfaces.query import GenericElasticsearchQuery
-from debeir.interfaces.parser import XMLParser, JsonLinesParser
+from debeir.core.parser import JsonLinesParser, XMLParser
+from debeir.core.query import GenericElasticsearchQuery
 
 
 class TREClinicalTrialDocumentParser(XMLParser):
@@ -74,7 +73,7 @@ class TrecClincialElasticsearchQuery(GenericElasticsearchQuery):
     def __init__(self, topics, config, *args, **kwargs):
         super().__init__(topics, config, *args, **kwargs)
 
-        #self.mappings = ['BriefTitle_Text',
+        # self.mappings = ['BriefTitle_Text',
         #                 'BriefSummary_Text',
         #                 'DetailedDescription_Text']
 

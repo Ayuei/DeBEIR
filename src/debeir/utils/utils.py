@@ -1,9 +1,9 @@
 import inspect
-
-import loguru
 import os
 import sys
 from collections.abc import MutableMapping
+
+import loguru
 
 
 def create_output_file(config, config_fp, remove, output_file, output_directory, **kwargs):
@@ -35,7 +35,7 @@ def create_output_file(config, config_fp, remove, output_file, output_directory,
         open(output_file, "w+").close()
 
     assert (
-            config.query_type
+        config.query_type
     ), "At least config or argument must be provided for query type"
 
     return output_file

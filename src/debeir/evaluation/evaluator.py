@@ -1,15 +1,16 @@
-import loguru
-from typing import Union, List, Dict
 from collections import defaultdict
+from typing import Dict, List, Union
 
+import loguru
 from analysis_tools_ir import evaluate, sigtests
-from debeir.interfaces.config import MetricsConfig, GenericConfig
+from debeir.core.config import GenericConfig, MetricsConfig
 
 
 class Evaluator:
     """
     Evaluation class for computing metrics from TREC-style files
     """
+
     def __init__(self, qrels: str, metrics: List[str]):
         self.qrels = qrels
         self.metrics = []

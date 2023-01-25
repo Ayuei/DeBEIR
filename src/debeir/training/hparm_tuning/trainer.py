@@ -1,21 +1,20 @@
 import abc
 from collections import defaultdict
 from functools import partial
-from typing import Sequence, Dict, Union
+from typing import Dict, Sequence, Union
 
 import loguru
 import optuna
-from wandb import wandb
-from datasets import DatasetDict, Dataset
-from sentence_transformers import SentenceTransformer, losses
-from torch.utils.data import DataLoader
-
+import torch
+import torch_optimizer
 from debeir.training.hparm_tuning.config import HparamConfig
 from debeir.training.hparm_tuning.types import Hparam
-import torch_optimizer
-import torch
+from debeir.training.utils import LoggingEvaluator, LoggingLoss
+from sentence_transformers import SentenceTransformer, losses
+from torch.utils.data import DataLoader
+from wandb import wandb
 
-from debeir.training.utils import LoggingLoss, LoggingEvaluator
+from datasets import Dataset, DatasetDict
 
 
 class OptimizersWrapper:

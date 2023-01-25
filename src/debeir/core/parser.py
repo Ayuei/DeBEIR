@@ -1,14 +1,13 @@
 import abc
+import csv
 import dataclasses
+import json
 from collections import defaultdict
 from dataclasses import dataclass
-import csv
-from typing import Dict, List, Optional
+from typing import Dict, List
 from xml.etree import ElementTree as ET
-import dill
-import json
 
-import loguru
+import dill
 import pandas as pd
 
 

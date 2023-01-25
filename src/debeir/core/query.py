@@ -1,11 +1,9 @@
 import dataclasses
+from typing import Dict, Optional, Union
 
 import loguru
-
-from typing import Dict, Union, Optional
-
-from debeir.interfaces.config import apply_config, GenericConfig
 from debeir.engines.elasticsearch.generate_script_score import generate_script
+from debeir.core.config import GenericConfig, apply_config
 from debeir.utils.scaler import get_z_value
 
 
@@ -106,7 +104,7 @@ class GenericElasticsearchQuery(Query):
 
     @apply_config
     def generate_query_embedding(
-        self, topic_num, encoder, *args, norm_weight=2.15, ablations=False, cosine_ceiling=Optional[float],
+            self, topic_num, encoder, *args, norm_weight=2.15, ablations=False, cosine_ceiling=Optional[float],
             cosine_offset: float = 1.0, **kwargs):
         """
         Generates an embedding script score query for Elasticsearch as part of the NIR scoring function.

@@ -1,22 +1,19 @@
 import abc
-
-import debeir
-from loguru import logger
 from typing import List
 
+import debeir
+from debeir.core.config import Config, GenericConfig
+from debeir.core.executor import GenericElasticsearchExecutor
+from debeir.core.results import Results
+from debeir.datasets.factory import factory_fn, get_nir_config
 from debeir.engines.client import Client
-from debeir.data_sets.factory import factory_fn, get_nir_config
-from debeir.interfaces.executor import GenericElasticsearchExecutor
-from debeir.interfaces.config import Config, _NIRMasterConfig
-from debeir.interfaces.config import GenericConfig
-from debeir.interfaces.document import document_factory
-from debeir.interfaces.results import Results
+from loguru import logger
 
 
 class Pipeline:
     pipeline_structure = ["parser", "query", "engine", "evaluator"]
     cannot_disable = ["parser", "query", "engine"]
-    callbacks: List['debeir.interfaces.callbacks.Callback']
+    callbacks: List['debeir.core.callbacks.Callback']
     output_file = None
 
     def __init__(self, engine: GenericElasticsearchExecutor,

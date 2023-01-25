@@ -1,7 +1,6 @@
 import abc
 import dataclasses
-from enum import Enum
-from typing import Sequence, Dict
+from typing import Sequence
 
 import optuna
 

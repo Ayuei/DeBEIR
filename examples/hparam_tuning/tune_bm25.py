@@ -14,7 +14,7 @@ import optuna
 from optuna.integration import WeightsAndBiasesCallback
 
 from engines.client import Client
-from data_sets import factory_fn
+from datasets import factory_fn
 from main import run_config_es
 from training.hparm_tuning.optuna_rank import print_optuna_stats
 

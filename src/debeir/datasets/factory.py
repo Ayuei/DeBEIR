@@ -2,28 +2,21 @@ from pathlib import Path
 from typing import Dict, Type, Union
 
 import toml
-
+from debeir.datasets.bioreddit import BioRedditCommentParser, BioRedditSubmissionParser
+from debeir.datasets.clinical_trials import ClinicalTrialParser, ClinicalTrialsElasticsearchExecutor, \
+    TrialsElasticsearchQuery, TrialsQueryConfig
+from debeir.datasets.marco import MarcoElasticsearchExecutor, MarcoQueryConfig
+from debeir.datasets.trec_clinical_trials import TrecClincialElasticsearchQuery, TrecClinicalTrialsParser
+from debeir.datasets.trec_covid import TrecCovidParser, TrecElasticsearchQuery
 from debeir.evaluation.evaluator import Evaluator
 from debeir.evaluation.residual_scoring import ResidualEvaluator
-from debeir.data_sets.trec_clinical_trials import TrecClincialElasticsearchQuery, TrecClinicalTrialsParser
-from debeir.interfaces.config import GenericConfig, _NIRMasterConfig, SolrConfig, ElasticsearchConfig, MetricsConfig, \
-    NIRConfig, Config
-from debeir.interfaces.query import GenericElasticsearchQuery, Query
-from debeir.data_sets.clinical_trials import TrialsElasticsearchQuery
-from debeir.data_sets.trec_covid import TrecElasticsearchQuery
-
-from debeir.data_sets.clinical_trials import (
-    ClinicalTrialsElasticsearchExecutor,
-    ClinicalTrialParser,
-    TrialsQueryConfig,
-)
-from debeir.data_sets.marco import MarcoElasticsearchExecutor, MarcoQueryConfig
-from debeir.interfaces.executor import GenericElasticsearchExecutor
-from debeir.interfaces.parser import (
+from debeir.core.config import Config, ElasticsearchConfig, GenericConfig, MetricsConfig, NIRConfig, SolrConfig, \
+    _NIRMasterConfig
+from debeir.core.executor import GenericElasticsearchExecutor
+from debeir.core.parser import (
     CSVParser, Parser, TSVParser,
 )
-from debeir.data_sets.bioreddit import BioRedditSubmissionParser, BioRedditCommentParser
-from debeir.data_sets.trec_covid import TrecCovidParser
+from debeir.core.query import GenericElasticsearchQuery, Query
 
 str_to_config_cls = {
     "clinical_trials": TrialsQueryConfig,
@@ -132,7 +125,7 @@ def get_nir_config(nir_config, *args, ignore_errors=False, **kwargs):
         search_engine_config = config_factory(args_dict=main_config.get_search_engine_settings(search_engine),
                                               config_cls=supported_search_engines[search_engine])
 
-    #for search_engine in supported_search_engines:
+    # for search_engine in supported_search_engines:
     #    if search_engine in kwargs and kwargs[search_engine] and kwargs['engine'] == search_engine:
     #        search_engine_config = config_factory(args_dict=main_config.get_search_engine_settings(search_engine),
     #                                              config_cls=supported_search_engines[search_engine])

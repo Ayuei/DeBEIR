@@ -31,7 +31,7 @@ class InputExample:
     def get_label(self):
         return self.label
 
-    #def __getattr__(self, key):
+    # def __getattr__(self, key):
     #    if key == "label":
     #        return self.get_label()
 

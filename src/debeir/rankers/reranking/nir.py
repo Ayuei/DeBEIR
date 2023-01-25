@@ -4,16 +4,15 @@ NIR Reranker
 [Insert paper link here]
 """
 
-from typing import List, Dict
+import math
+from typing import Dict, List
 
-from tqdm import tqdm
-
-from debeir.utils import scaler
-from debeir.interfaces.document import Document
+from debeir.core.document import Document
 from debeir.rankers.reranking.reranker import DocumentReRanker
 from debeir.rankers.transformer_sent_encoder import Encoder
+from debeir.utils import scaler
 from scipy import spatial
-import math
+from tqdm import tqdm
 
 
 class NIReRanker(DocumentReRanker):

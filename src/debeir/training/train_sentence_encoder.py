@@ -1,14 +1,13 @@
-import datasets
-import transformers
-
 from functools import partial
 from typing import List, Union
 
-from sentence_transformers.evaluation import SentenceEvaluator
-from transformers import SchedulerType, Trainer, AutoModel, TrainingArguments
-
+import transformers
+from debeir.datasets.types import InputExample, RelevanceExample
 from debeir.training.utils import _train_sentence_transformer, tokenize_function
-from debeir.data_sets.types import InputExample, RelevanceExample
+from sentence_transformers.evaluation import SentenceEvaluator
+from transformers import AutoModel, SchedulerType, Trainer, TrainingArguments
+
+import datasets
 
 
 def train_biencoder(model_fp_or_name: str, output_dir: str, train_examples: List[InputExample],

@@ -1,5 +1,5 @@
 import copy
-from typing import Union, Dict
+from typing import Dict, Union
 
 base_script = {
     "lang": "painless",
@@ -16,6 +16,7 @@ class SourceBuilder:
 
     This is a string builder class
     """
+
     def __init__(self):
         self.s = ""
         self.i = 0
@@ -46,7 +47,7 @@ class SourceBuilder:
         """
         if ignore_below_one:
             self._add_line(
-                #"def log_score = _score < 1.0 ? 0.0 : Math.log(_score)/Math.log(params.norm_weight);"
+                # "def log_score = _score < 1.0 ? 0.0 : Math.log(_score)/Math.log(params.norm_weight);"
                 "def log_score = params.disable_bm25 ? 0.0 : Math.log(_score)/Math.log(params.norm_weight);"
                 # "def log_score = Math.log(_score)/Math.log(params.norm_weight);"
             )
@@ -89,7 +90,7 @@ class SourceBuilder:
         """
         self._add_line("double embed_score = " + " + ".join(self.variables) + ";")
         self._add_line(
-            #"return params.disable_bm25 == true ? embed_score : embed_score + log_score;"
+            # "return params.disable_bm25 == true ? embed_score : embed_score + log_score;"
             "return embed_score + log_score;"
         )
 
@@ -159,7 +160,7 @@ def check_params_is_valid(params, qfields):
 
 
 def generate_script(
-    fields, params, source_generator=generate_source, qfields="q_eb"
+        fields, params, source_generator=generate_source, qfields="q_eb"
 ) -> Dict:
     """
     Parameters for creating the script

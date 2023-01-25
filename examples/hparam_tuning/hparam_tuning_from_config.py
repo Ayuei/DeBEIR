@@ -10,8 +10,8 @@ from training.hparm_tuning.optuna_rank import run_optuna_with_wandb, print_optun
 from training.hparm_tuning.trainer import SentenceTransformerHparamTrainer
 
 from sentence_transformers import evaluation
-from data_sets.trec_clinical_trials import TrecClinicalTrialTripletParser
-from interfaces import ParsedTopicsToDataset
+from datasets.trec_clinical_trials import TrecClinicalTrialTripletParser
+from core import ParsedTopicsToDataset
 from training.hparm_tuning.config import HparamConfig
 
 

@@ -1,17 +1,16 @@
+import json
 import logging
 import os
 
 import torch
 from torch import nn
-from transformers import BertModel, BertConfig
-import json
+from transformers import BertConfig, BertModel
 
 logger = logging.getLogger(__name__)
 
 ACT_FUNCS = {
     "relu": nn.ReLU,
 }
-
 
 LOSS_FUNCS = {
     'cross_entropy_loss': nn.CrossEntropyLoss,
@@ -88,6 +87,7 @@ class KMaxPool(nn.Module):
 def visualisation_dump(argmax, input_tensors):
     pass
 
+
 class ResidualBlock(nn.Module):
 
     def __init__(self, in_channels, out_channels, optional_shortcut=True,
@@ -109,7 +109,7 @@ class ResidualBlock(nn.Module):
 
 class ColBERT(nn.Module):
     def __init__(self, bert_model_args, bert_model_kwargs, config: BertConfig, device: str, max_seq_len: int
-            = 128, k: int = 8,
+    = 128, k: int = 8,
                  optional_shortcut: bool = True, hidden_neurons: int = 2048, use_batch_norms: bool = True,
                  use_trans_blocks: bool = False, residual_kernel_size: int = 1, dropout_perc: float = 0.5,
                  act_func="mish", loss_func='cross_entropy_loss', **kwargs):  # kwargs for compat
@@ -169,16 +169,16 @@ class ColBERT(nn.Module):
         # Create the MLP to compress the k signals
         linear_layers = list()
         linear_layers.append(nn.Linear(hidden_dim * k, num_labels))  # Downsample into Kmaxpool?
-        #linear_layers.append(nn.Linear(hidden_neurons, hidden_neurons))
-        #linear_layers.append(nn.Dropout(dropout_perc))
-        #linear_layers.append(nn.Linear(hidden_neurons, num_labels))
+        # linear_layers.append(nn.Linear(hidden_neurons, hidden_neurons))
+        # linear_layers.append(nn.Dropout(dropout_perc))
+        # linear_layers.append(nn.Linear(hidden_neurons, num_labels))
 
         self.linear_layers = nn.Sequential(*linear_layers)
         self.apply(weight_init)
         self.bert = BertModel.from_pretrained(*bert_model_args, **bert_model_kwargs,
-                config=self.bert_config)  # Add Bert model after random initialisation
+                                              config=self.bert_config)  # Add Bert model after random initialisation
 
-        for param in self.bert.pooler.parameters(): # We don't need the pooler
+        for param in self.bert.pooler.parameters():  # We don't need the pooler
             param.requires_grad = False
 
         self.bert.to(self.device)
@@ -204,13 +204,13 @@ class ColBERT(nn.Module):
             assert len(self.transformation_blocks) == len(hidden_states)
             zip_args.append(self.transformation_blocks)
         else:
-            zip_args.append([identity for i in range(self.num_layers+1)])
+            zip_args.append([identity for i in range(self.num_layers + 1)])
 
         if self.use_batch_norms:
             assert len(self.batch_norms) == len(hidden_states)
             zip_args.append(self.batch_norms)
         else:
-            zip_args.append([identity for i in range(self.num_layers+1)])
+            zip_args.append([identity for i in range(self.num_layers + 1)])
 
         out = None
         for co, hi, tr, bn in zip(*zip_args):
@@ -227,7 +227,6 @@ class ColBERT(nn.Module):
         logits = self.linear_layers(torch.flatten(out, start_dim=1))
 
         return self.loss_func(logits, labels), logits
-
 
     @classmethod
     def from_config(cls, *args, config_path):
@@ -276,7 +275,7 @@ class ColBERT(nn.Module):
 
 
 class ComBERT(nn.Module):
-    def __init__(self, bert_model_args, bert_model_kwargs, config: BertConfig, device: str, max_seq_len: int= 128,
+    def __init__(self, bert_model_args, bert_model_kwargs, config: BertConfig, device: str, max_seq_len: int = 128,
                  k: int = 8, optional_shortcut: bool = True, hidden_neurons: int = 2048, use_batch_norms: bool = True,
                  use_trans_blocks: bool = False, residual_kernel_size: int = 1, dropout_perc: float = 0.5,
                  act_func="mish", loss_func='cross_entropy_loss', num_blocks=2, **kwargs):  # kwargs for compat
@@ -313,7 +312,6 @@ class ComBERT(nn.Module):
         # Adds up to num_layers + 1 embedding layer
         conv_layers.append(nn.Conv1d(hidden_dim, hidden_dim, kernel_size=1))
 
-
         for i in range(num_blocks):
             conv_layers.append(ResidualBlock(hidden_dim, hidden_dim, optional_shortcut=optional_shortcut,
                                              kernel_size=residual_kernel_size, act_func=act_func))
@@ -346,7 +344,7 @@ class ComBERT(nn.Module):
         split_size = len(hidden_states) // self.num_blocks
 
         assert split_size % 2 == 0, "must be an even number"
-        split_layers = [hidden_states[x:x+split_size] for x in range(0, len(hidden_states), split_size)]
+        split_layers = [hidden_states[x:x + split_size] for x in range(0, len(hidden_states), split_size)]
         split_layers.insert(0, embedding_layer)
 
         assert len(self.conv_layers) == len(split_layers), "must have equal inputs in length"
@@ -360,7 +358,6 @@ class ComBERT(nn.Module):
         logits = self.linear_layers(torch.flatten(torch.cat(outputs, dim=-1), start_dim=1))
 
         return self.loss_func(logits, labels), logits
-
 
     @classmethod
     def from_config(cls, *args, config_path):

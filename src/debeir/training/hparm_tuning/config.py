@@ -2,8 +2,8 @@ import dataclasses
 import json
 from typing import Dict
 
+from debeir.core.config import Config
 from debeir.training.hparm_tuning.types import HparamTypes
-from debeir.interfaces.config import Config
 
 
 @dataclasses.dataclass(init=True)
@@ -43,7 +43,7 @@ class HparamConfig(Config):
         hparams = {}
 
         for hparam, value in self.hparams.items():
-            #if "args" in value:  # Of the form {"learning rate": {args: [0.1, 1.0, 0.1]}}
+            # if "args" in value:  # Of the form {"learning rate": {args: [0.1, 1.0, 0.1]}}
             #    hparam_obj = hparam_type(name=hparam, *value["args"])
             if isinstance(value, Dict) and "type" in value:
                 hparam_type = HparamTypes[value['type']]

@@ -6,11 +6,12 @@ Date: May 07, 2020
 Code imported from: https://github.com/HobbitLong/SupContrast/blob/master/losses.py
 """
 
-import torch
 from enum import Enum
-from typing import Iterable, Dict
+from typing import Dict, Iterable
+
+import torch
 import torch.nn.functional as F
-from torch import nn, Tensor
+from torch import Tensor, nn
 
 
 class SupConLoss(nn.Module):
@@ -157,5 +158,6 @@ class ContrastiveSentLoss(nn.Module):
         assert len(reps) == 2
         rep_anchor, rep_other = reps
         distances = self.distance_metric(rep_anchor, rep_other)
-        losses = 0.5 * (labels.float() * distances.pow(2) + (1 - labels).float() * F.relu(self.margin - distances).pow(2))
+        losses = 0.5 * (
+                    labels.float() * distances.pow(2) + (1 - labels).float() * F.relu(self.margin - distances).pow(2))
         return losses.mean() if self.size_average else losses.sum()

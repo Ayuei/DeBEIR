@@ -1,17 +1,18 @@
 from typing import List, Union
 
-import datasets
 import loguru
+import transformers
+from debeir.datasets.types import InputExample, RelevanceExample
 from sentence_transformers import SentenceTransformer, losses, models
-from sentence_transformers.evaluation import SentenceEvaluator, EmbeddingSimilarityEvaluator
+from sentence_transformers.evaluation import EmbeddingSimilarityEvaluator, SentenceEvaluator
 from torch.optim.lr_scheduler import LambdaLR
 from torch.utils.data import DataLoader
 from wandb import wandb
-import transformers
 
-from debeir.data_sets.types import RelevanceExample, InputExample
+import datasets
+
+
 # from sentence_transformers import InputExample
-from datasets import concatenate_datasets
 
 
 class LoggingScheduler:

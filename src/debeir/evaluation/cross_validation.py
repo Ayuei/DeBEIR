@@ -1,10 +1,9 @@
 from enum import Enum
-from typing import List, Union, Dict
+from typing import Dict, List, Union
 
 import numpy as np
+from debeir.datasets.types import DatasetTypes, InputExample
 from sklearn.model_selection import KFold, StratifiedKFold
-from debeir.data_sets.types import DatasetTypes
-from debeir.data_sets.types import InputExample
 
 import datasets
 
@@ -45,11 +44,12 @@ class CrossValidator:
          List[Dict] -> {"data": Data, "label": label}
          Huggingface Dataset Object -> Data(set="train", label = "label").select(idx)
     """
+
     def __init__(self, dataset: Union[List, List[Dict], datasets.Dataset],
                  x_idx_label_or_attr: Union[str, int], y_idx_label_or_attr: Union[str, int],
                  cross_validator_type: [str, CrossValidatorTypes] = CrossValidatorTypes.Stratified,
                  seed=42, n_splits=5):
-        #self.evaluator = evaluator
+        # self.evaluator = evaluator
         self.cross_vali_fn = str_to_fn[cross_validator_type](n_splits=n_splits,
                                                              shuffle=True,
                                                              random_state=seed)

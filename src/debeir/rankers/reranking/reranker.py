@@ -3,9 +3,9 @@ General re-ranking interfaces to be implemented by child classes.
 """
 
 import abc
-from typing import List, AnyStr, Union
+from typing import AnyStr, List, Union
 
-from debeir.interfaces.document import Document
+from debeir.core.document import Document
 
 
 class ReRanker:

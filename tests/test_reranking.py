@@ -6,10 +6,10 @@ from copy import deepcopy
 import pytest
 from debeir.rankers.reranking.nir import NIReRanker
 
-from debeir.interfaces import config
-from debeir.data_sets.factory import config_factory
-from debeir.interfaces.config import _NIRMasterConfig
-from debeir.interfaces.pipeline import BM25Pipeline
+from debeir.core import config
+from debeir.datasets.factory import config_factory
+from debeir.core.config import _NIRMasterConfig
+from debeir.core.pipeline import BM25Pipeline
 
 from debeir.rankers.reranking.use import USEReRanker
 from test_pipeline import config_file_dict, nir_config_dict

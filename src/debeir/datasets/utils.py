@@ -1,11 +1,10 @@
 # TODO: Convert a Parser Return Dict (Dict[int, Dict[str, ...])
 
-import datasets
-
-from debeir.data_sets.types import InputExample
+from debeir.datasets.types import DatasetTypes, InputExample
 from debeir.evaluation.cross_validation import CrossValidator
-from debeir.data_sets.types import DatasetTypes
 from debeir.evaluation.evaluator import Evaluator
+
+import datasets
 
 
 class CrossValidatorDataset:

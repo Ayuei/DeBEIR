@@ -3,10 +3,9 @@ import threading
 from queue import Queue
 from typing import List
 
-from elasticsearch import Elasticsearch
-
 from debeir.rankers.transformer_sent_encoder import Encoder
 from debeir.utils.utils import remove_excess_whitespace
+from elasticsearch import Elasticsearch
 
 
 class Indexer:

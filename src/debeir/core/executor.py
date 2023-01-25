@@ -1,13 +1,12 @@
-from typing import Dict, Union, Optional
+from typing import Dict, Optional, Union
 
 import loguru
-from elasticsearch import AsyncElasticsearch as Elasticsearch
-
-from debeir.interfaces.query import GenericElasticsearchQuery
 from debeir.engines.elasticsearch.executor import ElasticsearchExecutor
-from debeir.interfaces.config import NIRConfig, GenericConfig
+from debeir.core.config import GenericConfig, NIRConfig
+from debeir.core.query import GenericElasticsearchQuery
 from debeir.rankers.transformer_sent_encoder import Encoder
 from debeir.utils.scaler import unpack_elasticsearch_scores
+from elasticsearch import AsyncElasticsearch as Elasticsearch
 
 
 class GenericElasticsearchExecutor(ElasticsearchExecutor):
@@ -17,16 +16,16 @@ class GenericElasticsearchExecutor(ElasticsearchExecutor):
     query: GenericElasticsearchQuery
 
     def __init__(
-        self,
-        topics: Dict[Union[str, int], Dict[str, str]],
-        client: Elasticsearch,
-        index_name: str,
-        output_file: str,
-        query: GenericElasticsearchQuery,
-        encoder: Optional[Encoder] = None,
-        config=None,
-        *args,
-        **kwargs,
+            self,
+            topics: Dict[Union[str, int], Dict[str, str]],
+            client: Elasticsearch,
+            index_name: str,
+            output_file: str,
+            query: GenericElasticsearchQuery,
+            encoder: Optional[Encoder] = None,
+            config=None,
+            *args,
+            **kwargs,
     ):
         super().__init__(
             topics,
@@ -56,17 +55,17 @@ class GenericElasticsearchExecutor(ElasticsearchExecutor):
         """
         return self.query.generate_query(topic_num, **kwargs)
 
-    #def generate_query_ablation(self, topic_num, **kwargs):
+    # def generate_query_ablation(self, topic_num, **kwargs):
     #    return self.query.generate_query_ablation(topic_num)
 
     def generate_embedding_query(
-        self,
-        topic_num,
-        cosine_weights=None,
-        query_weights=None,
-        norm_weight=2.15,
-        automatic_scores=None,
-        **kwargs,
+            self,
+            topic_num,
+            cosine_weights=None,
+            query_weights=None,
+            norm_weight=2.15,
+            automatic_scores=None,
+            **kwargs,
     ):
         """
         Executes an NIR-style query with combined scoring.
@@ -93,9 +92,9 @@ class GenericElasticsearchExecutor(ElasticsearchExecutor):
             **kwargs,
         )
 
-    #@apply_config
+    # @apply_config
     async def execute_query(
-        self, query=None, return_size: int=None, return_id_only: bool=None,
+            self, query=None, return_size: int = None, return_id_only: bool = None,
             topic_num=None, ablation=False, query_type=None,
             **kwargs
     ):
@@ -150,11 +149,11 @@ class GenericElasticsearchExecutor(ElasticsearchExecutor):
         loguru.logger.info("Running automatic BM25 weight adjustment")
 
         # Backup variables temporarily
-        #size = self.return_size
-        #self.return_size = 1
-        #self.return_id_only = True
-        #prev_qt = self.config.query_type
-        #self.config.query_type = "query"
+        # size = self.return_size
+        # self.return_size = 1
+        # self.return_id_only = True
+        # prev_qt = self.config.query_type
+        # self.config.query_type = "query"
 
         results = await self.run_all_queries(query_type="query",
                                              return_results=True,

@@ -1,7 +1,7 @@
 from typing import Dict
 
-from debeir.interfaces.query import GenericElasticsearchQuery
-from debeir.interfaces.parser import XMLParser
+from debeir.core.parser import XMLParser
+from debeir.core.query import GenericElasticsearchQuery
 
 
 class TrecCovidParser(XMLParser):

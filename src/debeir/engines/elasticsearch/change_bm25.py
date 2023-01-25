@@ -1,8 +1,7 @@
 import json
 
-import elasticsearch
 import requests
-from loguru import logger
+
 
 # echo "k = $k b = $b"
 #
@@ -25,7 +24,7 @@ from loguru import logger
 # sleep 10
 
 
-def change_bm25_params(index, k1: float, b: float, base_url: str="http://localhost:9200"):
+def change_bm25_params(index, k1: float, b: float, base_url: str = "http://localhost:9200"):
     """
     Change the BM25 parameters of the elasticsearch BM25 ranker.
 
@@ -51,18 +50,18 @@ def change_bm25_params(index, k1: float, b: float, base_url: str="http://localho
     headers = {"Content-type": "application/json"}
 
     data = {
-      "index": {
-        "similarity": {
-          "default": {
-            "type": "BM25",
-            "b": b,
-            "k1": k1,
-          }
+        "index": {
+            "similarity": {
+                "default": {
+                    "type": "BM25",
+                    "b": b,
+                    "k1": k1,
+                }
+            }
         }
-      }
-     }
+    }
 
-    resp = requests.put(base_url+"/_settings", headers=headers, data=json.dumps(data), timeout=60)
+    resp = requests.put(base_url + "/_settings", headers=headers, data=json.dumps(data), timeout=60)
 
     if not resp.ok:
         raise RuntimeError("Response code:", resp.status_code, resp.text)

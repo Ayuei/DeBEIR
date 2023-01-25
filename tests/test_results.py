@@ -5,10 +5,10 @@ import pytest
 import toml
 
 from debeir.engines.client import Client
-from debeir.data_sets.factory import query_factory, parser_factory, executor_factory, config_factory
-from debeir.interfaces import config
-from debeir.interfaces.config import _NIRMasterConfig
-from debeir.interfaces.results import Results
+from debeir.datasets.factory import query_factory, parser_factory, executor_factory, config_factory
+from debeir.core import config
+from debeir.core.config import _NIRMasterConfig
+from debeir.core.results import Results
 
 
 @pytest.fixture(scope="session")

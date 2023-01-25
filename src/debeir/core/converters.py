@@ -1,6 +1,7 @@
 from collections import defaultdict
 from typing import Dict, Union
-from debeir.interfaces.parser import Parser
+
+from debeir.core.parser import Parser
 
 import datasets
 
@@ -9,6 +10,7 @@ class ParsedTopicsToDataset:
     """
     Converts a parser's output to a huggingface dataset object.
     """
+
     @classmethod
     def convert(cls, parser: Parser, output: Dict[Union[str, int], Dict]):
         """

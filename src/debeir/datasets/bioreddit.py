@@ -1,7 +1,7 @@
 from typing import Dict
 
-from debeir.interfaces.query import GenericElasticsearchQuery
-from debeir.interfaces.parser import CSVParser
+from debeir.core.parser import CSVParser
+from debeir.core.query import GenericElasticsearchQuery
 
 
 class BioRedditSubmissionParser(CSVParser):
@@ -38,6 +38,7 @@ class BioRedditElasticsearchQuery(GenericElasticsearchQuery):
     """
     Elasticsearch Query object for the BioReddit
     """
+
     def __init__(self, topics, config, *args, **kwargs):
         super().__init__(topics, config, *args, **kwargs)
         self.mappings = ["Text"]

@@ -1,13 +1,12 @@
-import numpy as np
-
 from collections import defaultdict
-from typing import List, Dict, Union
-from datasets import Dataset
-from sklearn.metrics.pairwise import cosine_similarity
+from typing import Dict, List, Union
 
+import numpy as np
 from debeir.evaluation.evaluator import Evaluator
 from debeir.rankers.transformer_sent_encoder import Encoder
+from sklearn.metrics.pairwise import cosine_similarity
 
+from datasets import Dataset
 
 distance_fns = {
     "dot_score": np.dot,
@@ -37,7 +36,7 @@ class SentenceEvaluator(Evaluator):
                 query = topic[query_col]
                 query_eb = self.encoder(query)
 
-                topic[query_col+"_eb"] = query_eb
+                topic[query_col + "_eb"] = query_eb
 
     def _get_document_embedding_and_mapping(self, id_col, text_cols):
         document_ebs = defaultdict(lambda: defaultdict(lambda: []))
@@ -57,7 +56,7 @@ class SentenceEvaluator(Evaluator):
             "max": max,
             "min": min,
             "sum": sum,
-            "avg": lambda k: sum(k)/len(k)
+            "avg": lambda k: sum(k) / len(k)
         }
 
         if not isinstance(a[0], list):
@@ -82,7 +81,7 @@ class SentenceEvaluator(Evaluator):
             for doc_id, document_repr in doc_topics.items():
                 doc_txt_cols, doc_embeddings = list(zip(*document_repr))
 
-                query_ebs = [self.parsed_topics[text_col+"_eb"] for text_col in self.text_cols]
+                query_ebs = [self.parsed_topics[text_col + "_eb"] for text_col in self.text_cols]
                 topics[topic_num].append([doc_id, self._get_score(query_ebs, doc_embeddings)])
 
         for topic_num in topics:

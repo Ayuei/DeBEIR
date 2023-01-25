@@ -1,7 +1,6 @@
 from typing import List
-from debeir.interfaces.document import Document
-from debeir.interfaces.document import document_factory
 
+from debeir.core.document import Document, document_factory
 
 LAZY_STATIC_DOCUMENT_KEY = "document_objects"
 LAZY_STATIC_DOCUMENT_TOPICS = "document_topics"

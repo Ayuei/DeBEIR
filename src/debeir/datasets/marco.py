@@ -1,28 +1,27 @@
 from dataclasses import dataclass
-from typing import Dict, Union, Optional
+from typing import Dict, Optional, Union
 
-from elasticsearch import AsyncElasticsearch as Elasticsearch
-
-from debeir.interfaces.config import GenericConfig
-from debeir.interfaces.executor import GenericElasticsearchExecutor
-from debeir.interfaces.query import GenericElasticsearchQuery
+from debeir.core.config import GenericConfig
+from debeir.core.executor import GenericElasticsearchExecutor
+from debeir.core.query import GenericElasticsearchQuery
 from debeir.rankers.transformer_sent_encoder import Encoder
+from elasticsearch import AsyncElasticsearch as Elasticsearch
 
 
 class MarcoElasticsearchExecutor(GenericElasticsearchExecutor):
     query: GenericElasticsearchQuery
 
     def __init__(
-        self,
-        topics: Dict[Union[str, int], Dict[str, str]],
-        client: Elasticsearch,
-        index_name: str,
-        output_file: str,
-        query: GenericElasticsearchQuery,
-        encoder: Optional[Encoder] = None,
-        config=None,
-        *args,
-        **kwargs,
+            self,
+            topics: Dict[Union[str, int], Dict[str, str]],
+            client: Elasticsearch,
+            index_name: str,
+            output_file: str,
+            query: GenericElasticsearchQuery,
+            encoder: Optional[Encoder] = None,
+            config=None,
+            *args,
+            **kwargs,
     ):
         super().__init__(
             topics,
@@ -45,13 +44,13 @@ class MarcoElasticsearchExecutor(GenericElasticsearchExecutor):
         return self.query.generate_query(topic_num)
 
     def generate_embedding_query(
-        self,
-        topic_num,
-        cosine_weights=None,
-        query_weights=None,
-        norm_weight=2.15,
-        automatic_scores=None,
-        **kwargs,
+            self,
+            topic_num,
+            cosine_weights=None,
+            query_weights=None,
+            norm_weight=2.15,
+            automatic_scores=None,
+            **kwargs,
     ):
         return super().generate_embedding_query(
             topic_num,
@@ -63,7 +62,7 @@ class MarcoElasticsearchExecutor(GenericElasticsearchExecutor):
         )
 
     async def execute_query(
-        self, query=None, topic_num=None, ablation=False, query_type="query", **kwargs
+            self, query=None, topic_num=None, ablation=False, query_type="query", **kwargs
     ):
         return super().execute_query(
             query, topic_num, ablation, query_type=query_type, **kwargs
@@ -75,7 +74,7 @@ class MarcoQueryConfig(GenericConfig):
     def validate(self):
         if self.query_type == "embedding":
             assert (
-                self.encoder_fp and self.encoder
+                    self.encoder_fp and self.encoder
             ), "Must provide encoder path for embedding model"
             assert self.norm_weight is not None or self.automatic is not None, (
                 "Norm weight be " "specified or be automatic"

@@ -4,7 +4,7 @@ import os
 from abc import ABC
 from dataclasses import dataclass
 from pathlib import Path
-from typing import List, MutableMapping, Dict, Union
+from typing import Dict, List, MutableMapping, Union
 
 import loguru
 import toml
@@ -117,7 +117,6 @@ class GenericConfig(Config, ABC):
     output_file: str = None
     run_name: str = None
 
-
     @classmethod
     def from_toml(cls, fp: Union[str, Path], *args, **kwargs) -> 'GenericConfig':
         return Config.from_toml(fp, cls, *args, **kwargs)
@@ -145,7 +144,6 @@ class _NIRMasterConfig(Config):
             return ElasticsearchConfig.from_args(engine_settings, ElasticsearchConfig)
 
         return engine_settings
-
 
     def get_nir_settings(self, key='default_settings', return_as_instance=False):
         nir_settings = self.nir[key]

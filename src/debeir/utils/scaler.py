@@ -1,4 +1,3 @@
-import warnings
 from typing import Dict
 
 
@@ -41,7 +40,6 @@ def get_z_value(cosine_ceiling, bm25_ceiling) -> float:
     assert bm25_ceiling > cosine_ceiling, "BM25 Ceiling cannot be lower than the cosine ceiling."
 
     return bm25_ceiling ** (1 / float(cosine_ceiling))
-
 
 # class Scaler:
 #    def __init__(self, gold_standard, qwt, cwt):

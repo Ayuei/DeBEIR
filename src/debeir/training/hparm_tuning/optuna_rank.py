@@ -1,11 +1,10 @@
-import joblib
-import optuna
 from functools import partial
 
+import joblib
+import optuna
+from debeir.training.hparm_tuning.trainer import Trainer
 from optuna.integration.wandb import WeightsAndBiasesCallback
 from optuna.trial import TrialState
-
-from debeir.training.hparm_tuning.trainer import Trainer
 
 
 def objective(trainer: Trainer, trial: optuna.Trial):
@@ -44,7 +43,7 @@ def run_optuna_with_wandb(trainer, n_trials=100, n_jobs=1, maximize_objective=Tr
     except:
         pass
     finally:
-        joblib.dump(study, save_study_path+".pkl")
+        joblib.dump(study, save_study_path + ".pkl")
 
     return study
 

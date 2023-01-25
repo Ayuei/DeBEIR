@@ -7,11 +7,11 @@ import requests
 import toml
 
 from debeir.engines.client import Client
-from debeir.interfaces.pipeline import NIRPipeline
-from debeir.data_sets.factory import query_factory, parser_factory, executor_factory, config_factory
+from debeir.core.pipeline import NIRPipeline
+from debeir.datasets.factory import query_factory, parser_factory, executor_factory, config_factory
 from debeir.engines.elasticsearch.change_bm25 import change_bm25_params
-from debeir.interfaces import config
-from debeir.interfaces.config import _NIRMasterConfig
+from debeir.core import config
+from debeir.core.config import _NIRMasterConfig
 
 
 @pytest.fixture(scope="session")

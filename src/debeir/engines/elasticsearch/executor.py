@@ -1,14 +1,12 @@
-from typing import Dict, Optional, Union, List
+from typing import Dict, List, Optional, Union
 
 import tqdm.asyncio
-from elasticsearch import AsyncElasticsearch as Elasticsearch
-
+from debeir.core.config import apply_config
+from debeir.core.document import document_factory
+from debeir.core.query import GenericElasticsearchQuery
 from debeir.rankers.transformer_sent_encoder import Encoder
-from debeir.interfaces.query import GenericElasticsearchQuery
-from debeir.interfaces.config import apply_config
 from debeir.utils.utils import unpack_coroutine
-from debeir.interfaces.document import document_factory
-from debeir.interfaces.results import Results
+from elasticsearch import AsyncElasticsearch as Elasticsearch
 
 
 class ElasticsearchExecutor:
@@ -21,18 +19,19 @@ class ElasticsearchExecutor:
         2. End-to-End Neural IR
         3. Statistical keyword matching
     """
+
     def __init__(
-        self,
-        topics: Dict[Union[str, int], Dict[str, str]],
-        client: Elasticsearch,
-        index_name: str,
-        output_file: str,
-        query: GenericElasticsearchQuery,
-        encoder: Optional[Encoder],
-        return_size: int = 1000,
-        test=False,
-        return_id_only=True,
-        config=None,
+            self,
+            topics: Dict[Union[str, int], Dict[str, str]],
+            client: Elasticsearch,
+            index_name: str,
+            output_file: str,
+            query: GenericElasticsearchQuery,
+            encoder: Optional[Encoder],
+            return_size: int = 1000,
+            test=False,
+            return_id_only=True,
+            config=None,
     ):
         self.topics = {"1": topics["1"]} if test else topics
         self.client = client
@@ -67,7 +66,7 @@ class ElasticsearchExecutor:
         return kwargs
 
     async def run_all_queries(
-        self, query_type=None, return_results=False,
+            self, query_type=None, return_results=False,
             return_size: int = None, return_id_only: bool = False, **kwargs
     ) -> List:
         """
