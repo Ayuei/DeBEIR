@@ -34,7 +34,9 @@ results = await p.run_pipeline(cosine_offset=5.0)
 
 See ```examples/``` for more use cases and where to get started.
 
-Otherwise, html rendered documentation is available in docs/
+Otherwise, html rendered documentation is available [here](https://ayuei.github.io/DeBEIR/debeir.html) 
+
+
 
 ### Development
 
