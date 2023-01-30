@@ -172,3 +172,21 @@
 	keywords     = {COVID-19, Universal sentence embeddings, Information retrieval, Natural language processing, Neural index, Dense retrieval, Medical misinformation, Biomedical search},
 	abstract     = {Consumers from non-medical backgrounds often look for information regarding a specific medical information need; however, they are limited by their lack of medical knowledge and may not be able to find reputable resources. As a case study, we investigate reducing this knowledge barrier to allow consumers to achieve search effectiveness comparable to that of an expert, or a medical professional, for COVID-19 related questions. We introduce and evaluate a hybrid index model that allows a consumer to formulate queries using consumer language to find relevant answers to COVID-19 questions. Our aim is to reduce performance degradation between medical professional queries and those of a consumer. We use a universal sentence embedding model to project consumer queries into the same semantic space as professional queries. We then incorporate sentence embeddings into a search framework alongside an inverted index. Documents from this index are retrieved using a novel scoring function that considers sentence embeddings and BM25 scoring. We find that our framework alleviates the expertise disparity, which we validate using an additional set of crowdsourced—consumer—queries even in an unsupervised setting. We also propose an extension of our method, where the sentence encoder is optimised in a supervised setup. Our framework allows for a consumer to search using consumer queries to match the search performance with that of a professional.}
 }
+
+@inproceedings{opennir,
+author = {MacAvaney, Sean},
+title = {OpenNIR: A Complete Neural Ad-Hoc Ranking Pipeline},
+year = {2020},
+isbn = {9781450368223},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+url = {https://doi.org/10.1145/3336191.3371864},
+doi = {10.1145/3336191.3371864},
+abstract = {With the growing popularity of neural approaches for ad-hoc ranking, there is a need for tools that can effectively reproduce prior results and ease continued research by supporting current state-of-the-art approaches. Although several excellent neural ranking tools exist, none offer an easy end-to-end ad-hoc neural raking pipeline. A complete pipeline is particularly important for ad-hoc ranking because there are numerous parameter settings that have a considerable effect on the ultimate performance yet often are under-reported in current work (e.g., initial ranking settings, re-ranking threshold, training sampling strategy, etc.). In this work, I present a complete ad-hoc neural ranking pipeline which addresses these shortcomings: OpenNIR. The pipeline is easy to use (a single command will download required data, train, and evaluate a model), yet highly configurable, allowing for continued work in areas that are understudied. Aside from the core pipeline, the software also includes several bells and whistles that make use of components of the pipeline, such as performance benchmarking and tuning of unsupervised ranker parameters for fair comparisons against traditional baselines. The pipeline and these capabilities are demonstrated. The code is available, and contributions are welcome.},
+booktitle = {Proceedings of the 13th International Conference on Web Search and Data Mining},
+pages = {845–848},
+numpages = {4},
+keywords = {reproducibility, ad-hoc ranking, neural ranking},
+location = {Houston, TX, USA},
+series = {WSDM '20}
+}

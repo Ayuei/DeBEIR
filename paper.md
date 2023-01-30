@@ -1,5 +1,5 @@
 ---
-title: 'DeBIR: A Python Package for Dense Bi-Encoder Information Retrieval'
+title: 'DeBEIR: A Python Package for Dense Bi-Encoder Information Retrieval'
 tags:
   - information retrieval
   - dense retrieval
@@ -35,7 +35,7 @@ Information Retrieval (IR) is the task of retrieving documents given a query or 
 
 Unlike statistical learning, tuning deep learning retrieval methods is often costly and time-consuming. This cost makes it essential to automate much of the training, tuning and evaluation processes efficiently.
 
-DeBIR is a library for facilitating dense retrieval research, primarily focusing on bi-encoder dense retrieval where query and documents dense vectors are generated separately [@reimers2019]. It allows for expedited experimentation in dense retrieval research by reducing boilerplate code through an interchangeable pipeline API and code extendability through the inheritance of general classes. It further abstracts standard training loops and hyperparameter tuning into easy-to-define configuration files. This library is aimed at helping practitioners, researchers and data scientists experimenting with bi-encoders by providing them with dense retrieval methods that are easy to use out of the box but also have additional extendability for more nuanced research. Furthermore, our pipeline runs asynchronously to reduce I/O performance bottlenecks, facilitating faster experiments and research.
+DeBEIR is a library for facilitating dense retrieval research, primarily focusing on bi-encoder dense retrieval where query and documents dense vectors are generated separately [@reimers2019]. It allows for expedited experimentation in dense retrieval research by reducing boilerplate code through an interchangeable pipeline API and code extendability through the inheritance of general classes. It further abstracts standard training loops and hyperparameter tuning into easy-to-define configuration files. This library is aimed at helping practitioners, researchers and data scientists experimenting with bi-encoders by providing them with dense retrieval methods that are easy to use out of the box but also have additional extendability for more nuanced research. Furthermore, our pipeline runs asynchronously to reduce I/O performance bottlenecks, facilitating faster experiments and research.
 
 A brief summary of the pipeline stages (\autoref{fig:training}) is:
 
@@ -61,20 +61,20 @@ However, bi-encoders are more effective than BM25 and can complement BM25 for ra
 used as the only ranking system in the pipeline if query speed is needed.
 However, current libraries don't address this use case as it requires integration with the indexing and querying pipeline of the search engine. 
 
-DeBIR is a library that mainly facilitates bi-encoder research (where query and document can be encoded independently) and provides base classes with flexible functionality through inheritance. Although we provide cross-encoder re-rankers for feature completeness, the library's priority is facilitating bi-encoder research. The strength of bi-encoders lies in the offline indexing of dense vectors. These vectors can then be used for first-stage retrieval and potentially passed to a second-stage retrieval system such as a cross-encoder. Bi-encoders can be used as the sole retrieval system when there is a lack of training data [@search-like-an-expert-2022] and, therefore, can be more useful in areas such as biomedical IR, where training data is scarce. Cross-encoders, however, require large amounts of training data for effectiveness.
+DeBEIR is a library that mainly facilitates bi-encoder research (where query and document can be encoded independently) and provides base classes with flexible functionality through inheritance. Although we provide cross-encoder re-rankers for feature completeness, the library's priority is facilitating bi-encoder research. The strength of bi-encoders lies in the offline indexing of dense vectors. These vectors can then be used for first-stage retrieval and potentially passed to a second-stage retrieval system such as a cross-encoder. Bi-encoders can be used as the sole retrieval system when there is a lack of training data [@search-like-an-expert-2022] and, therefore, can be more useful in areas such as biomedical IR, where training data is scarce. Cross-encoders, however, require large amounts of training data for effectiveness.
 
-The DeBIR library exposes an API for commonly used functions for training, hyper-parameter tuning (\autoref{fig:training}) and evaluation of transformer-based models. The pipeline can be broken up into multiple stages: parsing, query building, query execution, serialization and evaluation (\autoref{fig:pipeline}). Furthermore, we package our caching mechanism for the expensive encoding operations to speed up the pipeline during repeated experimentation.
+The DeBEIR library exposes an API for commonly used functions for training, hyper-parameter tuning (\autoref{fig:training}) and evaluation of transformer-based models. The pipeline can be broken up into multiple stages: parsing, query building, query execution, serialization and evaluation (\autoref{fig:pipeline}). Furthermore, we package our caching mechanism for the expensive encoding operations to speed up the pipeline during repeated experimentation.
 
 Although similar libraries exist, such as sentence-transformers [@reimers2019], openNIR[@opennir], they have less of a focus on the early stages of the dense retrieval pipeline. This stage involves indexing the textual data from the corpora and indexing dense vector representations, which is only helpful for bi-encoder type models over the traditional cross-encoder and is thus not typically explored by other libraries. Other limitations include a lack of extendability that restrict the users' options for training customization (we provide base classes that can be inherited) or that the library is tailored to general-purpose machine learning rather than informational retrieval. Finally, these libraries have a limited caching mechanism, as cross-encoders typically will not require this capability as it is decoupled from the index. Bi-encoders can have queries cached at query time to make repeated query calls to the index significantly faster. 
 
 This library will help facilitate early-stage dense retrieval and rapid experimentation research with bi-encoders, which other libraries have yet to explore. Our library is also flexible enough for second-stage retrieval using cross-encoders from this library or other libraries. Furthermore, we will continue to improve this tool.
 
-![Standard flow of the DeBIR query/evaluation loop.\label{fig:pipeline}](pipeline.pdf){scale=0.5}
+![Standard flow of the DeEBIR query/evaluation loop.\label{fig:pipeline}](pipeline.pdf){scale=0.5}
 
-![Standard flow of the DeBIR training loop.\label{fig:training}](training.pdf){scale=0.43}
+![Standard flow of the DeEBIR training loop.\label{fig:training}](training.pdf){scale=0.43}
 
 # Acknowledgments
-The DeBIR library uses sentence-transformers, hugggingface's transformers and datasets, allRank, optuna, elasticsearch and trectools python packages.
+The DeBEIR library uses sentence-transformers, hugggingface's transformers and datasets, allRank, optuna, elasticsearch and trectools python packages.
 
 This search is supported by CSIRO Data61, an Australian Government agency through the Precision Medicine FSP program and the Australian Research Training Program. We extend thanks to Brian Jin (Data61) for providing a code review.
 
