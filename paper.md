@@ -1,5 +1,5 @@
 ---
-title: 'DeBeIR: A Python Package for Dense Bi-Encoder Information Retrieval'
+title: 'DeBEIR: A Python Package for Dense Bi-Encoder Information Retrieval'
 tags:
   - information retrieval
   - dense retrieval
@@ -35,7 +35,7 @@ Information Retrieval (IR) is the task of retrieving documents given a query or 
 
 Unlike statistical learning, tuning deep learning retrieval methods is often costly and time-consuming. This cost makes it essential to automate much of the training, tuning and evaluation processes efficiently.
 
-DeBeIR is a library for facilitating dense retrieval research, primarily focusing on bi-encoder dense retrieval where query and documents dense vectors are generated separately [@reimers2019]. It allows for expedited experimentation in dense retrieval research by reducing boilerplate code through an interchangeable pipeline API and code extendability through the inheritance of general classes. It further abstracts standard training loops and hyperparameter tuning into easy-to-define configuration files. This library is aimed at helping practitioners, researchers and data scientists experimenting with bi-encoders by providing them with dense retrieval methods that are easy to use out of the box but also have additional extendability for more nuanced research. Furthermore, our pipeline runs asynchronously to reduce I/O performance bottlenecks, facilitating faster experiments and research.
+DeBEIR is a library for facilitating dense retrieval research, primarily focusing on bi-encoder dense retrieval where query and documents dense vectors are generated separately [@reimers2019]. It allows for expedited experimentation in dense retrieval research by reducing boilerplate code through an interchangeable pipeline API and code extendability through the inheritance of general classes. It further abstracts standard training loops and hyperparameter tuning into easy-to-define configuration files. This library is aimed at helping practitioners, researchers and data scientists experimenting with bi-encoders by providing them with dense retrieval methods that are easy to use out of the box but also have additional extendability for more nuanced research. Furthermore, our pipeline runs asynchronously to reduce I/O performance bottlenecks, facilitating faster experiments and research.
 
 A brief summary of the pipeline stages (\autoref{fig:training}) is:
 
@@ -63,7 +63,7 @@ However, current libraries don't address this use case as it requires integratio
 
 DeeEIR is a library that addresses this gap by facilitating bi-encoder research and provides base classes with flexible functionality through inheritance. Although we provide cross-encoder re-rankers for feature completeness, the library's priority is facilitating bi-encoder research. The strength of bi-encoders lies in the offline indexing of dense vectors. These vectors can then be used for first-stage retrieval and potentially passed to a second-stage retrieval system such as a cross-encoder. Bi-encoders can be used as the sole retrieval system when there is a lack of training data [@search-like-an-expert-2022] and, therefore, can be more useful in areas such as biomedical IR, where training data is scarce. Cross-encoders, however, require large amounts of training data for effectiveness.
 
-The DeBeIR library exposes an API for commonly used functions for training, hyper-parameter tuning (\autoref{fig:training}) and evaluation of transformer-based models. The pipeline can be broken up into multiple stages: parsing, query building, query execution, serialization and evaluation (\autoref{fig:pipeline}). Furthermore, we package our caching mechanism for the expensive encoding operations to speed up the pipeline during repeated experimentation.
+The DeBEIR library exposes an API for commonly used functions for training, hyper-parameter tuning (\autoref{fig:training}) and evaluation of transformer-based models. The pipeline can be broken up into multiple stages: parsing, query building, query execution, serialization and evaluation (\autoref{fig:pipeline}). Furthermore, we package our caching mechanism for the expensive encoding operations to speed up the pipeline during repeated experimentation.
 
 Although similar libraries exist, such as sentence-transformers [@reimers2019], and openNIR[@opennir], they have less of a focus on the early stages of the dense retrieval pipeline. This stage involves indexing the textual data from the corpora and indexing dense vector representations, which is only helpful for bi-encoder type models over the traditional cross-encoder and is thus not typically explored by other libraries. Other limitations include a lack of extendability that restrict the users' options for training customization (we provide base classes that can be inherited) or that the library is tailored to general-purpose machine learning rather than informational retrieval. Finally, these libraries have a limited caching mechanism, as cross-encoders typically will not require this capability as it is decoupled from the index. Bi-encoders can have queries cached at query time to make repeated query calls to the index significantly faster.
 
@@ -74,7 +74,7 @@ This library will help facilitate early-stage dense retrieval and rapid experime
 ![Standard flow of the DeEBIR training loop.\label{fig:training}](training.pdf){scale=0.43}
 
 # Acknowledgments
-The DeBeIR library uses Sentence-Transformers, Hugging Face's transformers and Datasets, allRank, Optuna, Elasticsearch and Trectools python packages.
+The DeBEIR library uses Sentence-Transformers, Hugging Face's transformers and Datasets, allRank, Optuna, Elasticsearch and Trectools python packages.
 
 This search is supported by CSIRO Data61, an Australian Government agency through the Precision Medicine FSP program and the Australian Research Training Program. We extend thanks to Brian Jin (Data61) for providing a code review.
 
@@ -170,6 +170,6 @@ study = run_optuna_with_wandb(trainer, wandb_kwargs={
 print_optuna_stats(study)
 ```
 
-More information on the library is found on the GitHub page, [DeBeIR](https://www.github.com/ayuei/debeir). Any feedback and suggestions are welcome by opening a thread in [DeBeIR issues](https://www.github.com/ayuei/debeir/issues).
+More information on the library is found on the GitHub page, [DeBEIR](https://www.github.com/ayuei/debeir). Any feedback and suggestions are welcome by opening a thread in [DeBEIR issues](https://www.github.com/ayuei/debeir/issues).
 
 # References
