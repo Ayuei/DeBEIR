@@ -1,16 +1,15 @@
 import threading
 from pathlib import Path
+from queue import Queue
 
 import plac
-
-from debeir.data_sets.factory import config_factory
-from debeir.interfaces.indexer import SemanticElasticsearchIndexer
-from debeir.interfaces.config import GenericConfig, _NIRMasterConfig
-from debeir.rankers.transformer_sent_encoder import Encoder
-
-from queue import Queue
+from elasticsearch import Elasticsearch, helpers
 from tqdm import tqdm
-from elasticsearch import helpers, Elasticsearch
+
+from debeir.core.config import GenericConfig, _NIRMasterConfig
+from debeir.core.indexer import SemanticElasticsearchIndexer
+from debeir.datasets.factory import config_factory
+from debeir.rankers.transformer_sent_encoder import Encoder
 
 
 class ProducerThread(threading.Thread):

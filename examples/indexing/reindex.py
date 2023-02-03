@@ -1,11 +1,10 @@
 import threading
-import sys
-
-from debeir.interfaces import GenericConfig, ElasticsearchConfig
-
 from queue import Queue
+
+from elasticsearch import Elasticsearch, helpers
 from tqdm import tqdm
-from elasticsearch import helpers, Elasticsearch
+
+from debeir.core.config import ElasticsearchConfig, GenericConfig
 
 BUF_SIZE = 10000
 N_THREADS = 6

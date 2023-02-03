@@ -1,19 +1,17 @@
 #!/usr/bin/env python
 # coding: utf-8
-import sys; sys.path.append("/home/vin/Projects/nir/")
 import os
-import dill
-
 from functools import partial
-from training.utils import DatasetToSentTrans
-from training.hparm_tuning.optuna_rank import run_optuna_with_wandb, print_optuna_stats
-from training.hparm_tuning.trainer import SentenceTransformerHparamTrainer
 
+import dill
 from sentence_transformers import evaluation
-from datasets.trec_clinical_trials import TrecClinicalTrialTripletParser
-from core import ParsedTopicsToDataset
-from training.hparm_tuning.config import HparamConfig
 
+from debeir.core.converters import ParsedTopicsToDataset
+from debeir.datasets.trec_clinical_trials import TrecClinicalTrialTripletParser
+from debeir.training.hparm_tuning.config import HparamConfig
+from debeir.training.hparm_tuning.optuna_rank import print_optuna_stats, run_optuna_with_wandb
+from debeir.training.hparm_tuning.trainer import SentenceTransformerHparamTrainer
+from debeir.training.utils import SentDataset
 
 TASK_NAME = "trec_contrastive_passage"
 OUTPUT_DIR = f"./outputs/cross_encoder/{TASK_NAME}/"
@@ -37,10 +35,10 @@ def get_dataset(dataset_save_path="."):
         converted_dataset = converted_dataset['test']
         converted_dataset = converted_dataset.shuffle().train_test_split(test_size=0.2)
 
-        train_dataset = DatasetToSentTrans(converted_dataset['train'], text_cols=["q_text", "brief_title"],
-                                           label_col="label")
-        val_dataset = DatasetToSentTrans(converted_dataset['test'], text_cols=["q_text", "brief_title"],
-                                         label_col="label")
+        train_dataset = SentDataset(converted_dataset['train'], text_cols=["q_text", "brief_title"],
+                                    label_col="label")
+        val_dataset = SentDataset(converted_dataset['test'], text_cols=["q_text", "brief_title"],
+                                  label_col="label")
 
         dill.dump(train_dataset, open(train_fp, "wb+"))
         dill.dump(val_dataset, open(val_fp, "wb+"))
