@@ -31,13 +31,12 @@ class ReRanker:
     def _get_document_representation(cls, document) -> (AnyStr, AnyStr):
         pass
 
+    # noinspection PyUnresolvedReferences
     def rerank(self) -> List:
         """
         Re-rank the passed ranked list based on implemented private _compute_scores method.
 
-        :param ranked_list:
-        :return:
-            A ranked list in descending order of the score field (which will be the last item in the list)
+        :return: A ranked list in descending order of the score field (which will be the last item in the list)
         """
         ranking = []
 

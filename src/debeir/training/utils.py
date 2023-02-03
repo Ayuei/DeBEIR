@@ -1,15 +1,21 @@
+"""
+Utility methods for integration with other libraries.
+
+E.g. integrating wandb into sentence-transformer
+"""
+
 from typing import List, Union
 
+import datasets
 import loguru
 import transformers
-from debeir.datasets.types import InputExample, RelevanceExample
 from sentence_transformers import SentenceTransformer, losses, models
 from sentence_transformers.evaluation import EmbeddingSimilarityEvaluator, SentenceEvaluator
 from torch.optim.lr_scheduler import LambdaLR
 from torch.utils.data import DataLoader
 from wandb import wandb
 
-import datasets
+from debeir.datasets.types import InputExample, RelevanceExample
 
 
 # from sentence_transformers import InputExample
@@ -186,6 +192,7 @@ def _train_sentence_transformer(model_fp_or_name: str, output_dir: str,
 
     model = SentenceTransformer(modules=[encoder, pooling_model])
 
+    # TODO: Fix this
     train_dataloader = DataLoader(train_dataset, shuffle=True, batch_size=train_batch_size)
 
     if loss_func is None:

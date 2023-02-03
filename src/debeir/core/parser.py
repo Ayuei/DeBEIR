@@ -1,3 +1,7 @@
+"""
+Parser interface and implemented parser classes for common file types: XML, CSV, TSV, plaintext
+"""
+
 import abc
 import csv
 import dataclasses
@@ -74,7 +78,7 @@ class XMLParser(Parser):
     @classmethod
     def _recurse_to_child_node(cls, node: ET.Element, track: List):
         """
-        Helper method to get all children nodes for text extraction in an xml.
+        Helper method to get all children nodes for text extraction in a xml.
 
         :param node: Current node
         :param track: List to track nodes
@@ -135,7 +139,7 @@ class CSVParser(Parser):
     Loads topics from a CSV file
     """
     id_field = "id"
-    parse_fields = ["Text"]
+    parse_fields = ["text"]
 
     def __init__(self, id_field=None, parse_fields=None):
         if parse_fields is None:

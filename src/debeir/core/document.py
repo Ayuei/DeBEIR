@@ -1,3 +1,10 @@
+"""
+Document abstraction.
+Adaptor design pattern.
+
+The pipeline must return results from the index as a Document object regardless of the engine type used.
+"""
+
 import abc
 import dataclasses
 from collections import defaultdict
@@ -132,10 +139,29 @@ class Document:
 
 
 class ElasticsearchDocument(Document):
+    """
+    Elasticsearch class, this handles converting results to a document object
+    """
+
     @classmethod
     def from_results(cls, results, query_cls, ignore_facets=True,
                      *args, **kwargs) -> Dict[Union[int, float], 'Document']:
+        """
+        Convert a set of elasticsearch results, to a dictionary of [Topic_num, list[Document]]
 
+        :param results:
+        :type results:
+        :param query_cls:
+        :type query_cls:
+        :param ignore_facets:
+        :type ignore_facets:
+        :param args:
+        :type args:
+        :param kwargs:
+        :type kwargs:
+        :return:
+        :rtype:
+        """
         documents = defaultdict(lambda: [])
 
         for (topic_num, res) in results:

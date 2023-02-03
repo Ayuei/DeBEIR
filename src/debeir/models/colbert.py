@@ -174,7 +174,7 @@ class ColBERT(nn.Module):
         # linear_layers.append(nn.Linear(hidden_neurons, num_labels))
 
         self.linear_layers = nn.Sequential(*linear_layers)
-        self.apply(weight_init)
+        # self.apply(weight_init)
         self.bert = BertModel.from_pretrained(*bert_model_args, **bert_model_kwargs,
                                               config=self.bert_config)  # Add Bert model after random initialisation
 
@@ -326,7 +326,7 @@ class ComBERT(nn.Module):
         linear_layers.append(nn.Linear(hidden_neurons, num_labels))
 
         self.linear_layers = nn.Sequential(*linear_layers)
-        self.apply(weight_init)
+        # self.apply(weight_init)
         self.bert = BertModel.from_pretrained(*bert_model_args, **bert_model_kwargs,
                                               config=self.bert_config)  # Add Bert model after random initialisation
         self.bert.to(self.device)

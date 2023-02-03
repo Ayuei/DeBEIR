@@ -1,10 +1,10 @@
 # TODO: Convert a Parser Return Dict (Dict[int, Dict[str, ...])
+import datasets
+from datasets import DatasetDict
 
 from debeir.datasets.types import DatasetTypes, InputExample
 from debeir.evaluation.cross_validation import CrossValidator
 from debeir.evaluation.evaluator import Evaluator
-
-import datasets
 
 
 class CrossValidatorDataset:
@@ -36,7 +36,7 @@ class CrossValidatorDataset:
         :param x_attr: Label or idx of the x label (not directly used)
         """
 
-        return cls(data, CrossValidator(evaluator, data, x_attr, y_attr,
+        return cls(data, CrossValidator(data, x_attr, y_attr,
                                         n_splits=n_splits, seed=seed),
                    x_attr=x_attr, y_attr=y_attr,
                    n_folds=n_splits)

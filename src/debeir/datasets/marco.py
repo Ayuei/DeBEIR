@@ -1,11 +1,12 @@
 from dataclasses import dataclass
 from typing import Dict, Optional, Union
 
+from elasticsearch import AsyncElasticsearch as Elasticsearch
+
 from debeir.core.config import GenericConfig
 from debeir.core.executor import GenericElasticsearchExecutor
 from debeir.core.query import GenericElasticsearchQuery
 from debeir.rankers.transformer_sent_encoder import Encoder
-from elasticsearch import AsyncElasticsearch as Elasticsearch
 
 
 class MarcoElasticsearchExecutor(GenericElasticsearchExecutor):
@@ -69,6 +70,7 @@ class MarcoElasticsearchExecutor(GenericElasticsearchExecutor):
         )
 
 
+
 @dataclass(init=True, unsafe_hash=True)
 class MarcoQueryConfig(GenericConfig):
     def validate(self):
@@ -81,7 +83,7 @@ class MarcoQueryConfig(GenericConfig):
             )
 
     @classmethod
-    def from_toml(cls, fp: str, *args, **kwargs) -> "MarcoQueryConfig":
+    def from_toml(cls, fp: str, *args, **kwargs) -> 'MarcoQueryConfig':
         return super().from_toml(fp, cls, *args, **kwargs)
 
     @classmethod

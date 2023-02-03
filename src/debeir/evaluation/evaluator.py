@@ -1,8 +1,17 @@
+"""
+Contains the evaluator interface.
+
+The evaluator computes metrics for a given result set and qrels.
+
+This interface currently supports TREC-style evaluation.
+"""
+
 from collections import defaultdict
 from typing import Dict, List, Union
 
 import loguru
 from analysis_tools_ir import evaluate, sigtests
+
 from debeir.core.config import GenericConfig, MetricsConfig
 
 
@@ -76,4 +85,14 @@ class Evaluator:
 
     @classmethod
     def build_from_config(cls, config: GenericConfig, metrics_config: MetricsConfig):
+        """
+        Build the evaluator object from a configuration file.
+
+        :param config:
+        :type config:
+        :param metrics_config:
+        :type metrics_config:
+        :return:
+        :rtype:
+        """
         return cls(config.qrels, metrics_config.metrics)

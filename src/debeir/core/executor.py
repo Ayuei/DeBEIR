@@ -1,14 +1,23 @@
+"""
+The executor interface provides API access to the index for querying.
+The executor executes queries to an index and parses the resulting document set, in an asynchronous way.
+
+The executor defines general methods that all engines must use.
+"""
+
 from typing import Dict, Optional, Union
 
 import loguru
-from debeir.engines.elasticsearch.executor import ElasticsearchExecutor
-from debeir.core.config import GenericConfig, NIRConfig
-from debeir.core.query import GenericElasticsearchQuery
-from debeir.rankers.transformer_sent_encoder import Encoder
-from debeir.utils.scaler import unpack_elasticsearch_scores
 from elasticsearch import AsyncElasticsearch as Elasticsearch
 
+from debeir.core.config import GenericConfig, NIRConfig
+from debeir.core.query import GenericElasticsearchQuery
+from debeir.engines.elasticsearch.executor import ElasticsearchExecutor
+from debeir.rankers.transformer_sent_encoder import Encoder
+from debeir.utils.scaler import unpack_elasticsearch_scores
 
+
+# TODO: refactor from Generic Executor
 class GenericElasticsearchExecutor(ElasticsearchExecutor):
     """
     Generic Executor class for Elasticsearch

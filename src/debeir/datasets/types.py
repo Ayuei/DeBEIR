@@ -1,3 +1,7 @@
+"""
+Contains the common data types that are used in the library.
+"""
+
 import string
 from collections import defaultdict
 from enum import Enum

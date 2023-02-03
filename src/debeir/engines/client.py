@@ -1,3 +1,9 @@
+"""
+A client encapsulation for the implementations in debeir.engines
+
+It allows for a common interface between all search engines such as close() but also encapsulation of multiple clients
+"""
+
 import dataclasses
 
 from elasticsearch import AsyncElasticsearch
@@ -35,6 +41,9 @@ class Client:
         return client
 
     def get_client(self, engine):
+        """Retrieve a client by it's engine name: Elasticsearch, Solr, Dummy"""
+        engine = engine.lower()
+
         if engine == "elasticsearch":
             return self.es_client
 

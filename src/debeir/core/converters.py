@@ -1,9 +1,12 @@
+"""
+Converters for integration with other libraries such as sentence-transformers and Huggingface Datasets
+"""
 from collections import defaultdict
 from typing import Dict, Union
 
-from debeir.core.parser import Parser
-
 import datasets
+
+from debeir.core.parser import Parser
 
 
 class ParsedTopicsToDataset:
@@ -30,6 +33,8 @@ class ParsedTopicsToDataset:
         Facet_2s: [],
         }
 
+        :param parser:
+        :type parser:
         :param output: Topics output from the parser object
         :return:
         """

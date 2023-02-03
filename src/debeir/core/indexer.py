@@ -1,11 +1,19 @@
+"""
+Contains code for indexing embeddings onto the index.
+A first-stage query, will walk through the documents and encode them, before re-indexing.
+
+See examples/indexing/create_semantic_index.py for usage
+"""
+
 import abc
 import threading
 from queue import Queue
 from typing import List
 
+from elasticsearch import Elasticsearch
+
 from debeir.rankers.transformer_sent_encoder import Encoder
 from debeir.utils.utils import remove_excess_whitespace
-from elasticsearch import Elasticsearch
 
 
 class Indexer:

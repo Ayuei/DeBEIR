@@ -11,26 +11,49 @@ import uuid
 from typing import List
 
 import loguru
-from debeir.datasets.factory import query_factory
-from debeir.evaluation.evaluator import Evaluator
+
 from debeir.core.config import GenericConfig, NIRConfig
 from debeir.core.pipeline import Pipeline
+from debeir.datasets.factory import query_factory
+from debeir.evaluation.evaluator import Evaluator
 
 
 class Callback:
+    """Base Callback class, Do not use directly. Derive a child class."""
+
     def __init__(self):
         self.pipeline = None
 
     @abc.abstractmethod
     def before(self, pipeline: Pipeline):
+        """
+        This callback will be called before the pipeline begins querying the index.
+
+        :param pipeline:
+        :type pipeline:
+        :return:
+        :rtype:
+        """
         pass
 
     @abc.abstractmethod
     def after(self, results: List):
+        """
+        This callback will be called after the pipeline has fetched all the results from the index.
+
+        :param results:
+        :type results:
+        :return:
+        :rtype:
+        """
         pass
 
 
 class SerializationCallback(Callback):
+    """
+    Serialization callback, writes results to a file after pipeline completes
+    """
+
     def __init__(self, config: GenericConfig, nir_config: NIRConfig):
         super().__init__()
         self.config = config
@@ -74,9 +97,8 @@ class SerializationCallback(Callback):
     def after(self, results: List):
         """
         Serialize results to self.output_file in a TREC-style format
-        :param topic_num: Topic number to serialize
-        :param res: Raw elasticsearch result
-        :param run_name: The run name for TREC-style runs (default: NO_RUN_NAME)
+        :param results:
+        :type results:
         """
 
         self._after(results,
@@ -101,6 +123,10 @@ class SerializationCallback(Callback):
 
 
 class EvaluationCallback(Callback):
+    """
+    Evaluation callback, runs after pipeline completes and evaluates using a TREC binary or python library
+    """
+
     def __init__(self, evaluator: Evaluator, config):
         super().__init__()
         self.evaluator = evaluator

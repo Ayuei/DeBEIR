@@ -3,14 +3,15 @@ from dataclasses import dataclass
 from typing import Dict, List, Optional, Union
 
 import loguru
-from debeir.engines.elasticsearch.generate_script_score import generate_script
+from elasticsearch import AsyncElasticsearch as Elasticsearch
+
 from debeir.core.config import GenericConfig, apply_config
 from debeir.core.executor import GenericElasticsearchExecutor
 from debeir.core.parser import Parser
 from debeir.core.query import GenericElasticsearchQuery
+from debeir.engines.elasticsearch.generate_script_score import generate_script
 from debeir.rankers.transformer_sent_encoder import Encoder
 from debeir.utils.scaler import get_z_value
-from elasticsearch import AsyncElasticsearch as Elasticsearch
 
 
 @dataclass(init=True, unsafe_hash=True)
@@ -488,7 +489,6 @@ class ClinicalTrialsElasticsearchExecutor(GenericElasticsearchExecutor):
 
         self.query_fns = {
             "query": self.generate_query,
-            "ablation": self.generate_query_ablation,
             "embedding": self.generate_embedding_query,
         }
 

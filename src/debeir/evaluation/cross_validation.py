@@ -1,14 +1,30 @@
+"""
+Cross validation object implementations for a dataset agnostic k-fold validation.
+
+Input datasets types are defined in `debeir.core.datasets.types`
+"""
 from enum import Enum
 from typing import Dict, List, Union
 
+import datasets
 import numpy as np
-from debeir.datasets.types import DatasetTypes, InputExample
 from sklearn.model_selection import KFold, StratifiedKFold
 
-import datasets
+from debeir.datasets.types import DatasetTypes, InputExample
 
 
+# noinspection PyTypeChecker
 def split_k_fold(n_fold, data_files):
+    """
+    Split a csv dataset k times
+
+    :param n_fold: Number of folds to produce
+    :type n_fold:
+    :param data_files: The file paths in csv format for splitting
+    :type data_files:
+    :return: Huggingface Dataset objects of the train and validation splits
+    :rtype:
+    """
     percentage = 100 // n_fold
 
     vals_ds = datasets.load_dataset('csv', split=[

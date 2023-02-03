@@ -1,10 +1,12 @@
+"""Utility methods for producing the script for calculating embedding scores end-to-end on the index"""
+
 import copy
 from typing import Dict, Union
 
 base_script = {
     "lang": "painless",
     # Compute faster dot products as all vectors are unit length
-    "source": None,
+    "source": "",
     "params": None,
 }
 
@@ -160,7 +162,7 @@ def check_params_is_valid(params, qfields):
 
 
 def generate_script(
-        fields, params, source_generator=generate_source, qfields="q_eb"
+        fields, params, source_generator=None, qfields="q_eb"
 ) -> Dict:
     """
     Parameters for creating the script
@@ -171,6 +173,10 @@ def generate_script(
     :param qfields: Query fields to search from (topic facets)
     :return:
     """
+
+    if source_generator is None:
+        source_generator = generate_source
+
     script = copy.deepcopy(base_script)
     check_params_is_valid(params, qfields)
 

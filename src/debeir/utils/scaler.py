@@ -1,3 +1,7 @@
+"""
+Contains utility methods for the library.
+"""
+
 from typing import Dict
 
 

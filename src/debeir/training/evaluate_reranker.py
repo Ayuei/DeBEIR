@@ -1,12 +1,16 @@
+"""
+Evaluation of re-ranking against a set of qrels.
+"""
+
 from collections import defaultdict
 from typing import Dict, List, Union
 
 import numpy as np
-from debeir.evaluation.evaluator import Evaluator
-from debeir.rankers.transformer_sent_encoder import Encoder
+from datasets import Dataset
 from sklearn.metrics.pairwise import cosine_similarity
 
-from datasets import Dataset
+from debeir.evaluation.evaluator import Evaluator
+from debeir.rankers.transformer_sent_encoder import Encoder
 
 distance_fns = {
     "dot_score": np.dot,
@@ -15,6 +19,11 @@ distance_fns = {
 
 
 class SentenceEvaluator(Evaluator):
+    """
+    Evaluates the result-set by comparing the sentence embeddings distance in terms of relevance.
+    That is, the document set is sorted by distances from the query and the ranked list will be compared with qrels.
+    """
+
     def __init__(self, model: Encoder, dataset: Dataset, parsed_topics: Dict[Union[str, int], Dict],
                  text_cols: List[str], query_cols: List[str], id_col: str,
                  distance_fn: str,
@@ -72,6 +81,12 @@ class SentenceEvaluator(Evaluator):
         return aggs[aggregate](scores)
 
     def produce_ranked_lists(self):
+        """
+        Sort the internal (query, document) set by the object's distance function
+
+        :return:
+        :rtype:
+        """
         # Store the indexes to access
         # For each topic, sort.
 

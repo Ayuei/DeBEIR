@@ -1,7 +1,22 @@
+"""
+The factory abstraction.
+
+Contains all the factory functions to produce Pipeline objects from configuration files:
+Parser, Query, Executor, Evaluator
+"""
+
 from pathlib import Path
 from typing import Dict, Type, Union
 
 import toml
+
+from debeir.core.config import Config, ElasticsearchConfig, GenericConfig, MetricsConfig, NIRConfig, SolrConfig, \
+    _NIRMasterConfig
+from debeir.core.executor import GenericElasticsearchExecutor
+from debeir.core.parser import (
+    CSVParser, Parser, TSVParser,
+)
+from debeir.core.query import GenericElasticsearchQuery, Query
 from debeir.datasets.bioreddit import BioRedditCommentParser, BioRedditSubmissionParser
 from debeir.datasets.clinical_trials import ClinicalTrialParser, ClinicalTrialsElasticsearchExecutor, \
     TrialsElasticsearchQuery, TrialsQueryConfig
@@ -10,13 +25,6 @@ from debeir.datasets.trec_clinical_trials import TrecClincialElasticsearchQuery,
 from debeir.datasets.trec_covid import TrecCovidParser, TrecElasticsearchQuery
 from debeir.evaluation.evaluator import Evaluator
 from debeir.evaluation.residual_scoring import ResidualEvaluator
-from debeir.core.config import Config, ElasticsearchConfig, GenericConfig, MetricsConfig, NIRConfig, SolrConfig, \
-    _NIRMasterConfig
-from debeir.core.executor import GenericElasticsearchExecutor
-from debeir.core.parser import (
-    CSVParser, Parser, TSVParser,
-)
-from debeir.core.query import GenericElasticsearchQuery, Query
 
 str_to_config_cls = {
     "clinical_trials": TrialsQueryConfig,
@@ -112,6 +120,20 @@ def config_factory(path: Union[str, Path] = None, config_cls: Type[Config] = Non
 
 
 def get_nir_config(nir_config, *args, ignore_errors=False, **kwargs):
+    """
+    Factory for the NIR config settings (see configs/nir.toml)
+
+    :param nir_config:
+    :type nir_config:
+    :param args:
+    :type args:
+    :param ignore_errors:
+    :type ignore_errors:
+    :param kwargs:
+    :type kwargs:
+    :return:
+    :rtype:
+    """
     main_config = config_factory(nir_config, config_cls=_NIRMasterConfig)
     search_engine_config = None
 

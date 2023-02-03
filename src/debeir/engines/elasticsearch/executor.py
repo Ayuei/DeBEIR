@@ -1,12 +1,13 @@
 from typing import Dict, List, Optional, Union
 
 import tqdm.asyncio
+from elasticsearch import AsyncElasticsearch as Elasticsearch
+
 from debeir.core.config import apply_config
 from debeir.core.document import document_factory
 from debeir.core.query import GenericElasticsearchQuery
 from debeir.rankers.transformer_sent_encoder import Encoder
 from debeir.utils.utils import unpack_coroutine
-from elasticsearch import AsyncElasticsearch as Elasticsearch
 
 
 class ElasticsearchExecutor:
@@ -78,7 +79,6 @@ class ElasticsearchExecutor:
                for computing the BM25 scores for log normalization in NIR-style scoring
         :param return_size: Number of documents to return. Overrides the config value if exists.
         :param return_id_only: Return the ID of the document only, rather than the full source document.
-        :param args: Arguments to pass to the execute_query method
         :param kwargs: Keyword arguments to pass to the execute_query method
         :return:
             A list of results if return_results = True else an empty list is returned.

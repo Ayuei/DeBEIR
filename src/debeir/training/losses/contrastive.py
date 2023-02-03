@@ -59,8 +59,8 @@ class SupConLoss(nn.Module):
             if labels.shape[0] != batch_size:
                 raise ValueError('Num of labels does not match num of features')
             mask = torch.eq(labels, labels.T).float().to(device)
-        else:
-            mask = mask.float().to(device)
+        # else:
+        #    mask = mask.float().to(device)
 
         contrast_count = features.shape[1]
         contrast_feature = torch.cat(torch.unbind(features, dim=1), dim=0)

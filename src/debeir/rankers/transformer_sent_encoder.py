@@ -35,14 +35,15 @@ class Encoder:
         self.nlp.max_length = max_length
         self.normalize = normalize
 
+    # noinspection PyUnresolvedReferences
     @cache.Cache(hash_self=True, cache_dir="./cache/embedding_cache/")
-    def encode(self, topic: str) -> List:
+    def encode(self, topic: str, disable_cache=False) -> List:
         """
         Computes sentence embeddings for a given topic, uses spacy for sentence segmentation.
         By default, uses a cache to store previously computed vectors. Pass "disable_cache" as a kwarg to disable this.
 
         :param topic: The topic (a list of sentences) to encode. Should be a raw string.
-        :param disable_cache: keyword argument, pass as True to disable encoding caching.
+        :param disable_cache: disables fetching from and serialising to the embedding cache
         :return:
             Returns a list of encoded tensors is returned.
         """

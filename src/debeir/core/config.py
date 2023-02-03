@@ -1,3 +1,10 @@
+"""
+The Config interface which is usually the entrypoint into the debeir library.
+It is used by factories defined in debeir.core to create objects in the Pipeline abstraction.
+
+Examples of configs can be found in the configs/ on the GitHub page.
+"""
+
 import abc
 import dataclasses
 import os
@@ -31,7 +38,7 @@ class Config:
         :param args: Arguments to be passed to Config
         :param kwargs: Keyword arguments to be passed
         :return:
-            A instantiated and validated Config object.
+            An instantiated and validated Config object.
         """
         args_dict = toml.load(fp)
 

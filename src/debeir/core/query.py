@@ -1,9 +1,16 @@
+"""
+Query abstraction.
+
+The Query interfaces, encapsulates the output of the Parser objects and is used in the Executor classes to manipulate
+the query internals to produce queries compatible with the search engine index being used.
+"""
 import dataclasses
 from typing import Dict, Optional, Union
 
 import loguru
-from debeir.engines.elasticsearch.generate_script_score import generate_script
+
 from debeir.core.config import GenericConfig, apply_config
+from debeir.engines.elasticsearch.generate_script_score import generate_script
 from debeir.utils.scaler import get_z_value
 
 
@@ -109,6 +116,8 @@ class GenericElasticsearchQuery(Query):
         """
         Generates an embedding script score query for Elasticsearch as part of the NIR scoring function.
 
+        :param cosine_offset:
+        :type cosine_offset:
         :param topic_num: The topic number to search for
         :param encoder: The encoder that will be used for encoding the topics
         :param norm_weight: The BM25 log normalization constant

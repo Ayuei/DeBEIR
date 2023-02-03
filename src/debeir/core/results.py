@@ -1,3 +1,11 @@
+"""
+Results abstraction
+
+The executor will return results in raw form, and needs to parsed to a common Results interface.
+
+This result abstraction uses lazy evaluation and will only compute and manipulate documents from raw form when requested.
+"""
+
 from typing import List
 
 from debeir.core.document import Document, document_factory
