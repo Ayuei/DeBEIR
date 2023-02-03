@@ -1,3 +1,9 @@
+"""
+Hyperameter config interface, which is different from the debeir.core.config interfaces
+
+These configs allows you to define, re-producible hyper-parameter searches, while having integration with wandb.
+"""
+
 import dataclasses
 import json
 from typing import Dict

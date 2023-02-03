@@ -1,3 +1,8 @@
+"""
+Trainer Classes that are intended for use in hyperparameter tuning. Otherwise, for other encoding use cases, use the
+`debeir.rankers.transformer_sent_encoder`
+"""
+
 import abc
 from collections import defaultdict
 from functools import partial
@@ -7,17 +12,19 @@ import loguru
 import optuna
 import torch
 import torch_optimizer
-from debeir.training.hparm_tuning.config import HparamConfig
-from debeir.training.hparm_tuning.types import Hparam
-from debeir.training.utils import LoggingEvaluator, LoggingLoss
+from datasets import Dataset, DatasetDict
 from sentence_transformers import SentenceTransformer, losses
 from torch.utils.data import DataLoader
 from wandb import wandb
 
-from datasets import Dataset, DatasetDict
+from debeir.training.hparm_tuning.config import HparamConfig
+from debeir.training.hparm_tuning.types import Hparam
+from debeir.training.utils import LoggingEvaluator, LoggingLoss
 
 
 class OptimizersWrapper:
+    """This abstraction, allows for consistent API access to optimizer libraries: torch, torch_optimizer"""
+
     def __getattr__(self, name):
         if name in torch.optim.__dict__:
             return getattr(torch.optim, name)
@@ -52,6 +59,7 @@ class SentenceTransformerHparamTrainer(Trainer):
         self.loss_fn = None
         self.hparams = hparams_config.parse_config_to_py() if hparams_config else None
 
+    # noinspection PyUnresolvedReferences
     def get_optuna_hparams(self, trial: optuna.Trial, hparams: Sequence[Hparam] = None):
         """
         Get hyperparameters suggested by the optuna library
@@ -101,6 +109,18 @@ class SentenceTransformerHparamTrainer(Trainer):
         return kwargs
 
     def fit(self, in_trial: optuna.Trial, train_dataset, val_dataset):
+        """
+        Fit the trainer model with the specified hyperpameters produced by the optuna trial.
+
+        :param in_trial:
+        :type in_trial:
+        :param train_dataset:
+        :type train_dataset:
+        :param val_dataset:
+        :type val_dataset:
+        :return:
+        :rtype:
+        """
         hparams = self.get_optuna_hparams(in_trial)
         kwargs = self.build_kwargs_and_model(hparams)
 
@@ -109,6 +129,7 @@ class SentenceTransformerHparamTrainer(Trainer):
         train_dataloader = DataLoader(train_dataset, shuffle=True,
                                       batch_size=int(kwargs.pop("batch_size")), drop_last=True)
 
+        # noinspection PyTypeChecker
         self.model.fit(
             train_objectives=[(train_dataloader, loss)],
             **kwargs,
@@ -121,6 +142,22 @@ class SentenceTransformerHparamTrainer(Trainer):
 
 
 def trial_callback(trial, score, epoch, *args, **kwargs):
+    """
+    Trial callback used by optuna. Records the scores for each epoch.
+
+    :param trial:
+    :type trial:
+    :param score:
+    :type score:
+    :param epoch:
+    :type epoch:
+    :param args:
+    :type args:
+    :param kwargs:
+    :type kwargs:
+    :return:
+    :rtype:
+    """
     trial.report(score, epoch)
     # Handle pruning based on the intermediate value
     if trial.should_prune():
@@ -139,13 +176,13 @@ class SentenceTransformerTrainer(SentenceTransformerHparamTrainer):
         kwargs = self.build_kwargs_and_model(self.hparams)
 
         if not self.evaluator:
-            self.evaluator = LoggingEvaluator(self.evaluator_fn.from_input_examples(self.dataset['val']), wandb)
+            self.evaluator = LoggingEvaluator(self.evaluator_fn.from_input_examples(self.dataset['val']))
 
         loss = self.loss_fn(model=self.model)
 
         if self.use_wandb:
             wandb.watch(self.model)
-            loss = LoggingLoss(loss, wandb)
+            loss = LoggingLoss(loss)
 
         train_dataloader = DataLoader(self.dataset['train'], shuffle=True,
                                       batch_size=int(kwargs.pop("batch_size")),

@@ -1,3 +1,7 @@
+"""
+Hparam abstractions that is used for parsing hparam configuration files to python objects for optuna.
+"""
+
 import abc
 import dataclasses
 from typing import Sequence
