@@ -1,5 +1,8 @@
-import asyncio
 import os
+import sys
+
+sys.path.append(os.path.dirname(os.path.realpath(__file__)) + "/../src")
+
 from collections import defaultdict
 from copy import deepcopy
 
@@ -12,7 +15,7 @@ from debeir.core.config import _NIRMasterConfig
 from debeir.core.pipeline import BM25Pipeline
 
 from debeir.rankers.reranking.use import USEReRanker
-from test_pipeline import config_file_dict, nir_config_dict
+
 
 @pytest.mark.asyncio
 async def test_nir_rerank_instance_method(config_file_dict, nir_config_dict):

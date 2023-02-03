@@ -3,25 +3,33 @@ First and foremost. Check if we can import the library.
 """
 
 import importlib
+import os
+import sys
 from pathlib import Path
+
+# Fix the import path for platform-agnostic testing
+sys.path.append(os.path.dirname(os.path.realpath(__file__)) + "/../src")
 
 
 def _import_helper(sub_module):
-    imports = list(Path(f"../src/debeir/{sub_module}").rglob("*.py"))
+    os.chdir(os.path.dirname(os.path.realpath(__file__)) + "/../src")
+    imports = list(Path(f"debeir/{sub_module}/").rglob("*.py"))
+    assert len(imports) > 0
+
     for im in imports:
         if "__init__.py" in im.name:
             continue
 
-        module_path = ".".join(list(im.parts)[1:])[:-3]
+        module_path = ".".join(list(im.parts))[:-3]
 
         try:
             importlib.import_module(module_path)
         except ModuleNotFoundError as e:
-            raise Exception(f"Unable to import {im.name}", str(e))
+            raise Exception(f"Unable to import {module_path}", str(e))
 
 
 def test_datasets_imports():
-    _import_helper("data_sets")
+    _import_helper("datasets")
 
 
 def test_engines_imports():
@@ -33,7 +41,7 @@ def test_evaluation_imports():
 
 
 def test_interfaces_imports():
-    _import_helper("interfaces")
+    _import_helper("core")
 
 
 def test_models_imports():
@@ -53,7 +61,8 @@ def test_utils_import():
 
 
 def test_bootstrap_import():
-    import sys, os
-
     sys.path.insert(0, os.path.dirname("../main.py"))
 
+
+def test_toplevel_imports():
+    pass

@@ -6,12 +6,12 @@ import pytest
 import requests
 import toml
 
-from debeir.engines.client import Client
-from debeir.core.pipeline import NIRPipeline
-from debeir.datasets.factory import query_factory, parser_factory, executor_factory, config_factory
-from debeir.engines.elasticsearch.change_bm25 import change_bm25_params
 from debeir.core import config
 from debeir.core.config import _NIRMasterConfig
+from debeir.core.pipeline import NIRPipeline
+from debeir.datasets.factory import config_factory, executor_factory, parser_factory, query_factory
+from debeir.engines.client import Client
+from debeir.engines.elasticsearch.change_bm25 import change_bm25_params
 
 
 @pytest.fixture(scope="session")
@@ -189,7 +189,7 @@ def test_parser_instance_method(config_file_dict):
 
     parser = parser_factory[c.parser_fn]
     parser.parse_fields = ["invalid_field", "invalid_field", "invalid_field"]
-    parser = parser(parse_fields=["id", "text"])
+    parser = parser(parse_fields=["text", "id"], id_field='id')
 
     parsed_topics = parser.get_topics(c.topics_path)
 
