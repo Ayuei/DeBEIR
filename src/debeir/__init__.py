@@ -5,3 +5,6 @@ See ./examples/ in the parent directory for an out-of-the-box runnable code.
 
 Otherwise, check out notebooks in the parent directory for training your own model amongst other things.
 """
+
+from .core.config import *
+from .core.pipeline import *
