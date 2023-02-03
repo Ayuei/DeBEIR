@@ -1,5 +1,8 @@
 #!/bin/sh
 
+echo "Running cleanup"
+sh cleanup.sh > /dev/null 2>&1
+
 set -e
 
 git clone git@github.com:Ayuei/go-clinical-indexer.git
