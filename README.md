@@ -34,9 +34,11 @@ results = await p.run_pipeline(cosine_offset=5.0)
 
 See ```examples/``` for more use cases and where to get started.
 
-Otherwise, html rendered documentation is available [here](https://ayuei.github.io/DeBEIR/debeir.html) 
+### Documentation
 
+API Documentation for the library with rendered HTML documentation is available at [https://ayuei.github.io/DeBEIR/debeir.html](https://ayuei.github.io/DeBEIR/debeir.html) which is built with the pdoc3 library and is rebuilt with every commit with gh-pages.
 
+Statically compiled documentation (which is updated less frequently) can be found in the top level directory [docs/index.html](docs/index.html).
 
 ### Development
 
@@ -67,7 +69,7 @@ A helper script for removing the development environment is provided in ```tests
 If you have any issue with the current library, please file an issue [create an issue](https://github.com/Ayuei/DeBEIR/issues/new/choose).
 
 ### Contributing
-For those wanting to contribute to the library, please see [./CONTRIBUTING.md](CONTRIBUTING.md) and submit a pull request!
+For those wanting to contribute to the library, please see [CONTRIBUTING.md](CONTRIBUTING.md) and submit a pull request!
 
 ### Support
 If you wish to reach out to the author and maintainer of this library, please email vincent.nguyen@anu.edu.au
