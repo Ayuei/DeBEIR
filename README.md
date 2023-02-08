@@ -29,7 +29,9 @@ p = NIRPipeline.build_from_config(config_fp="./tests/config.toml",
                                   engine="elasticsearch",
                                   nir_config_fp="./tests/nir_config.toml")
 
-results = await p.run_pipeline(cosine_offset=5.0)
+
+# The cosine offset ensures a non-negative score.
+results = await p.run_pipeline(cosine_offset=1.0)
 ```
 
 See ```examples/``` for more use cases and where to get started.
