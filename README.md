@@ -40,7 +40,7 @@ API Documentation for the library with rendered HTML documentation is available 
 
 Statically compiled documentation (which is updated less frequently) can be found in the top level directory [docs/index.html](docs/index.html).
 
-You can also build this documentation with the pdoc3 library by executing the following commands:
+You can also build this documentation with the pdoc library by executing the following commands:
 ```
 pip install -r requirements-docs.txt
 
