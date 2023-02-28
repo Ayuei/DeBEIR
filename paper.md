@@ -31,19 +31,21 @@ bibliography: paper.bib
 ---
 
 # Summary
-Information Retrieval (IR) is the task of retrieving documents given a query or information need. These documents are retrieved and ranked based on a relevance function or relevance model such as Best-Matching 25 [@bm25]. Although deep learning has been successful in other computer science fields, such as computer vision [@alexnet; @googlenet] and natural language processing [@orig-bert-2018; @liu:2019; @biobert], success in information retrieval was limited in the literature due to comparisons against weak baselines [@yang2019critically]. However, in 2019 [@lin-neural-recantation], deep learning in information retrieval could surpass less computationally intensive keyword-based statistical models in terms of retrieval effectiveness, sparking the field of dense retrieval. Dense retrieval is the task of retrieving documents given a query or information need using a dense vector representation of the query and documents. The dense vector representation is obtained by passing the query and documents through a neural network. The neural network is usually a pre-trained language model such as BERT [@orig-bert-2018] or RoBERTa [@roberta]. The dense query vector representation is then used to retrieve documents using a similarity function such as cosine similarity.
+Information Retrieval (IR) is the task of retrieving documents given a query or information need. These documents are retrieved and ranked based on a relevance function or relevance model such as Best-Matching 25 (BM25) [@bm25]. Although deep learning has been successful in other computer science fields, such as computer vision with AlexNet [@alexnet] and Inception [@googlenet] and natural language processing with transformers [@orig-bert-2018; @liu:2019; @biobert]; success in information retrieval was limited due to comparisons against weak baselines [@yang2019critically]. However, in 2019 [@lin-neural-recantation], deep learning in information retrieval could surpass less computationally intensive keyword-based statistical models in terms of retrieval effectiveness, sparking the field of dense retrieval. Dense retrieval is the task of retrieving documents given a query or information need using a dense vector representation of the query and documents [@lin2021pretrained]. The dense vector representation is obtained by passing the query and documents through a neural network. The neural network is usually a pre-trained language model such as BERT [@orig-bert-2018] or RoBERTa [@roberta]. The dense query vector representation is then used to retrieve documents using a similarity function such as cosine similarity.
 
-Unlike statistical learning, tuning deep learning retrieval methods is often costly and time-consuming. This cost makes it essential to automate much of the training, tuning and evaluation processes efficiently.
+Unlike statistical learning, tuning deep learning retrieval methods is often costly and time-consuming. This cost makes it essential to efficently automate much of the training, tuning and evaluation processes.
 
-DeBEIR is a library for facilitating dense retrieval research, primarily focusing on bi-encoder dense retrieval where query and documents dense vectors are generated separately [@reimers2019]. It allows for expedited experimentation in dense retrieval research by reducing boilerplate code through an interchangeable pipeline API and code extendability through the inheritance of general classes. It further abstracts standard training loops and hyperparameter tuning into easy-to-define configuration files. This library is aimed at helping practitioners, researchers and data scientists experimenting with bi-encoders by providing them with dense retrieval methods that are easy to use out of the box but also have additional extendability for more nuanced research. Furthermore, our pipeline runs asynchronously to reduce I/O performance bottlenecks, facilitating faster experiments and research.
+We present DeBEIR a library for: (1) facilitating dense retrieval research, primarily focusing on bi-encoder dense retrieval where query and documents dense vectors are generated separately [@reimers2019], (2) expedited experimentation in dense retrieval research by reducing boilerplate code through an interchangeable pipeline API and code extendability through the inheritance of general classes; (3) abstractions for standard training loops and hyperparameter tuning from easy-to-define configuration files. 
 
-A brief summary of the pipeline stages (\autoref{fig:training}) is:
+DeBEIR is aimed at helping practitioners, researchers and data scientists experimenting with bi-encoders by providing them with dense retrieval methods that are easy to use out of the box but also have additional extendability for more nuanced research. Furthermore, our pipeline runs asynchronously to reduce I/O performance bottlenecks, facilitating faster experiments and research.
 
-1. Configuration based on TOML files; these are loaded in a class factory to create pipeline objects.
+A brief summary of the pipeline is (\autoref{fig:training}):
+
+1. Configuration based on Tom's Obvious Minimal Language (TOML) files; these are loaded in a class factory to create pipeline objects.
 
 2. An executor object takes in a query builder object. The purpose of the query builder object is to define the mapping of the documents and which parts of the query to use for query execution.
 
-3. The executor object asynchronously executes the queries.
+3. The executor object asynchronously runs the queries.
 
 4. Finally, an evaluator object uses the results to list metrics defined by a configuration file against an oracle test set.
 
@@ -51,7 +53,7 @@ A brief summary of the pipeline stages (\autoref{fig:training}) is:
 This pipeline is condensed into a single class that can be built from a configuration file.
 
 # Statement of Need
-Dense retrieval has been popular in Information Retrieval for some time [@drmm; @abcnn; @paccr]. In the early 2000s, there had been considerable stagnation in retrieval effectiveness as there needed to be more robust baselines [@Armstrong:2009] when proposing new methods. This stagnation repeated with the rise of deep learning, where retrieval performance was again compared against weaker baselines and was not significantly stronger than older non-deep learning statistical models, such as a well-tuned BM25 model [@yang2019critically].
+Dense retrieval has been popular in Information Retrieval since 2015 [@paccr; @drmm; @abcnn]. In the early 2000s, there had been considerable stagnation in retrieval effectiveness as there needed to be more robust baselines [@Armstrong:2009] when proposing new methods. This stagnation repeated with the rise of deep learning, where retrieval performance was again compared against weaker baselines and was not significantly stronger than older non-deep learning statistical models, such as a well-tuned BM25 model [@yang2019critically].
 
 However, this was later recanted when transformer models could be used fine-tuned on Natural Language Inference tasks or ms-marco as a cross-encoder (where a query and document pair are encoded at ranking time) [@lin-neural-recantation], significantly overtaking even the best BM25 models.
 
