@@ -27,8 +27,8 @@ class ProducerThread(threading.Thread):
         return
 
 
-@plac.opt('config', 'Path of configuration file', type=Path)
-@plac.opt('nir_config', 'Path of master nir configuration file', type=Path)
+@plac.pos('config', 'Path of configuration file', type=Path)
+@plac.pos('nir_config', 'Path of master nir configuration file', type=Path)
 @plac.opt('fields', 'Fields to encode. Format like so: field1,field2,field3', type=str)
 @plac.opt('documents', 'Number of documents. This is used for progress bar.', type=int)
 @plac.opt('buffer_size', 'Queue document buffer size', type=int)
