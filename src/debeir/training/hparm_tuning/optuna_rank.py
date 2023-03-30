@@ -32,7 +32,7 @@ def objective(trainer: Trainer, trial: optuna.Trial):
     return trainer.fit(trial, train_dataset, val_dataset)
 
 
-def run_optuna_with_wandb(trainer, n_trials=100, n_jobs=1, maximize_objective=True, save_study_path=".",
+def run_optuna_with_wandb(trainer, n_trials=100, n_jobs=1, maximize_objective=True, save_study_path="temp_study",
                           wandb_kwargs=None):
     """
     Partially initialize the objective function with a trainer and hparams to optimize.
@@ -62,6 +62,7 @@ def run_optuna_with_wandb(trainer, n_trials=100, n_jobs=1, maximize_objective=Tr
     except:
         pass
     finally:
+        logging.info(f"Saving trials to {save_study_path}.pkl")
         joblib.dump(study, save_study_path + ".pkl")
 
     return study
