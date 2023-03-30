@@ -18,4 +18,4 @@ cd ..
 
 python -m pip install .
 python -m pip install https://s3-us-west-2.amazonaws.com/ai2-s2-scispacy/releases/v0.5.0/en_core_sci_md-0.5.0.tar.gz
-python ./examples/indexing/create_semantic_index.py -c tests/config.toml -n tests/nir_config.toml --fields Text -d 100_000 -w 2 -b 100
+python ./examples/indexing/create_semantic_index.py --fields Text -d 100_000 -w 2 -b 100 tests/config.toml tests/nir_config.toml 
