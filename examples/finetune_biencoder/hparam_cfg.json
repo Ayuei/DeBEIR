@@ -1,0 +1,10 @@
+{
+  "lr": 2e-5,
+  "warmup_steps": 100,
+  "optimizer": "Adam",
+  "scheduler": "constantlr",
+  "batch_size": 32,
+  "epochs": 5,
+  "loss_fn": "OnlineContrastiveLoss",
+  "model_name": "squeezebert/squeezebert-uncased"
+}
