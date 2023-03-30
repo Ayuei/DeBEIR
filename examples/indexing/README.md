@@ -6,9 +6,11 @@ indexing directly with the server.
 
 The use of this program, requires a working elasticsearch instance, and properly configured configuration files.
 
-Example usage:
+Assuming you are using the script from the current working directory:
 
 ```
+ln -s ../../tests . 
+
 git clone git@github.com:Ayuei/go-clinical-indexer.git
 
 tar -xf tests/test_set.tar.gz
