@@ -48,7 +48,7 @@ def load_dataset():
 
 if __name__ == "__main__":
     hparam_config = HparamConfig.from_json(
-        "./trec2021_tuning.json"
+        "hparam_config.json"
     )
 
     trainer = SentenceTransformerHparamTrainer(
