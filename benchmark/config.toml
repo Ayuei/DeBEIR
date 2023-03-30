@@ -1,0 +1,14 @@
+"query_type" = "embedding"
+"automatic" = true
+"encoder_fp" = "sentence-transformers/distilbert-base-nli-mean-tokens"
+"index" = "test"
+"norm_weight" = 100
+
+"config_fn" = "generic"
+"query_fn" = "generic"
+"parser_fn" = "tsv"
+"executor_fn" = "generic"
+
+# Get the test set from tests/test_set.tar.gz
+"qrels" = "test_set/qrels.tsv"
+"topics_path" = "test_set/queries.tsv"
