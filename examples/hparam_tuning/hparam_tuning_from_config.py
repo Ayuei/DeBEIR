@@ -1,64 +1,62 @@
-#!/usr/bin/env python
 # coding: utf-8
-import os
-from functools import partial
 
-import dill
+import datasets
 from sentence_transformers import evaluation
 
-from debeir.core.converters import ParsedTopicsToDataset
-from debeir.datasets.trec_clinical_trials import TrecClinicalTrialTripletParser
 from debeir.training.hparm_tuning.config import HparamConfig
 from debeir.training.hparm_tuning.optuna_rank import print_optuna_stats, run_optuna_with_wandb
 from debeir.training.hparm_tuning.trainer import SentenceTransformerHparamTrainer
 from debeir.training.utils import SentDataset
+from debeir.utils.lazy_static import lazy_static
 
 TASK_NAME = "trec_contrastive_passage"
 OUTPUT_DIR = f"./outputs/cross_encoder/{TASK_NAME}/"
 DATA_DIR = "../data/"
 
 
-def get_dataset(dataset_save_path="."):
-    os.makedirs(dataset_save_path, exist_ok=True)
+def remap_label(ex):
+    # Normalize 0, 1, 2 -> 0, 1
+    # We treat neutral the same as a contradiction
+    ex['label'] = ex['label'] // 2
 
-    train_fp = os.path.join(dataset_save_path, "train.dill")
-    val_fp = os.path.join(dataset_save_path, "val.dill")
+    return ex
 
-    if not os.path.isfile(train_fp) and not os.path.isfile(val_fp):
-        topics = TrecClinicalTrialTripletParser.get_topics(
-            "/home/vin/Datasets/clinical_trials/topics/enriched_trec.json")
-        converted_dataset = ParsedTopicsToDataset.convert(TrecClinicalTrialTripletParser, topics)
 
-        converted_dataset = converted_dataset.map(lambda example: {"label": int(int(example['rel']) > 0)})
-        # converted_dataset = converted_dataset.shuffle().train_test_split(test_size=0.25)
-        converted_dataset = converted_dataset.shuffle().train_test_split(test_size=0.4)
-        converted_dataset = converted_dataset['test']
-        converted_dataset = converted_dataset.shuffle().train_test_split(test_size=0.2)
+def load_dataset():
+    """
+    Load and preprocess the SNLI dataset
 
-        train_dataset = SentDataset(converted_dataset['train'], text_cols=["q_text", "brief_title"],
-                                    label_col="label")
-        val_dataset = SentDataset(converted_dataset['test'], text_cols=["q_text", "brief_title"],
-                                  label_col="label")
+    1. Re-normalize the labels to binary
+    2. Remove examples with no gold labels.
+    """
 
-        dill.dump(train_dataset, open(train_fp, "wb+"))
-        dill.dump(val_dataset, open(val_fp, "wb+"))
-    else:
-        train_dataset = dill.load(open(train_fp, "rb"))
-        val_dataset = dill.load(open(val_fp, "rb"))
+    dataset = datasets.load_dataset('snli')
 
-    return {"train": train_dataset, "val": val_dataset}
+    # Use our sentence transformer dataset adapter pattern, allows for huggingface datasets to be used with
+    # Sentence transformer API
+    train = SentDataset(dataset['train'].map(remap_label).filter(lambda k: k['label'] != -1),
+                        text_cols=['premise', 'hypothesis'],
+                        label_col='label')
+
+    val = SentDataset(dataset['test'].map(remap_label).filter(lambda k: k['label'] != -1),
+                      text_cols=['premise', 'hypothesis'],
+                      label_col='label')
+
+    # Make sure our validation and train column name are correct for the trainer
+    return {'train': train, 'val': val}
 
 
 if __name__ == "__main__":
     hparam_config = HparamConfig.from_json(
-        "./configs/hparam/trec2021_tuning.json"
+        "./trec2021_tuning.json"
     )
 
     trainer = SentenceTransformerHparamTrainer(
-        dataset_loading_fn=partial(get_dataset, "."),
+        # Reuse the dataset with lazy static, so we don't have to do the preprocessing repeatedly
+        dataset_loading_fn=lazy_static("hparam_dataloader", load_dataset),
         evaluator_fn=evaluation.BinaryClassificationEvaluator,
         hparams_config=hparam_config,
     )
 
-    study = run_optuna_with_wandb(trainer, wandb_kwargs={"project": "trec2021-tuning-new"})
+    study = run_optuna_with_wandb(trainer)
     print_optuna_stats(study)
