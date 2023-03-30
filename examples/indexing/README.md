@@ -6,7 +6,7 @@ indexing directly with the server.
 
 The use of this program, requires a working elasticsearch instance, and properly configured configuration files.
 
-Assuming you are using the script from the current working directory:
+Assuming you are using the script from the current working directory, execute the following:
 
 ```
 ln -s ../../tests . 
