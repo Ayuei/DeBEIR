@@ -6,7 +6,7 @@ It allows for a common interface between all search engines such as close() but 
 
 import dataclasses
 
-from elasticsearch import AsyncElasticsearch
+from elasticsearch import AsyncElasticsearch, Elasticsearch
 
 
 @dataclasses.dataclass(init=True)
@@ -32,6 +32,14 @@ class Client:
 
         if engine_type == "elasticsearch":
             es_client = AsyncElasticsearch(
+                f"{engine_config.protocol}://{engine_config.ip}:{engine_config.port}",
+                timeout=engine_config.timeout
+            )
+
+            client.es_client = es_client
+
+        if engine_type == "elasticsearch_sync":
+            es_client = Elasticsearch(
                 f"{engine_config.protocol}://{engine_config.ip}:{engine_config.port}",
                 timeout=engine_config.timeout
             )
