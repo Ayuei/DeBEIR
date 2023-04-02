@@ -1,23 +1,37 @@
 import asyncio
-import shutil
-import tarfile
+import statistics
+import time
+
+from loguru import logger
+from tqdm import tqdm
 
 from debeir import Client, NIRPipeline
 
+logger.disable("debeir")
+
 
 async def run_all_queries(client, p):
-    for topic_num in p.engine.query.topics:
-        body = p.engine.query.generate_query_embedding(topic_num, cosine_offset=100000)
+    tasks = []
 
-        res = await client.search(
-            index=p.engine.index_name, body=body, size=100
-        )
+    for topic_num in p.engine.query.topics:
+        body = p.engine.query.generate_query_embedding(topic_num)
+        tasks.append(asyncio.create_task(
+            client.search(
+                index=p.engine.index_name, body=body, size=10
+            )
+        ))
+
+    for fut in tqdm(asyncio.as_completed(tasks), total=len(tasks)):
+        await fut
+
+
+def print_stats(times):
+    print(f"max: {max(times)}, min: {min(times)}, avg: {statistics.mean(times)}, "
+          f"std: {statistics.stdev(times)}")
 
 
 if __name__ == "__main__":
-    shutil.copy("./../tests/test_set.tar.gz", ".")
-    with tarfile.open("./test_set.tar.gz", mode="r") as f:
-        f.extractall()
+    tracker = []
 
     p = NIRPipeline.build_from_config(config_fp="./config.toml",
                                       engine="elasticsearch",
@@ -25,4 +39,8 @@ if __name__ == "__main__":
 
     client = Client.build_from_config("elasticsearch", p.engine_config)
 
+    start = time.time()
     asyncio.run(run_all_queries(client.es_client, p))
+    end = time.time()
+
+    print(end - start)
