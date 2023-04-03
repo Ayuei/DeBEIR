@@ -1,7 +1,7 @@
 """
 Contains utility hyperparameter tuning methods using optuna with integration with wandb
 """
-
+import logging
 from functools import partial
 
 import joblib
