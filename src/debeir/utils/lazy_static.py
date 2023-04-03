@@ -57,6 +57,8 @@ def lazy_static(key, func, *args, **kwargs):
         if key not in __lazy_static.data:
             data = func(*args, **kwargs)
             __lazy_static[key] = data
+        else:
+            data = __lazy_static.data.get(key)
 
         return data
 
