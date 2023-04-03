@@ -1,8 +1,10 @@
 # coding: utf-8
 
 import datasets
+import plac
 from sentence_transformers import evaluation
 
+import wandb
 from debeir.training.hparm_tuning.config import HparamConfig
 from debeir.training.hparm_tuning.trainer import SentenceTransformerTrainer
 from debeir.training.utils import SentDataset
@@ -20,7 +22,7 @@ def remap_label(ex):
     return ex
 
 
-def load_dataset():
+def load_dataset(limit):
     """
     Load and preprocess the SNLI dataset
 
@@ -32,11 +34,17 @@ def load_dataset():
 
     # Use our sentence transformer dataset adapter pattern, allows for huggingface datasets to be used with
     # Sentence transformer API
-    train = SentDataset(dataset['train'].map(remap_label).filter(lambda k: k['label'] != -1),
-                        text_cols=['premise', 'hypothesis'],
-                        label_col='label')
 
-    val = SentDataset(dataset['test'].map(remap_label).filter(lambda k: k['label'] != -1),
+    select_range = limit if limit != -1 else len(dataset['train'])
+
+    train = SentDataset(
+        dataset['train'].select(range(select_range)).map(remap_label).filter(lambda k: k['label'] != -1),
+        text_cols=['premise', 'hypothesis'],
+        label_col='label')
+
+    select_range = limit if limit != -1 else len(dataset['test'])
+
+    val = SentDataset(dataset['test'].select(range(select_range)).map(remap_label).filter(lambda k: k['label'] != -1),
                       text_cols=['premise', 'hypothesis'],
                       label_col='label')
 
@@ -44,12 +52,24 @@ def load_dataset():
     return {'train': train, 'val': val}
 
 
-if __name__ == "__main__":
+@plac.opt('limit', "Only sample a subset for training", type=int)
+def main(limit=-1):
+    if limit != -1:
+        print(f"Limiting training and validation examples to {limit}")
+    else:
+        print(f"Running full test sample of snli, using the flag --limit [number] to limit the training instances.")
+
+    wandb.init()
+
     trainer = SentenceTransformerTrainer(
         # Reuse the dataset with lazy static, so we don't have to do the preprocessing repeatedly
-        dataset=load_dataset(),
+        dataset=load_dataset(limit),
         hparams_config=HparamConfig.from_json("hparam_cfg.json"),
         evaluator_fn=evaluation.BinaryClassificationEvaluator,
     )
 
     trainer.fit()
+
+
+if __name__ == "__main__":
+    plac.call(main)
