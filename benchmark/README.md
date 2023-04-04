@@ -32,3 +32,15 @@ often experiments are repeated several times.
 |----------|----------|--------|-------|-------|
 | Cache    | 0.178    | 0.0049 | 0.181 | 0.169 |
 | No cache | 28.52    | 0.7664 | 29.03 | 27.19 |
+
+## Torch compile
+
+We also have a benchmark for testing the pytorch 2.0.0 compile performance gains: ```benchmark_pytorch_compile.sh```
+We don't see a noticeable difference, which shows that during the encode stage that calls to the GPU model is not the
+bottleneck.
+Most notably, it is the sentence segmentation that takes the longest.
+
+|                  | Mean (s) | Stdev | Max   | Min   |
+|------------------|----------|-------|-------|-------|
+| Pytorch Compiled | 28.47    | 0.786 | 29.65 | 27.29 |
+| Pytorch          | 28.29    | 0.473 | 29.10 | 27.72 |
