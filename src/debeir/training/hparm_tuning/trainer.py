@@ -108,6 +108,9 @@ class SentenceTransformerHparamTrainer(Trainer):
 
         return kwargs
 
+    def prehook(self):
+        pass
+
     def fit(self, in_trial: optuna.Trial, train_dataset, val_dataset):
         """
         Fit the trainer model with the specified hyperpameters produced by the optuna trial.
@@ -128,6 +131,8 @@ class SentenceTransformerHparamTrainer(Trainer):
         loss = self.loss_fn(model=self.model)
         train_dataloader = DataLoader(train_dataset, shuffle=True,
                                       batch_size=int(kwargs.pop("batch_size")), drop_last=True)
+
+        self.prehook()
 
         # noinspection PyTypeChecker
         self.model.fit(
@@ -172,6 +177,9 @@ class SentenceTransformerTrainer(SentenceTransformerHparamTrainer):
         self.use_wandb = use_wandb
         self.dataset = dataset
 
+    def prehook(self):
+        pass
+
     def fit(self, **extra_kwargs):
         kwargs = self.build_kwargs_and_model(self.hparams)
 
@@ -187,6 +195,8 @@ class SentenceTransformerTrainer(SentenceTransformerHparamTrainer):
         train_dataloader = DataLoader(self.dataset['train'], shuffle=True,
                                       batch_size=int(kwargs.pop("batch_size")),
                                       drop_last=True)
+
+        self.prehook()
 
         self.model.fit(
             train_objectives=[(train_dataloader, loss)],
