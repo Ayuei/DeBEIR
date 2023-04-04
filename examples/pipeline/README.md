@@ -15,6 +15,5 @@ and ```nir.toml```.
 ```python3
 # Run the example in the same directory
 # We use the test files included in the ./DeBEIR/test/ directory in the script
-python3
-run_pipeline.py
+python3 run_pipeline.py
 ```
