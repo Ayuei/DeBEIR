@@ -168,6 +168,12 @@ class _NIRMasterConfig(Config):
 class ElasticsearchConfig(Config):
     """
     Basic Elasticsearch configuration file settings from the master nir.toml file
+
+    Attributes:
+        protool (int): https or http.
+        ip: IP address of the elasticsearch index/cluster.
+        port: port of the elasticsearch index
+        timeout: the maximum time to wait for a request to finish. Recommended to set to 10 minutes, as dense retrieval is an expensive operation.
     """
     protocol: str
     ip: str
