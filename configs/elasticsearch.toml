@@ -1,4 +1,4 @@
 protocol = "http"
 ip = "127.0.0.1"
 port = "9200"
-timeout = 600
+timeout = 600 # 10 minutes timeout, dense retrieval requests are expensive and may take a while to return results
