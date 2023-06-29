@@ -43,7 +43,7 @@ Requires: Docker and pip installation of requirements-dev.txt packages.
 ```bash
 cd tests/
 
-./build_test.env.sh
+./build_test_env.sh
 
 pytest tests_imports.py 
 pytest test_pipeline.py
