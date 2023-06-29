@@ -65,7 +65,7 @@ pip install -r requirements-dev.txt
 
 cd tests/
 
-./build_test.env.sh
+./build_test_env.sh
 
 pytest .
 ```
