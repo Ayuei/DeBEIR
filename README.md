@@ -2,8 +2,10 @@
 
 A **De**nse **B**i-**E**ncoder for **I**nformation **R**etrieval library for experimenting and using neural models (with a particular emphasis on bi-encoder models) for end-to-end ranking of documents.
 
-###
-Requires python >= 3.10
+### Requirements
+* Python >= 3.10
+* GPU hardware compatible with pytorch is encouraged
+* Otherwise requirements for your index such as storage and CPU usage should be considered
 
 ### Setup and installation
 It is recommended to set up a virtual environment and install from source
