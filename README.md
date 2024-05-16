@@ -83,4 +83,4 @@ If you have any issue with the current library, please file an issue [create an 
 For those wanting to contribute to the library, please see [CONTRIBUTING.md](CONTRIBUTING.md) and submit a pull request!
 
 ### Support
-If you wish to reach out to the author and maintainer of this library, please email vincent.nguyen@anu.edu.au
+If you wish to reach out to the author and maintainer of this library, please email vincent.nguyen@csiro.au
